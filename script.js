@@ -109,10 +109,10 @@ const toggleElement = e => {
     .querySelectorAll(`.${getToggleElement(e.target)}`)
     .forEach(element => {
       const classList = [...element.classList];
-
       const action = classList.find(c => c === 'js-anim--collapsed')
         ? 'expand'
         : 'collapse';
+
       toggle(element, action);
     });
 };
