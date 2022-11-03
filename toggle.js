@@ -1,16 +1,31 @@
-const getParentHeight = elem => {
-  const height = {};
-  const parent = elem.parentElement;
-  if (getComputedStyle(elem).display === 'none') {
-    height.before = parent.offsetHeight + getElementHeight(elem);
-  } else {
-    height.before = parent.offsetHeight;
+const validateDimension = dimension => {
+  if (dimension !== 'height' && dimension !== 'width') {
+    throw new ReferenceError(
+      `Invalid dimension: ${dimension}. Use 'height' or 'width'`
+    );
   }
+};
+
+const getParentMeasure = (elem, dimension) => {
+  validateDimension(dimension);
+
+  const measure = {};
+  const parent = elem.parentElement;
+
+  /** parent measurement before setting child to display: none */
+  measure.before =
+    dimension === 'height' ? parent.offsetHeight : parent.offsetWidth;
+  if (getComputedStyle(elem).display === 'none') {
+    measure.before += getElementMeasure(elem, dimension);
+  }
+
   elem.style.setProperty('display', 'none');
-  height.after = parent.offsetHeight;
+  /** parent measurement after setting child to display: none */
+  measure.after =
+    dimension === 'height' ? parent.offsetHeight : parent.offsetWidth;
   elem.style.removeProperty('display');
 
-  return height;
+  return measure;
 };
 
 const getMarginNumericValue = margin => {
@@ -53,15 +68,26 @@ const getElementMargins = (element, axis) => {
   return calcMargins[axis](margins, arrLength);
 };
 
-const getElementHeight = element => {
+const getElementMeasure = (element, dimension) => {
+  validateDimension(dimension);
+
   element.style.setProperty(
     'display',
     getComputedStyle(element).display === 'none' ? 'block' : ''
   );
-  const height = element.offsetHeight;
+
+  const measure =
+    dimension === 'height' ? element.offsetHeight : element.offsetWidth;
+
   element.style.removeProperty('display');
 
-  return height + getElementMargins(element, 'vertical');
+  return (
+    measure +
+    getElementMargins(
+      element,
+      dimension === 'height' ? 'vertical' : 'horizontal'
+    )
+  );
 };
 
 const setMaxHeight = (elem, height) => {
@@ -105,7 +131,8 @@ const setParentMaxHeight = args => {
 };
 
 const expandCollapse = (element, action, duration) => {
-  const parentHeight = getParentHeight(element);
+  const parentHeight = getParentMeasure(element, 'height');
+  console.log(getParentMeasure(element, 'width'));
 
   setParentMaxHeight({ element, parentHeight, action });
   element.classList.add(classNames[action]);
@@ -147,7 +174,7 @@ const initExpandCollapse = (opts = {}) => {
       total: { expand: 500, collapse: 500 },
     },
   } = opts;
-  console.log(duration);
+
   document.querySelectorAll(toggleBtn).forEach(btn => {
     btn.addEventListener('click', e =>
       expandCollapseHandler(e.target, duration)
