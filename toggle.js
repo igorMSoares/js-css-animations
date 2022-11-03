@@ -6,28 +6,6 @@ const validateDimension = dimension => {
   }
 };
 
-const getParentMeasure = (elem, dimension) => {
-  validateDimension(dimension);
-
-  const measure = {};
-  const parent = elem.parentElement;
-
-  /** parent measurement before setting child to display: none */
-  measure.before =
-    dimension === 'height' ? parent.offsetHeight : parent.offsetWidth;
-  if (getComputedStyle(elem).display === 'none') {
-    measure.before += getElementMeasure(elem, dimension);
-  }
-
-  elem.style.setProperty('display', 'none');
-  /** parent measurement after setting child to display: none */
-  measure.after =
-    dimension === 'height' ? parent.offsetHeight : parent.offsetWidth;
-  elem.style.removeProperty('display');
-
-  return measure;
-};
-
 const getMarginNumericValue = margin => {
   return +margin.match(/[\d.]+/);
 };
@@ -90,11 +68,43 @@ const getElementMeasure = (element, dimension) => {
   );
 };
 
-const setMaxHeight = (elem, height) => {
-  elem.style.setProperty('max-height', height);
+const getParentMeasure = (elem, dimension) => {
+  validateDimension(dimension);
+
+  const measure = {};
+  const parent = elem.parentElement;
+
+  /** parent measurement before setting child to display: none */
+  measure.before =
+    dimension === 'height' ? parent.offsetHeight : parent.offsetWidth;
+  if (getComputedStyle(elem).display === 'none') {
+    measure.before += getElementMeasure(elem, dimension);
+  }
+
+  elem.style.setProperty('display', 'none');
+  /** parent measurement after setting child to display: none */
+  measure.after =
+    dimension === 'height' ? parent.offsetHeight : parent.offsetWidth;
+  elem.style.removeProperty('display');
+
+  return measure;
 };
 
+const getParentMeasures = elem => {
+  return {
+    height: getParentMeasure(elem, 'height'),
+    width: getParentMeasure(elem, 'width'),
+  };
+};
+
+const setMaxHeight = (elem, height) =>
+  elem.style.setProperty('max-height', height);
+
+const setMaxWidth = (elem, width) => elem.style.setProperty('max-width', width);
+
 const removeMaxHeight = elem => elem.style.removeProperty('max-height');
+
+const removeMaxWidth = elem => elem.style.removeProperty('max-width');
 
 const getToggleElement = eventTarget => {
   let toggleBtn = eventTarget;
@@ -112,34 +122,41 @@ const classNames = {
   expand: 'js-anim--expand',
 };
 
-const parentMxHgt = {
+const measured = {
   collapse: { initial: 'before', final: 'after' },
   expand: { initial: 'after', final: 'before' },
 };
 
-const oppositeAction = {
-  collapse: 'expand',
-  expand: 'collapse',
-};
-
-const setParentMaxHeight = args => {
-  const { parentState = 'initial', element, parentHeight, action } = args;
+const setParentMaxMeasures = args => {
+  const { parentState = 'initial', element, parentMeasures, action } = args;
   setMaxHeight(
     element.parentElement,
-    `${parentHeight[parentMxHgt[action][parentState]]}px`
+    `${parentMeasures.height[measured[action][parentState]]}px`
+  );
+  setMaxWidth(
+    element.parentElement,
+    `${parentMeasures.width[measured[action][parentState]]}px`
   );
 };
 
 const expandCollapse = (element, action, duration) => {
-  const parentHeight = getParentMeasure(element, 'height');
-  console.log(getParentMeasure(element, 'width'));
+  const oppositeAction = {
+    collapse: 'expand',
+    expand: 'collapse',
+  };
+  const parentMeasures = getParentMeasures(element);
 
-  setParentMaxHeight({ element, parentHeight, action });
+  setParentMaxMeasures({ element, parentMeasures, action });
   element.classList.add(classNames[action]);
   element.classList.remove(classNames[oppositeAction[action]]);
 
   setTimeout(() => {
-    setParentMaxHeight({ parentState: 'final', element, parentHeight, action });
+    setParentMaxMeasures({
+      parentState: 'final',
+      element,
+      parentMeasures,
+      action,
+    });
     if (action === 'expand') {
       element.classList.remove(classNames.collapsed);
     }
@@ -150,6 +167,7 @@ const expandCollapse = (element, action, duration) => {
       element.classList.add(classNames.collapsed);
     }
     removeMaxHeight(element.parentElement);
+    removeMaxWidth(element.parentElement);
   }, duration.total[action]);
 };
 
@@ -183,7 +201,7 @@ const initExpandCollapse = (opts = {}) => {
     document
       .querySelectorAll(`.${getToggleElement(btn)}`)
       .forEach(el =>
-        el.parentElement.classList.add('js-anim--mxhgt-transition')
+        el.parentElement.classList.add('js-anim--dimension-transitions')
       );
   });
 };

@@ -22,8 +22,9 @@
   }
 }
 
-.js-anim--mxhgt-transition {
+.js-anim--dimension-transitions {
   transition: max-height 500ms ease;
+  transition: max-width 500ms ease;
 }
 
 .js-anim--expand {
