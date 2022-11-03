@@ -139,13 +139,51 @@ const setParentMaxMeasures = args => {
   );
 };
 
+const getRootProperty = property => {
+  return getComputedStyle(document.documentElement).getPropertyValue(
+    getCssPropertyName(property)
+  );
+};
+
+const setParentCssProperties = element => {
+  const duration = getComputedStyle(element).getPropertyValue(
+    '--js-css-animation--duration'
+  );
+  const timingFunction = getComputedStyle(element).getPropertyValue(
+    '--js-css-animation--timing-function'
+  );
+
+  if (duration !== getRootProperty('duration')) {
+    element.parentElement.style.setProperty(
+      getCssPropertyName('duration'),
+      duration
+    );
+  }
+
+  if (timingFunction !== getRootProperty('timing-function')) {
+    element.parentElement.style.setProperty(
+      getCssPropertyName('timing-function'),
+      timingFunction
+    );
+  }
+};
+
+const removeParentCssProperties = element => {
+  element.parentElement.style.removeProperty(getCssPropertyName('duration'));
+  element.parentElement.style.removeProperty(
+    getCssPropertyName('timing-function')
+  );
+};
+
 const expandCollapse = (element, action) => {
   element.setAttribute('disabled', 'true');
   const duration = Number(
-    getComputedStyle(document.documentElement)
+    getComputedStyle(element)
       .getPropertyValue('--js-css-animation--duration')
       .match(/\d+/)
   );
+
+  setParentCssProperties(element);
 
   const oppositeAction = {
     collapse: 'expand',
@@ -176,6 +214,7 @@ const expandCollapse = (element, action) => {
     removeMaxHeight(element.parentElement);
     removeMaxWidth(element.parentElement);
     setTimeout(() => element.removeAttribute('disabled'), 100);
+    removeParentCssProperties(element);
   }, duration);
 };
 
@@ -190,17 +229,36 @@ const expandCollapseHandler = triggerBtn => {
   });
 };
 
+const getCssPropertyName = property => {
+  const propertyName = {
+    duration: '--js-css-animation--duration',
+    'timing-function': '--js-css-animation--timing-function',
+  };
+
+  return propertyName[property];
+};
+
+const setCssProperty = (element, property, value) => {
+  element.style.setProperty(getCssPropertyName(property), value);
+};
+
 const initExpandCollapse = (opts = {}) => {
-  const { toggleBtn = '.js-anim--toggle-btn' } = opts;
+  const { toggleBtn = '.js-anim--toggle-btn', duration, timingFunction } = opts;
 
   document.querySelectorAll(toggleBtn).forEach(btn => {
     btn.addEventListener('click', e => expandCollapseHandler(e.target));
 
-    document
-      .querySelectorAll(getToggleSelector(btn))
-      .forEach(el =>
-        el.parentElement.classList.add('js-anim--dimension-transitions')
-      );
+    document.querySelectorAll(getToggleSelector(btn)).forEach(el => {
+      if (duration && typeof duration === 'string') {
+        setCssProperty(el, 'duration', duration);
+      }
+
+      if (timingFunction && typeof timingFunction === 'string') {
+        setCssProperty(el, 'timing-function', timingFunction);
+      }
+
+      el.parentElement.classList.add('js-anim--dimension-transitions');
+    });
   });
 };
 
