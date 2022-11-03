@@ -9,6 +9,15 @@ body {
   padding: 0;
 }
 
+.row {
+  display: flex;
+  gap: 1rem;
+}
+
+.col {
+  width: 50%;
+}
+
 .container {
   width: 40%;
   max-width: 1100px;
@@ -21,4 +30,5 @@ main {
 
 .content {
   border: 2px solid darkolivegreen;
+  width: fit-content;
 }
