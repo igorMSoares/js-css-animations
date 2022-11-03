@@ -117,6 +117,10 @@ const getToggleSelector = eventTarget => {
 };
 
 const classNames = {
+  dimensionsTransitions: 'js-anim--dimensions-transitions',
+  heightTransition: 'js-anim--height-transition',
+  widthTransition: 'js-anim--width-transition',
+  toggleBtn: 'js-anim--toggle-btn',
   btnCursor: 'js-anim--btn-cursor',
   collapsed: 'js-anim--collapsed',
   collapse: 'js-anim--collapse',
@@ -180,7 +184,7 @@ const expandCollapse = (element, action) => {
   element.setAttribute('disabled', 'true');
   const duration = Number(
     getComputedStyle(element)
-      .getPropertyValue('--js-css-animation--duration')
+      .getPropertyValue(getCssPropertyName('duration'))
       .match(/\d+/)
   );
 
@@ -256,8 +260,22 @@ const updateCssProperties = (element, opts) => {
   }
 };
 
+const setParentTransitions = (element, wTransit, hTransit) => {
+  if (wTransit && hTransit)
+    element.parentElement.classList.add(classNames.dimensionsTransitions);
+  else if (wTransit)
+    element.parentElement.classList.add(classNames.widthTransition);
+  else if (hTransit)
+    element.parentElement.classList.add(classNames.heightTransition);
+};
+
 const initExpandCollapse = (opts = {}) => {
-  const { toggleBtn = '.js-anim--toggle-btn', cursor } = opts;
+  const {
+    toggleBtn = `.${classNames.toggleBtn}`,
+    cursor,
+    widthTransition = true,
+    heightTransition = true,
+  } = opts;
 
   document.querySelectorAll(toggleBtn).forEach(btn => {
     btn.classList.add(classNames.btnCursor);
@@ -269,7 +287,7 @@ const initExpandCollapse = (opts = {}) => {
     document.querySelectorAll(getToggleSelector(btn)).forEach(el => {
       updateCssProperties(el, opts);
 
-      el.parentElement.classList.add('js-anim--dimension-transitions');
+      setParentTransitions(el, widthTransition, heightTransition);
     });
   });
 };
