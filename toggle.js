@@ -139,7 +139,14 @@ const setParentMaxMeasures = args => {
   );
 };
 
-const expandCollapse = (element, action, duration) => {
+const expandCollapse = (element, action) => {
+  element.setAttribute('disabled', 'true');
+  const duration = Number(
+    getComputedStyle(document.documentElement)
+      .getPropertyValue('--js-css-animation--duration')
+      .match(/\d+/)
+  );
+
   const oppositeAction = {
     collapse: 'expand',
     expand: 'collapse',
@@ -160,7 +167,7 @@ const expandCollapse = (element, action, duration) => {
     if (action === 'expand') {
       element.classList.remove(classNames.collapsed);
     }
-  }, duration.toggleHeight[action]);
+  }, 0);
 
   setTimeout(() => {
     if (action === 'collapse') {
@@ -168,33 +175,26 @@ const expandCollapse = (element, action, duration) => {
     }
     removeMaxHeight(element.parentElement);
     removeMaxWidth(element.parentElement);
-  }, duration.total[action]);
+    setTimeout(() => element.removeAttribute('disabled'), 100);
+  }, duration);
 };
 
-const expandCollapseHandler = (triggerBtn, duration) => {
+const expandCollapseHandler = triggerBtn => {
   document.querySelectorAll(getToggleSelector(triggerBtn)).forEach(element => {
     const classList = [...element.classList];
     const action = classList.find(c => c === classNames.collapsed)
       ? 'expand'
       : 'collapse';
 
-    expandCollapse(element, action, duration);
+    if (!element.getAttribute('disabled')) expandCollapse(element, action);
   });
 };
 
 const initExpandCollapse = (opts = {}) => {
-  const {
-    toggleBtn = '.js-anim--toggle-btn',
-    duration = {
-      toggleHeight: { expand: 0, collapse: 0 },
-      total: { expand: 500, collapse: 500 },
-    },
-  } = opts;
+  const { toggleBtn = '.js-anim--toggle-btn' } = opts;
 
   document.querySelectorAll(toggleBtn).forEach(btn => {
-    btn.addEventListener('click', e =>
-      expandCollapseHandler(e.target, duration)
-    );
+    btn.addEventListener('click', e => expandCollapseHandler(e.target));
 
     document
       .querySelectorAll(getToggleSelector(btn))

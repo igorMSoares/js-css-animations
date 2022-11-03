@@ -22,18 +22,27 @@
   }
 }
 
+:root {
+  --js-css-animation--duration: 800ms;
+  --js-css-animation--timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
+
 .js-anim--dimension-transitions {
-  transition: max-height 500ms ease;
-  transition: max-width 500ms ease;
+  transition: max-height var(--js-css-animation--duration)
+      var(--js-css-animation--timing-function),
+    max-width var(--js-css-animation--duration)
+      var(--js-css-animation--timing-function);
 }
 
 .js-anim--expand {
-  animation: js-anim--expand 500ms ease;
+  animation: js-anim--expand var(--js-css-animation--duration)
+    var(--js-css-animation--timing-function);
   animation-fill-mode: forwards;
 }
 
 .js-anim--collapse {
-  animation: js-anim--collapse 500ms ease;
+  animation: js-anim--collapse var(--js-css-animation--duration)
+    var(--js-css-animation--timing-function);
   animation-fill-mode: forwards;
 }
 
