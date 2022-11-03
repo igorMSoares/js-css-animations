@@ -75,14 +75,21 @@ const oppositeAction = {
 };
 
 const setParentMaxHeight = args => {
-  const { reset = false, element, parentHeight, action } = args;
+  const { parentState = 'initial', element, parentHeight, action } = args;
   setMaxHeight(
     element.parentElement,
-    `${parentHeight[parentMxHgt[action][reset ? 'final' : 'initial']]}px`
+    `${parentHeight[parentMxHgt[action][parentState]]}px`
   );
 };
 
-const toggle = (element, action) => {
+const expandCollapse = (
+  element,
+  action,
+  duration = {
+    toggleHeight: { expand: 0, collapse: 0 },
+    total: { expand: 500, collapse: 500 },
+  }
+) => {
   const parentHeight = getParentHeight(element);
 
   setParentMaxHeight({ element, parentHeight, action });
@@ -90,39 +97,51 @@ const toggle = (element, action) => {
   element.classList.remove(classNames[oppositeAction[action]]);
 
   setTimeout(() => {
-    setParentMaxHeight({ reset: true, element, parentHeight, action });
+    setParentMaxHeight({ parentState: 'final', element, parentHeight, action });
     if (action === 'expand') {
       element.classList.remove(classNames.collapsed);
     }
-  }, 150);
+  }, duration.toggleHeight[action]);
 
   setTimeout(() => {
     if (action === 'collapse') {
       element.classList.add(classNames.collapsed);
     }
     removeMaxHeight(element.parentElement);
-  }, 650);
+  }, duration.total[action]);
 };
 
-const toggleElement = e => {
+const expandCollapseHandler = (triggerBtn, opts) => {
   document
-    .querySelectorAll(`.${getToggleElement(e.target)}`)
+    .querySelectorAll(`.${getToggleElement(triggerBtn)}`)
     .forEach(element => {
       const classList = [...element.classList];
       const action = classList.find(c => c === classNames.collapsed)
         ? 'expand'
         : 'collapse';
 
-      toggle(element, action);
+      expandCollapse(element, action, opts);
     });
 };
 
-document.querySelectorAll('.js-anim--toggle-btn').forEach(btn => {
-  btn.addEventListener('click', toggleElement);
+const initExpandCollapse = opts => {
+  document.querySelectorAll('.js-anim--toggle-btn').forEach(btn => {
+    btn.addEventListener('click', e => expandCollapseHandler(e.target, opts));
 
-  document
-    .querySelectorAll(`.${getToggleElement(btn)}`)
-    .forEach(el => el.parentElement.classList.add('js-anim--mxhgt-transition'));
-});
+    document
+      .querySelectorAll(`.${getToggleElement(btn)}`)
+      .forEach(el =>
+        el.parentElement.classList.add('js-anim--mxhgt-transition')
+      );
+  });
+};
 
-// export default toggleElement;
+const initAnimations = (type, opts) => {
+  const starter = {
+    'expand-collapse': initExpandCollapse,
+  };
+
+  starter[type](opts);
+};
+
+export default initAnimations;
