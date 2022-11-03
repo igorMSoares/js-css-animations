@@ -106,14 +106,14 @@ const removeMaxHeight = elem => elem.style.removeProperty('max-height');
 
 const removeMaxWidth = elem => elem.style.removeProperty('max-width');
 
-const getToggleElement = eventTarget => {
+const getToggleSelector = eventTarget => {
   let toggleBtn = eventTarget;
-  while (!toggleBtn.getAttribute('toggle-element')) {
+  while (!toggleBtn.getAttribute('toggle-selector')) {
     /** bubbles up untill the attribute is found */
     toggleBtn = toggleBtn.parentElement;
   }
 
-  return toggleBtn.getAttribute('toggle-element');
+  return toggleBtn.getAttribute('toggle-selector');
 };
 
 const classNames = {
@@ -172,16 +172,14 @@ const expandCollapse = (element, action, duration) => {
 };
 
 const expandCollapseHandler = (triggerBtn, duration) => {
-  document
-    .querySelectorAll(`.${getToggleElement(triggerBtn)}`)
-    .forEach(element => {
-      const classList = [...element.classList];
-      const action = classList.find(c => c === classNames.collapsed)
-        ? 'expand'
-        : 'collapse';
+  document.querySelectorAll(getToggleSelector(triggerBtn)).forEach(element => {
+    const classList = [...element.classList];
+    const action = classList.find(c => c === classNames.collapsed)
+      ? 'expand'
+      : 'collapse';
 
-      expandCollapse(element, action, duration);
-    });
+    expandCollapse(element, action, duration);
+  });
 };
 
 const initExpandCollapse = (opts = {}) => {
@@ -199,7 +197,7 @@ const initExpandCollapse = (opts = {}) => {
     );
 
     document
-      .querySelectorAll(`.${getToggleElement(btn)}`)
+      .querySelectorAll(getToggleSelector(btn))
       .forEach(el =>
         el.parentElement.classList.add('js-anim--dimension-transitions')
       );
