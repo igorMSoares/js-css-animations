@@ -152,10 +152,10 @@ const getRootProperty = property => {
 
 const setParentCssProperties = element => {
   const duration = getComputedStyle(element).getPropertyValue(
-    '--js-css-animation--duration'
+    getCssPropertyName('duration')
   );
   const timingFunction = getComputedStyle(element).getPropertyValue(
-    '--js-css-animation--timing-function'
+    getCssPropertyName('timing-function')
   );
 
   if (duration !== getRootProperty('duration')) {
@@ -260,13 +260,11 @@ const updateCssProperties = (element, opts) => {
   }
 };
 
-const setParentTransitions = (element, wTransit, hTransit) => {
+const setDimensionsTransitions = (element, wTransit, hTransit) => {
   if (wTransit && hTransit)
-    element.parentElement.classList.add(classNames.dimensionsTransitions);
-  else if (wTransit)
-    element.parentElement.classList.add(classNames.widthTransition);
-  else if (hTransit)
-    element.parentElement.classList.add(classNames.heightTransition);
+    element.classList.add(classNames.dimensionsTransitions);
+  else if (wTransit) element.classList.add(classNames.widthTransition);
+  else if (hTransit) element.classList.add(classNames.heightTransition);
 };
 
 const initExpandCollapse = (opts = {}) => {
@@ -287,7 +285,11 @@ const initExpandCollapse = (opts = {}) => {
     document.querySelectorAll(getToggleSelector(btn)).forEach(el => {
       updateCssProperties(el, opts);
 
-      setParentTransitions(el, widthTransition, heightTransition);
+      setDimensionsTransitions(
+        el.parentElement,
+        widthTransition,
+        heightTransition
+      );
     });
   });
 };
