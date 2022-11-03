@@ -82,14 +82,7 @@ const setParentMaxHeight = args => {
   );
 };
 
-const expandCollapse = (
-  element,
-  action,
-  duration = {
-    toggleHeight: { expand: 0, collapse: 0 },
-    total: { expand: 500, collapse: 500 },
-  }
-) => {
+const expandCollapse = (element, action, duration) => {
   const parentHeight = getParentHeight(element);
 
   setParentMaxHeight({ element, parentHeight, action });
@@ -111,7 +104,7 @@ const expandCollapse = (
   }, duration.total[action]);
 };
 
-const expandCollapseHandler = (triggerBtn, opts) => {
+const expandCollapseHandler = (triggerBtn, duration) => {
   document
     .querySelectorAll(`.${getToggleElement(triggerBtn)}`)
     .forEach(element => {
@@ -120,13 +113,23 @@ const expandCollapseHandler = (triggerBtn, opts) => {
         ? 'expand'
         : 'collapse';
 
-      expandCollapse(element, action, opts);
+      expandCollapse(element, action, duration);
     });
 };
 
-const initExpandCollapse = opts => {
-  document.querySelectorAll('.js-anim--toggle-btn').forEach(btn => {
-    btn.addEventListener('click', e => expandCollapseHandler(e.target, opts));
+const initExpandCollapse = (opts = {}) => {
+  const {
+    toggleBtn = '.js-anim--toggle-btn',
+    duration = {
+      toggleHeight: { expand: 0, collapse: 0 },
+      total: { expand: 500, collapse: 500 },
+    },
+  } = opts;
+  console.log(duration);
+  document.querySelectorAll(toggleBtn).forEach(btn => {
+    btn.addEventListener('click', e =>
+      expandCollapseHandler(e.target, duration)
+    );
 
     document
       .querySelectorAll(`.${getToggleElement(btn)}`)
