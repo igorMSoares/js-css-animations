@@ -13,22 +13,44 @@ const getParentHeight = elem => {
   return height;
 };
 
-const getElementVertMargin = element => {
-  const getNumericValue = margin => {
-    return +margin.match(/[\d.]+/);
-  };
+const getMarginNumericValue = margin => {
+  return +margin.match(/[\d.]+/);
+};
 
-  let marginSize;
-  const margins = getComputedStyle(element).margin.split(' ');
-  const arrLength = margins.length;
+const getVertMargin = (margins, arrLength) => {
+  let marginSize = 0;
   if ((arrLength === 1 || arrLength === 2) && margins[0] !== '0px') {
-    marginSize = 2 * getNumericValue(margins[0]);
+    marginSize = 2 * getMarginNumericValue(margins[0]);
   } else if (arrLength === 3 || arrLength === 4) {
-    marginSize = getNumericValue(margins[0]);
-    marginSize += getNumericValue(margins[2]);
+    marginSize = getMarginNumericValue(margins[0]);
+    marginSize += getMarginNumericValue(margins[2]);
   }
 
-  return marginSize || 0;
+  return marginSize;
+};
+
+const getHorizMargin = (margins, arrLength) => {
+  let marginSize = 0;
+  if (arrLength === 2 || arrLength === 3) {
+    marginSize = 2 * getMarginNumericValue(margins[1]);
+  } else if (arrLength === 4) {
+    marginSize = getMarginNumericValue(margins[1]);
+    marginSize += getMarginNumericValue(margins[3]);
+  }
+
+  return marginSize;
+};
+
+const getElementMargins = (element, axis) => {
+  const calcMargins = {
+    horizontal: getHorizMargin,
+    vertical: getVertMargin,
+  };
+
+  const margins = getComputedStyle(element).margin.split(' ');
+  const arrLength = margins.length;
+
+  return calcMargins[axis](margins, arrLength);
 };
 
 const getElementHeight = element => {
@@ -39,7 +61,7 @@ const getElementHeight = element => {
   const height = element.offsetHeight;
   element.style.removeProperty('display');
 
-  return height + getElementVertMargin(element);
+  return height + getElementMargins(element, 'vertical');
 };
 
 const setMaxHeight = (elem, height) => {
