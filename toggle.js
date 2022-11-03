@@ -117,6 +117,7 @@ const getToggleSelector = eventTarget => {
 };
 
 const classNames = {
+  btnCursor: 'js-anim--btn-cursor',
   collapsed: 'js-anim--collapsed',
   collapse: 'js-anim--collapse',
   expand: 'js-anim--expand',
@@ -233,6 +234,7 @@ const getCssPropertyName = property => {
   const propertyName = {
     duration: '--js-css-animation--duration',
     'timing-function': '--js-css-animation--timing-function',
+    cursor: '--js-css-animation--cursor',
   };
 
   return propertyName[property];
@@ -242,20 +244,30 @@ const setCssProperty = (element, property, value) => {
   element.style.setProperty(getCssPropertyName(property), value);
 };
 
+const updateCssProperties = (element, opts) => {
+  const { duration, timingFunction } = opts;
+
+  if (duration && typeof duration === 'string') {
+    setCssProperty(element, 'duration', duration);
+  }
+
+  if (timingFunction && typeof timingFunction === 'string') {
+    setCssProperty(element, 'timing-function', timingFunction);
+  }
+};
+
 const initExpandCollapse = (opts = {}) => {
-  const { toggleBtn = '.js-anim--toggle-btn', duration, timingFunction } = opts;
+  const { toggleBtn = '.js-anim--toggle-btn', cursor } = opts;
 
   document.querySelectorAll(toggleBtn).forEach(btn => {
+    btn.classList.add(classNames.btnCursor);
+    if (cursor && typeof cursor === 'string') {
+      setCssProperty(btn, 'cursor', cursor);
+    }
     btn.addEventListener('click', e => expandCollapseHandler(e.target));
 
     document.querySelectorAll(getToggleSelector(btn)).forEach(el => {
-      if (duration && typeof duration === 'string') {
-        setCssProperty(el, 'duration', duration);
-      }
-
-      if (timingFunction && typeof timingFunction === 'string') {
-        setCssProperty(el, 'timing-function', timingFunction);
-      }
+      updateCssProperties(el, opts);
 
       el.parentElement.classList.add('js-anim--dimension-transitions');
     });

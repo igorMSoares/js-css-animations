@@ -49,3 +49,8 @@
 .js-anim--collapsed {
   display: none;
 }
+
+.js-anim--btn-cursor {
+  --js-css-animation--cursor: pointer;
+  cursor: var(--js-css-animation--cursor);
+}
