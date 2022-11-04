@@ -118,7 +118,7 @@ const animate = (element, action, id, opts = {}) => {
   const parentMeasures = getParentMeasures(element);
 
   setParentMaxMeasures({ element, parentMeasures, action });
-  if (start) start();
+  if (start && typeof start === 'function') start();
   element.classList.add(classNames[action][id]);
   element.classList.remove(classNames[oppositeAction[action]][id]);
 
@@ -142,7 +142,7 @@ const animate = (element, action, id, opts = {}) => {
     removeDimensionMax(element.parentElement, 'width');
     setTimeout(() => element.removeAttribute('disabled'), 100);
     removeParentCssProperties(element);
-    if (complete) complete();
+    if (complete && typeof complete === 'function') complete();
   }, duration);
 };
 
