@@ -1,4 +1,4 @@
-import initAnimations from './toggle.js';
+import initAnimations from './js-css-animations/js-css-animations.js';
 
 initAnimations('slideDown');
 initAnimations('slideRight', {
