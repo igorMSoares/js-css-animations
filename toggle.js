@@ -97,14 +97,11 @@ const getParentMeasures = elem => {
   };
 };
 
-const setMaxHeight = (elem, height) =>
-  elem.style.setProperty('max-height', height);
+const setDimensionMax = (elem, dimension, value) =>
+  elem.style.setProperty(`max-${dimension}`, value);
 
-const setMaxWidth = (elem, width) => elem.style.setProperty('max-width', width);
-
-const removeMaxHeight = elem => elem.style.removeProperty('max-height');
-
-const removeMaxWidth = elem => elem.style.removeProperty('max-width');
+const removeDimensionMax = (elem, dimension) =>
+  elem.style.removeProperty(`max-${dimension}`);
 
 const getToggleSelector = eventTarget => {
   let toggleBtn = eventTarget;
@@ -122,6 +119,12 @@ const animationsId = {
   slideDown: 2,
   slideLeft: 3,
   slideRight: 4,
+};
+
+const propertyNames = {
+  duration: '--js-css-animation--duration',
+  timingFunction: '--js-css-animation--timing-function',
+  cursor: '--js-css-animation--cursor',
 };
 
 const classNames = {
@@ -154,57 +157,50 @@ const measured = {
 
 const setParentMaxMeasures = args => {
   const { parentState = 'initial', element, parentMeasures, action } = args;
-  setMaxHeight(
+  setDimensionMax(
     element.parentElement,
+    'height',
     `${parentMeasures.height[measured[action][parentState]]}px`
   );
-  setMaxWidth(
+  setDimensionMax(
     element.parentElement,
+    'width',
     `${parentMeasures.width[measured[action][parentState]]}px`
   );
 };
 
 const getRootProperty = property => {
   return getComputedStyle(document.documentElement).getPropertyValue(
-    getCssPropertyName(property)
+    propertyNames[property]
   );
 };
 
+const getCustomProperties = () => ['duration', 'timingFunction'];
+
 const setParentCssProperties = element => {
-  const duration = getComputedStyle(element).getPropertyValue(
-    getCssPropertyName('duration')
-  );
-  const timingFunction = getComputedStyle(element).getPropertyValue(
-    getCssPropertyName('timing-function')
-  );
-
-  if (duration !== getRootProperty('duration')) {
-    element.parentElement.style.setProperty(
-      getCssPropertyName('duration'),
-      duration
+  let currentProp;
+  getCustomProperties().forEach(prop => {
+    currentProp = getComputedStyle(element).getPropertyValue(
+      propertyNames[prop]
     );
-  }
 
-  if (timingFunction !== getRootProperty('timing-function')) {
-    element.parentElement.style.setProperty(
-      getCssPropertyName('timing-function'),
-      timingFunction
-    );
-  }
+    if (currentProp !== getRootProperty(prop)) {
+      element.parentElement.style.setProperty(propertyNames[prop], currentProp);
+    }
+  });
 };
 
 const removeParentCssProperties = element => {
-  element.parentElement.style.removeProperty(getCssPropertyName('duration'));
-  element.parentElement.style.removeProperty(
-    getCssPropertyName('timing-function')
-  );
+  getCustomProperties().forEach(prop => {
+    element.parentElement.style.removeProperty(propertyNames[prop]);
+  });
 };
 
 const animate = (element, action, id) => {
   element.setAttribute('disabled', 'true');
   const duration = Number(
     getComputedStyle(element)
-      .getPropertyValue(getCssPropertyName('duration'))
+      .getPropertyValue(propertyNames.duration)
       .match(/\d+/)
   );
 
@@ -236,8 +232,8 @@ const animate = (element, action, id) => {
     if (action === 'hide') {
       element.classList.add(classNames.collapsed);
     }
-    removeMaxHeight(element.parentElement);
-    removeMaxWidth(element.parentElement);
+    removeDimensionMax(element.parentElement, 'height');
+    removeDimensionMax(element.parentElement, 'width');
     setTimeout(() => element.removeAttribute('disabled'), 100);
     removeParentCssProperties(element);
   }, duration);
@@ -254,30 +250,16 @@ const eventHandler = (triggerBtn, id) => {
   });
 };
 
-const getCssPropertyName = property => {
-  const propertyName = {
-    duration: '--js-css-animation--duration',
-    'timing-function': '--js-css-animation--timing-function',
-    cursor: '--js-css-animation--cursor',
-  };
-
-  return propertyName[property];
-};
-
 const setCssProperty = (element, property, value) => {
-  element.style.setProperty(getCssPropertyName(property), value);
+  element.style.setProperty(propertyNames[property], value);
 };
 
 const updateCssProperties = (element, opts) => {
-  const { duration, timingFunction } = opts;
-
-  if (duration && typeof duration === 'string') {
-    setCssProperty(element, 'duration', duration);
-  }
-
-  if (timingFunction && typeof timingFunction === 'string') {
-    setCssProperty(element, 'timing-function', timingFunction);
-  }
+  getCustomProperties().forEach(prop => {
+    if (opts[prop] && typeof opts[prop] === 'string') {
+      setCssProperty(element, prop, opts[prop]);
+    }
+  });
 };
 
 const setDimensionsTransitions = (element, wTransit, hTransit) => {
