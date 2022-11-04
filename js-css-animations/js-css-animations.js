@@ -74,7 +74,7 @@ const setCssProperty = (element, property, value) => {
 
 const updateCssProperties = (element, opts) => {
   getCustomProperties().forEach(prop => {
-    if (opts[prop] && typeof opts[prop] === 'string') {
+    if (typeof opts[prop] === 'string') {
       setCssProperty(element, prop, opts[prop]);
     }
   });
@@ -100,9 +100,14 @@ const getToggleSelector = eventTarget => {
   return toggleBtn.getAttribute('toggle-selector');
 };
 
+const callbackTracker = {
+  executing: {},
+};
+Object.freeze(callbackTracker);
+
 const animate = (element, action, id, opts = {}) => {
   element.setAttribute('disabled', 'true');
-  const { complete, start } = opts;
+  const { complete, start, toggleBtn } = opts;
   const duration = Number(
     getComputedStyle(element)
       .getPropertyValue(propertyNames.duration)
@@ -116,9 +121,12 @@ const animate = (element, action, id, opts = {}) => {
     show: 'hide',
   };
   const parentMeasures = getParentMeasures(element);
-
   setParentMaxMeasures({ element, parentMeasures, action });
-  if (start && typeof start === 'function') start();
+
+  if (typeof start === 'function' && !callbackTracker.executing[toggleBtn]) {
+    start();
+  }
+
   element.classList.add(classNames[action][id]);
   element.classList.remove(classNames[oppositeAction[action]][id]);
 
@@ -142,8 +150,19 @@ const animate = (element, action, id, opts = {}) => {
     removeDimensionMax(element.parentElement, 'width');
     setTimeout(() => element.removeAttribute('disabled'), 100);
     removeParentCssProperties(element);
-    if (complete && typeof complete === 'function') complete();
+
+    if (
+      typeof complete === 'function' &&
+      !callbackTracker.executing[toggleBtn]
+    ) {
+      complete();
+    }
+
+    delete callbackTracker.executing[toggleBtn];
   }, duration);
+
+  if (!callbackTracker.executing[toggleBtn])
+    callbackTracker.executing[toggleBtn] = true;
 };
 
 const eventHandler = (triggerBtn, id, opts = {}) => {
@@ -170,10 +189,10 @@ const init = (animationId, opts = {}) => {
 
   document.querySelectorAll(toggleBtn).forEach(btn => {
     btn.classList.add(classNames.btnCursor);
-    if (cursor && typeof cursor === 'string') {
+    if (typeof cursor === 'string') {
       setCssProperty(btn, 'cursor', cursor);
     }
-    if (toggleSelector && typeof toggleSelector === 'string') {
+    if (typeof toggleSelector === 'string') {
       btn.setAttribute('toggle-selector', toggleSelector);
     }
 
@@ -186,9 +205,10 @@ const init = (animationId, opts = {}) => {
       );
     });
 
-    btn.addEventListener('click', e =>
-      eventHandler(e.target, animationId, { start, complete })
-    );
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      eventHandler(e.target, animationId, { start, complete, toggleBtn });
+    });
   });
 };
 
