@@ -282,17 +282,17 @@ const init = (animationId, opts = {}) => {
     if (cursor && typeof cursor === 'string') {
       setCssProperty(btn, 'cursor', cursor);
     }
-    btn.addEventListener('click', e => eventHandler(e.target, animationId));
 
     document.querySelectorAll(getToggleSelector(btn)).forEach(el => {
       updateCssProperties(el, opts);
-
       setDimensionsTransitions(
         el.parentElement,
         widthTransition,
         heightTransition
       );
     });
+
+    btn.addEventListener('click', e => eventHandler(e.target, animationId));
   });
 };
 
