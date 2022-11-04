@@ -100,8 +100,9 @@ const getToggleSelector = eventTarget => {
   return toggleBtn.getAttribute('toggle-selector');
 };
 
-const animate = (element, action, id) => {
+const animate = (element, action, id, opts = {}) => {
   element.setAttribute('disabled', 'true');
+  const { complete, start } = opts;
   const duration = Number(
     getComputedStyle(element)
       .getPropertyValue(propertyNames.duration)
@@ -117,6 +118,7 @@ const animate = (element, action, id) => {
   const parentMeasures = getParentMeasures(element);
 
   setParentMaxMeasures({ element, parentMeasures, action });
+  if (start) start();
   element.classList.add(classNames[action][id]);
   element.classList.remove(classNames[oppositeAction[action]][id]);
 
@@ -140,17 +142,18 @@ const animate = (element, action, id) => {
     removeDimensionMax(element.parentElement, 'width');
     setTimeout(() => element.removeAttribute('disabled'), 100);
     removeParentCssProperties(element);
+    if (complete) complete();
   }, duration);
 };
 
-const eventHandler = (triggerBtn, id) => {
+const eventHandler = (triggerBtn, id, opts = {}) => {
   document.querySelectorAll(getToggleSelector(triggerBtn)).forEach(element => {
     const classList = [...element.classList];
     const action = classList.find(c => c === classNames.collapsed)
       ? 'show'
       : 'hide';
 
-    if (!element.getAttribute('disabled')) animate(element, action, id);
+    if (!element.getAttribute('disabled')) animate(element, action, id, opts);
   });
 };
 
@@ -161,6 +164,8 @@ const init = (animationId, opts = {}) => {
     cursor,
     widthTransition = true,
     heightTransition = true,
+    start,
+    complete,
   } = opts;
 
   document.querySelectorAll(toggleBtn).forEach(btn => {
@@ -181,7 +186,9 @@ const init = (animationId, opts = {}) => {
       );
     });
 
-    btn.addEventListener('click', e => eventHandler(e.target, animationId));
+    btn.addEventListener('click', e =>
+      eventHandler(e.target, animationId, { start, complete })
+    );
   });
 };
 

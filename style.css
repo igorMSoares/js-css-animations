@@ -32,3 +32,13 @@ main {
   border: 2px solid darkolivegreen;
   width: fit-content;
 }
+
+.rotate-ccw {
+  transform: rotate(-90deg);
+  transition: transform 500ms ease-in-out;
+}
+
+.rotate-cw {
+  transform: rotate(0deg);
+  transition: transform 500ms ease-in-out;
+}
