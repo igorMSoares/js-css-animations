@@ -1,7 +1,7 @@
 import initAnimations from './toggle.js';
 
-initAnimations('expand-collapse');
-initAnimations('expand-collapse', {
+initAnimations('slideDown');
+initAnimations('slideRight', {
   toggleBtn: '.my-custom-btn',
   cursor: 'default',
   duration: '1500ms',

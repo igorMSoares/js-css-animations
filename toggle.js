@@ -116,6 +116,14 @@ const getToggleSelector = eventTarget => {
   return toggleBtn.getAttribute('toggle-selector');
 };
 
+const animationsId = {
+  collapse: 0,
+  slideUp: 1,
+  slideDown: 2,
+  slideLeft: 3,
+  slideRight: 4,
+};
+
 const classNames = {
   dimensionsTransitions: 'js-anim--dimensions-transitions',
   heightTransition: 'js-anim--height-transition',
@@ -123,13 +131,25 @@ const classNames = {
   toggleBtn: 'js-anim--toggle-btn',
   btnCursor: 'js-anim--btn-cursor',
   collapsed: 'js-anim--collapsed',
-  collapse: 'js-anim--collapse',
-  expand: 'js-anim--expand',
+  hide: [
+    'js-anim--collapse',
+    'js-anim--slide-up',
+    'js-anim--slide-down',
+    'js-anim--slide-left',
+    'js-anim--slide-right',
+  ],
+  show: [
+    'js-anim--expand',
+    'js-anim--slide-up__back',
+    'js-anim--slide-down__back',
+    'js-anim--slide-left__back',
+    'js-anim--slide-right__back',
+  ],
 };
 
 const measured = {
-  collapse: { initial: 'before', final: 'after' },
-  expand: { initial: 'after', final: 'before' },
+  hide: { initial: 'before', final: 'after' },
+  show: { initial: 'after', final: 'before' },
 };
 
 const setParentMaxMeasures = args => {
@@ -180,7 +200,7 @@ const removeParentCssProperties = element => {
   );
 };
 
-const expandCollapse = (element, action) => {
+const animate = (element, action, id) => {
   element.setAttribute('disabled', 'true');
   const duration = Number(
     getComputedStyle(element)
@@ -191,14 +211,14 @@ const expandCollapse = (element, action) => {
   setParentCssProperties(element);
 
   const oppositeAction = {
-    collapse: 'expand',
-    expand: 'collapse',
+    hide: 'show',
+    show: 'hide',
   };
   const parentMeasures = getParentMeasures(element);
 
   setParentMaxMeasures({ element, parentMeasures, action });
-  element.classList.add(classNames[action]);
-  element.classList.remove(classNames[oppositeAction[action]]);
+  element.classList.add(classNames[action][id]);
+  element.classList.remove(classNames[oppositeAction[action]][id]);
 
   setTimeout(() => {
     setParentMaxMeasures({
@@ -207,13 +227,13 @@ const expandCollapse = (element, action) => {
       parentMeasures,
       action,
     });
-    if (action === 'expand') {
+    if (action === 'show') {
       element.classList.remove(classNames.collapsed);
     }
   }, 0);
 
   setTimeout(() => {
-    if (action === 'collapse') {
+    if (action === 'hide') {
       element.classList.add(classNames.collapsed);
     }
     removeMaxHeight(element.parentElement);
@@ -223,14 +243,14 @@ const expandCollapse = (element, action) => {
   }, duration);
 };
 
-const expandCollapseHandler = triggerBtn => {
+const eventHandler = (triggerBtn, id) => {
   document.querySelectorAll(getToggleSelector(triggerBtn)).forEach(element => {
     const classList = [...element.classList];
     const action = classList.find(c => c === classNames.collapsed)
-      ? 'expand'
-      : 'collapse';
+      ? 'show'
+      : 'hide';
 
-    if (!element.getAttribute('disabled')) expandCollapse(element, action);
+    if (!element.getAttribute('disabled')) animate(element, action, id);
   });
 };
 
@@ -267,7 +287,7 @@ const setDimensionsTransitions = (element, wTransit, hTransit) => {
   else if (hTransit) element.classList.add(classNames.heightTransition);
 };
 
-const initExpandCollapse = (opts = {}) => {
+const init = (animationId, opts = {}) => {
   const {
     toggleBtn = `.${classNames.toggleBtn}`,
     cursor,
@@ -280,7 +300,7 @@ const initExpandCollapse = (opts = {}) => {
     if (cursor && typeof cursor === 'string') {
       setCssProperty(btn, 'cursor', cursor);
     }
-    btn.addEventListener('click', e => expandCollapseHandler(e.target));
+    btn.addEventListener('click', e => eventHandler(e.target, animationId));
 
     document.querySelectorAll(getToggleSelector(btn)).forEach(el => {
       updateCssProperties(el, opts);
@@ -295,11 +315,7 @@ const initExpandCollapse = (opts = {}) => {
 };
 
 const initAnimations = (type, opts) => {
-  const starter = {
-    'expand-collapse': initExpandCollapse,
-  };
-
-  starter[type](opts);
+  init(animationsId[type], opts);
 };
 
 export default initAnimations;
