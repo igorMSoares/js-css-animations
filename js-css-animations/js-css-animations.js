@@ -89,10 +89,13 @@ const setDimensionsTransitions = (element, wTransit, hTransit) => {
 
 const getToggleSelector = eventTarget => {
   let toggleBtn = eventTarget;
-  while (!toggleBtn.getAttribute('toggle-selector')) {
+  while (toggleBtn && !toggleBtn.getAttribute('toggle-selector')) {
     /** bubbles up untill the attribute is found */
     toggleBtn = toggleBtn.parentElement;
   }
+
+  if (!toggleBtn)
+    throw new ReferenceError('toggle-selector attribute not found');
 
   return toggleBtn.getAttribute('toggle-selector');
 };
@@ -154,6 +157,7 @@ const eventHandler = (triggerBtn, id) => {
 const init = (animationId, opts = {}) => {
   const {
     toggleBtn = `.${classNames.toggleBtn}`,
+    toggleSelector,
     cursor,
     widthTransition = true,
     heightTransition = true,
@@ -163,6 +167,9 @@ const init = (animationId, opts = {}) => {
     btn.classList.add(classNames.btnCursor);
     if (cursor && typeof cursor === 'string') {
       setCssProperty(btn, 'cursor', cursor);
+    }
+    if (toggleSelector && typeof toggleSelector === 'string') {
+      btn.setAttribute('toggle-selector', toggleSelector);
     }
 
     document.querySelectorAll(getToggleSelector(btn)).forEach(el => {
