@@ -43,9 +43,9 @@ const CLASS_NAMES = Object.freeze({
   ],
 });
 
-const getCustomProperties = () => ['duration', 'timingFunction'];
+const getCustomCssProperties = () => ['duration', 'timingFunction'];
 
-const getRootProperty = property => {
+const getRootCssProperty = property => {
   return getComputedStyle(document.documentElement).getPropertyValue(
     PROPERTY_NAMES[property]
   );
@@ -53,12 +53,12 @@ const getRootProperty = property => {
 
 const setParentCssProperties = element => {
   let currentProp;
-  getCustomProperties().forEach(prop => {
+  getCustomCssProperties().forEach(prop => {
     currentProp = getComputedStyle(element).getPropertyValue(
       PROPERTY_NAMES[prop]
     );
 
-    if (currentProp !== getRootProperty(prop)) {
+    if (currentProp !== getRootCssProperty(prop)) {
       element.parentElement.style.setProperty(
         PROPERTY_NAMES[prop],
         currentProp
@@ -68,7 +68,7 @@ const setParentCssProperties = element => {
 };
 
 const removeParentCssProperties = element => {
-  getCustomProperties().forEach(prop => {
+  getCustomCssProperties().forEach(prop => {
     element.parentElement.style.removeProperty(PROPERTY_NAMES[prop]);
   });
 };
@@ -78,14 +78,14 @@ const setCssProperty = (element, property, value) => {
 };
 
 const updateCssProperties = (element, opts) => {
-  getCustomProperties().forEach(prop => {
+  getCustomCssProperties().forEach(prop => {
     if (typeof opts[prop] === 'string') {
       setCssProperty(element, prop, opts[prop]);
     }
   });
 };
 
-const getTransitions = element => {
+const getCurrentTransition = element => {
   const currTransition = getComputedStyle(element).transition;
   return currTransition !== getDefaultComputedStyle(element).transition
     ? currTransition
@@ -110,7 +110,7 @@ const appendTransition = (element, className, currTransition) => {
 };
 
 const setDimensionsTransitions = (element, wTransit, hTransit) => {
-  const currTransition = getTransitions(element);
+  const currTransition = getCurrentTransition(element);
   let className;
 
   if (wTransit && hTransit) {
