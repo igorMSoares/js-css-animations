@@ -4,21 +4,19 @@ import {
   removeDimensionMax,
 } from './measurements.js';
 
-const ANIMATIONS_ID = {
+const ANIMATIONS_ID = Object.freeze({
   collapse: 0,
   slideUp: 1,
   slideDown: 2,
   slideLeft: 3,
   slideRight: 4,
-};
-Object.freeze(ANIMATIONS_ID);
+});
 
-const PROPERTY_NAMES = {
+const PROPERTY_NAMES = Object.freeze({
   duration: '--js-css-animation--duration',
   timingFunction: '--js-css-animation--timing-function',
   cursor: '--js-css-animation--cursor',
-};
-Object.freeze(PROPERTY_NAMES);
+});
 
 const CLASS_NAMES = Object.freeze({
   dimensionsTransitions: 'js-anim--dimensions-transitions',
@@ -41,6 +39,10 @@ const CLASS_NAMES = Object.freeze({
     'js-anim--slide-left__back',
     'js-anim--slide-right__back',
   ],
+});
+
+const CALLBACK_TRACKER = Object.freeze({
+  executing: {},
 });
 
 const getCustomCssProperties = () => ['duration', 'timingFunction'];
@@ -138,11 +140,6 @@ const getToggleSelector = eventTarget => {
   return toggleBtn.getAttribute('toggle-selector');
 };
 
-const callbackTracker = {
-  executing: {},
-};
-Object.freeze(callbackTracker);
-
 const animate = (element, action, id, opts = {}) => {
   element.setAttribute('disabled', 'true');
   const { complete, start, toggleBtn } = opts;
@@ -161,7 +158,7 @@ const animate = (element, action, id, opts = {}) => {
   const parentMeasures = getParentMeasures(element);
   setParentMaxMeasures({ element, parentMeasures, action });
 
-  if (typeof start === 'function' && !callbackTracker.executing[toggleBtn]) {
+  if (typeof start === 'function' && !CALLBACK_TRACKER.executing[toggleBtn]) {
     start();
   }
 
@@ -191,16 +188,16 @@ const animate = (element, action, id, opts = {}) => {
 
     if (
       typeof complete === 'function' &&
-      !callbackTracker.executing[toggleBtn]
+      !CALLBACK_TRACKER.executing[toggleBtn]
     ) {
       complete();
     }
 
-    delete callbackTracker.executing[toggleBtn];
+    delete CALLBACK_TRACKER.executing[toggleBtn];
   }, duration);
 
-  if (!callbackTracker.executing[toggleBtn])
-    callbackTracker.executing[toggleBtn] = true;
+  if (!CALLBACK_TRACKER.executing[toggleBtn])
+    CALLBACK_TRACKER.executing[toggleBtn] = true;
 };
 
 const eventHandler = (triggerBtn, id, opts = {}) => {
