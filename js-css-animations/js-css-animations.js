@@ -80,11 +80,44 @@ const updateCssProperties = (element, opts) => {
   });
 };
 
+const getTransitions = element => {
+  const currTransition = getComputedStyle(element).transition;
+  return currTransition !== getDefaultComputedStyle(element).transition
+    ? currTransition
+    : '';
+};
+
+const getClassTransition = className => {
+  return [
+    ...[...document.styleSheets].find(ss => ss.href.match(/js-animations\.css/))
+      .cssRules,
+  ].find(r => r.cssText.match(`\\.${className}`)).style.transition;
+};
+
+const appendTransition = (element, className, currTransition) => {
+  const classTransition = getClassTransition(className);
+  if (classTransition) {
+    element.style.setProperty(
+      'transition',
+      `${classTransition}, ${currTransition}`
+    );
+  }
+};
+
 const setDimensionsTransitions = (element, wTransit, hTransit) => {
-  if (wTransit && hTransit)
-    element.classList.add(classNames.dimensionsTransitions);
-  else if (wTransit) element.classList.add(classNames.widthTransition);
-  else if (hTransit) element.classList.add(classNames.heightTransition);
+  const currTransition = getTransitions(element);
+  let className;
+
+  if (wTransit && hTransit) {
+    className = classNames.dimensionsTransitions;
+  } else if (wTransit) {
+    className = classNames.widthTransition;
+  } else if (hTransit) {
+    className = classNames.heightTransition;
+  }
+
+  if (className) element.classList.add(className);
+  if (currTransition) appendTransition(element, className, currTransition);
 };
 
 const getToggleSelector = eventTarget => {
