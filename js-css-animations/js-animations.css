@@ -199,6 +199,10 @@
   display: none;
 }
 
+.js-anim--hidden {
+  visibility: hidden;
+}
+
 .js-anim--btn-cursor {
   --js-css-animation--cursor: pointer;
   cursor: var(--js-css-animation--cursor);

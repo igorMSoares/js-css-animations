@@ -25,6 +25,7 @@ const CLASS_NAMES = Object.freeze({
   toggleBtn: 'js-anim--toggle-btn',
   btnCursor: 'js-anim--btn-cursor',
   collapsed: 'js-anim--collapsed',
+  hidden: 'js-anim--hidden',
   hide: [
     'js-anim--collapse',
     'js-anim--slide-up',
@@ -142,7 +143,14 @@ const getToggleSelector = eventTarget => {
 
 const animate = (element, action, id, opts = {}) => {
   element.setAttribute('disabled', 'true');
-  const { complete, start, toggleBtn } = opts;
+  const {
+    complete,
+    start,
+    toggleBtn,
+    hide,
+    widthTransition,
+    heightTransition,
+  } = opts;
   const duration = Number(
     getComputedStyle(element)
       .getPropertyValue(PROPERTY_NAMES.duration)
@@ -155,8 +163,13 @@ const animate = (element, action, id, opts = {}) => {
     hide: 'show',
     show: 'hide',
   };
+
+  let dimension;
+  if (widthTransition && heightTransition) dimension = 'all';
+  else if (widthTransition) dimension = 'width';
+  else if (heightTransition) dimension = 'height';
   const parentMeasures = getParentMeasures(element);
-  setParentMaxMeasures({ element, parentMeasures, action });
+  setParentMaxMeasures({ element, parentMeasures, action, dimension });
 
   if (typeof start === 'function' && !CALLBACK_TRACKER.executing[toggleBtn]) {
     start();
@@ -171,15 +184,20 @@ const animate = (element, action, id, opts = {}) => {
       element,
       parentMeasures,
       action,
+      dimension,
     });
     if (action === 'show') {
-      element.classList.remove(CLASS_NAMES.collapsed);
+      hide
+        ? element.classList.remove(CLASS_NAMES.hidden)
+        : element.classList.remove(CLASS_NAMES.collapsed);
     }
   }, 0);
 
   setTimeout(() => {
     if (action === 'hide') {
-      element.classList.add(CLASS_NAMES.collapsed);
+      hide
+        ? element.classList.add(CLASS_NAMES.hidden)
+        : element.classList.add(CLASS_NAMES.collapsed);
     }
     removeDimensionMax(element.parentElement, 'height');
     removeDimensionMax(element.parentElement, 'width');
@@ -203,7 +221,9 @@ const animate = (element, action, id, opts = {}) => {
 const eventHandler = (triggerBtn, id, opts = {}) => {
   document.querySelectorAll(getToggleSelector(triggerBtn)).forEach(element => {
     const classList = [...element.classList];
-    const action = classList.find(c => c === CLASS_NAMES.collapsed)
+    const action = classList.find(
+      c => c === CLASS_NAMES.collapsed || c === CLASS_NAMES.hidden
+    )
       ? 'show'
       : 'hide';
 
@@ -218,6 +238,7 @@ const init = (animationId, opts = {}) => {
     cursor,
     widthTransition = true,
     heightTransition = true,
+    hide = false,
     start,
     complete,
   } = opts;
@@ -242,7 +263,14 @@ const init = (animationId, opts = {}) => {
 
     btn.addEventListener('click', e => {
       e.stopPropagation();
-      eventHandler(e.target, animationId, { start, complete, toggleBtn });
+      eventHandler(e.target, animationId, {
+        start,
+        complete,
+        toggleBtn,
+        hide,
+        widthTransition,
+        heightTransition,
+      });
     });
   });
 };

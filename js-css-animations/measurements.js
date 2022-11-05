@@ -109,17 +109,33 @@ const removeDimensionMax = (elem, dimension) =>
   elem.style.removeProperty(`max-${dimension}`);
 
 const setParentMaxMeasures = args => {
-  const { parentState = 'initial', element, parentMeasures, action } = args;
-  setDimensionMax(
-    element.parentElement,
-    'height',
-    `${parentMeasures.height[measured[action][parentState]]}px`
-  );
-  setDimensionMax(
-    element.parentElement,
-    'width',
-    `${parentMeasures.width[measured[action][parentState]]}px`
-  );
+  const {
+    parentState = 'initial',
+    element,
+    parentMeasures,
+    action,
+    dimension,
+  } = args;
+  if (!dimension) return;
+
+  if (dimension === 'all') {
+    setDimensionMax(
+      element.parentElement,
+      'height',
+      `${parentMeasures.height[measured[action][parentState]]}px`
+    );
+    setDimensionMax(
+      element.parentElement,
+      'width',
+      `${parentMeasures.width[measured[action][parentState]]}px`
+    );
+  } else {
+    setDimensionMax(
+      element.parentElement,
+      dimension,
+      `${parentMeasures.width[measured[action][parentState]]}px`
+    );
+  }
 };
 
 export { getParentMeasures, setParentMaxMeasures, removeDimensionMax };
