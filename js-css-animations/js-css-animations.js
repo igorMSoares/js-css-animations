@@ -4,21 +4,23 @@ import {
   removeDimensionMax,
 } from './measurements.js';
 
-const animationsId = {
+const ANIMATIONS_ID = {
   collapse: 0,
   slideUp: 1,
   slideDown: 2,
   slideLeft: 3,
   slideRight: 4,
 };
+Object.freeze(ANIMATIONS_ID);
 
-const propertyNames = {
+const PROPERTY_NAMES = {
   duration: '--js-css-animation--duration',
   timingFunction: '--js-css-animation--timing-function',
   cursor: '--js-css-animation--cursor',
 };
+Object.freeze(PROPERTY_NAMES);
 
-const classNames = {
+const CLASS_NAMES = Object.freeze({
   dimensionsTransitions: 'js-anim--dimensions-transitions',
   heightTransition: 'js-anim--height-transition',
   widthTransition: 'js-anim--width-transition',
@@ -39,13 +41,13 @@ const classNames = {
     'js-anim--slide-left__back',
     'js-anim--slide-right__back',
   ],
-};
+});
 
 const getCustomProperties = () => ['duration', 'timingFunction'];
 
 const getRootProperty = property => {
   return getComputedStyle(document.documentElement).getPropertyValue(
-    propertyNames[property]
+    PROPERTY_NAMES[property]
   );
 };
 
@@ -53,23 +55,26 @@ const setParentCssProperties = element => {
   let currentProp;
   getCustomProperties().forEach(prop => {
     currentProp = getComputedStyle(element).getPropertyValue(
-      propertyNames[prop]
+      PROPERTY_NAMES[prop]
     );
 
     if (currentProp !== getRootProperty(prop)) {
-      element.parentElement.style.setProperty(propertyNames[prop], currentProp);
+      element.parentElement.style.setProperty(
+        PROPERTY_NAMES[prop],
+        currentProp
+      );
     }
   });
 };
 
 const removeParentCssProperties = element => {
   getCustomProperties().forEach(prop => {
-    element.parentElement.style.removeProperty(propertyNames[prop]);
+    element.parentElement.style.removeProperty(PROPERTY_NAMES[prop]);
   });
 };
 
 const setCssProperty = (element, property, value) => {
-  element.style.setProperty(propertyNames[property], value);
+  element.style.setProperty(PROPERTY_NAMES[property], value);
 };
 
 const updateCssProperties = (element, opts) => {
@@ -109,11 +114,11 @@ const setDimensionsTransitions = (element, wTransit, hTransit) => {
   let className;
 
   if (wTransit && hTransit) {
-    className = classNames.dimensionsTransitions;
+    className = CLASS_NAMES.dimensionsTransitions;
   } else if (wTransit) {
-    className = classNames.widthTransition;
+    className = CLASS_NAMES.widthTransition;
   } else if (hTransit) {
-    className = classNames.heightTransition;
+    className = CLASS_NAMES.heightTransition;
   }
 
   if (className) element.classList.add(className);
@@ -143,7 +148,7 @@ const animate = (element, action, id, opts = {}) => {
   const { complete, start, toggleBtn } = opts;
   const duration = Number(
     getComputedStyle(element)
-      .getPropertyValue(propertyNames.duration)
+      .getPropertyValue(PROPERTY_NAMES.duration)
       .match(/\d+/)
   );
 
@@ -160,8 +165,8 @@ const animate = (element, action, id, opts = {}) => {
     start();
   }
 
-  element.classList.add(classNames[action][id]);
-  element.classList.remove(classNames[oppositeAction[action]][id]);
+  element.classList.add(CLASS_NAMES[action][id]);
+  element.classList.remove(CLASS_NAMES[oppositeAction[action]][id]);
 
   setTimeout(() => {
     setParentMaxMeasures({
@@ -171,13 +176,13 @@ const animate = (element, action, id, opts = {}) => {
       action,
     });
     if (action === 'show') {
-      element.classList.remove(classNames.collapsed);
+      element.classList.remove(CLASS_NAMES.collapsed);
     }
   }, 0);
 
   setTimeout(() => {
     if (action === 'hide') {
-      element.classList.add(classNames.collapsed);
+      element.classList.add(CLASS_NAMES.collapsed);
     }
     removeDimensionMax(element.parentElement, 'height');
     removeDimensionMax(element.parentElement, 'width');
@@ -201,7 +206,7 @@ const animate = (element, action, id, opts = {}) => {
 const eventHandler = (triggerBtn, id, opts = {}) => {
   document.querySelectorAll(getToggleSelector(triggerBtn)).forEach(element => {
     const classList = [...element.classList];
-    const action = classList.find(c => c === classNames.collapsed)
+    const action = classList.find(c => c === CLASS_NAMES.collapsed)
       ? 'show'
       : 'hide';
 
@@ -211,7 +216,7 @@ const eventHandler = (triggerBtn, id, opts = {}) => {
 
 const init = (animationId, opts = {}) => {
   const {
-    toggleBtn = `.${classNames.toggleBtn}`,
+    toggleBtn = `.${CLASS_NAMES.toggleBtn}`,
     toggleSelector,
     cursor,
     widthTransition = true,
@@ -221,7 +226,7 @@ const init = (animationId, opts = {}) => {
   } = opts;
 
   document.querySelectorAll(toggleBtn).forEach(btn => {
-    btn.classList.add(classNames.btnCursor);
+    btn.classList.add(CLASS_NAMES.btnCursor);
     if (typeof cursor === 'string') {
       setCssProperty(btn, 'cursor', cursor);
     }
@@ -246,7 +251,7 @@ const init = (animationId, opts = {}) => {
 };
 
 const initAnimations = (type, opts) => {
-  init(animationsId[type], opts);
+  init(ANIMATIONS_ID[type], opts);
 };
 
 export default initAnimations;
