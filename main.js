@@ -2,9 +2,8 @@ import jsCssAnimations from './js-css-animations/js-css-animations.js';
 
 jsCssAnimations.animate('slideDown', {
   complete: () => {
-    const img = document.querySelector('.my-custom-btn img');
-    jsCssAnimations.show.slideLeft(img, {
-      duration: '100ms',
+    const btn = document.querySelector('.my-custom-btn img');
+    jsCssAnimations.show.slideLeft(btn, {
       timingFunction: 'ease-in-out',
     });
   },
@@ -26,14 +25,20 @@ jsCssAnimations.animate('slideRight', {
     if (rotateClass) img.classList.remove(rotateClass);
   },
   complete: () => {
-    const img = document.querySelector('.my-custom-btn img');
-    jsCssAnimations.hide.slideLeft(img, {
-      duration: '1000ms',
+    const btn = document.querySelector('.my-custom-btn img');
+    jsCssAnimations.hide.slideLeft(btn, {
+      duration: '1200ms',
       timingFunction: 'ease',
+      resetAfter: false,
     });
   },
 });
 
 jsCssAnimations.show.slideDown(
-  document.querySelector('.content p:nth-child(1)')
+  document.querySelector('.content p:nth-child(1)'),
+  {
+    delay: '1000ms',
+    fillMode: 'backwards',
+    timingFunction: 'ease-in-out',
+  }
 );

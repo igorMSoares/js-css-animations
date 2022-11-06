@@ -121,23 +121,25 @@
 :root {
   --js-css-animation--duration: 800ms;
   --js-css-animation--timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  --js-css-animation--delay: 0;
+  --js-css-animation--fill-mode: forwards;
 }
 
 .js-anim--dimensions-transitions {
-  transition: max-width var(--js-css-animation--duration)
-      var(--js-css-animation--timing-function),
-    max-height var(--js-css-animation--duration)
-      var(--js-css-animation--timing-function);
+  transition-property: max-width, max-height;
+  transition-duration: var(--js-css-animation--duration);
+  transition-timing-function: var(--js-css-animation--timing-function);
+  transition-delay: var(--js-css-animation--delay);
 }
 
 .js-anim--width-transition {
   transition: max-width var(--js-css-animation--duration)
-    var(--js-css-animation--timing-function);
+    var(--js-css-animation--timing-function) var(--js-css-animation--delay);
 }
 
 .js-anim--height-transition {
   transition: max-height var(--js-css-animation--duration)
-    var(--js-css-animation--timing-function);
+    var(--js-css-animation--timing-function) var(--js-css-animation--delay);
 }
 
 .js-anim--collapse,
@@ -152,7 +154,8 @@
 .js-anim--slide-right__back {
   animation-duration: var(--js-css-animation--duration);
   animation-timing-function: var(--js-css-animation--timing-function);
-  animation-fill-mode: forwards;
+  animation-delay: var(--js-css-animation--delay);
+  animation-fill-mode: var(--js-css-animation--fill-mode);
 }
 
 .js-anim--collapse {

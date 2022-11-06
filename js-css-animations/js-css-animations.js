@@ -15,6 +15,8 @@ const ANIMATIONS_ID = Object.freeze({
 const PROPERTY_NAMES = Object.freeze({
   duration: '--js-css-animation--duration',
   timingFunction: '--js-css-animation--timing-function',
+  delay: '--js-css-animation--delay',
+  fillMode: '--js-css-animation--fill-mode',
   cursor: '--js-css-animation--cursor',
 });
 
@@ -46,7 +48,9 @@ const CALLBACK_TRACKER = Object.freeze({
   executing: {},
 });
 
-const getCustomCssProperties = () => ['duration', 'timingFunction'];
+const CUSTOM_CSS_PROPERTIES = Object.freeze(
+  Object.keys(PROPERTY_NAMES).filter(k => k !== 'cursor')
+);
 
 const getRootCssProperty = property => {
   return getComputedStyle(document.documentElement).getPropertyValue(
@@ -56,23 +60,20 @@ const getRootCssProperty = property => {
 
 const setParentCssProperties = element => {
   let currentProp;
-  getCustomCssProperties().forEach(prop => {
+  CUSTOM_CSS_PROPERTIES.forEach(prop => {
     currentProp = getComputedStyle(element).getPropertyValue(
       PROPERTY_NAMES[prop]
     );
 
     if (currentProp !== getRootCssProperty(prop)) {
-      element.parentElement.style.setProperty(
-        PROPERTY_NAMES[prop],
-        currentProp
-      );
+      setCssProperty(element.parentElement, PROPERTY_NAMES[prop], currentProp);
     }
   });
 };
 
-const removeParentCssProperties = element => {
-  getCustomCssProperties().forEach(prop => {
-    element.parentElement.style.removeProperty(PROPERTY_NAMES[prop]);
+const removeCustomCssProperties = element => {
+  CUSTOM_CSS_PROPERTIES.forEach(prop => {
+    element.style.removeProperty(PROPERTY_NAMES[prop]);
   });
 };
 
@@ -81,7 +82,7 @@ const setCssProperty = (element, property, value) => {
 };
 
 const updateCssProperties = (element, opts) => {
-  getCustomCssProperties().forEach(prop => {
+  CUSTOM_CSS_PROPERTIES.forEach(prop => {
     if (typeof opts[prop] === 'string') {
       setCssProperty(element, prop, opts[prop]);
     }
@@ -141,9 +142,20 @@ const getToggleSelector = eventTarget => {
   return toggleBtn.getAttribute('toggle-selector');
 };
 
+const getTotalAnimTime = element => {
+  const total = {};
+  ['duration', 'delay'].forEach(prop => {
+    total[prop] = Number(
+      getComputedStyle(element)
+        .getPropertyValue(PROPERTY_NAMES[prop])
+        .match(/\d+/)
+    );
+  });
+  return total;
+};
+
 const animate = (element, action, id, opts = {}) => {
   element.setAttribute('disabled', 'true');
-  console.log(CLASS_NAMES[action][id]);
   const {
     complete,
     start,
@@ -151,16 +163,13 @@ const animate = (element, action, id, opts = {}) => {
     hide,
     widthTransition,
     heightTransition,
+    resetAfter,
   } = opts;
 
   if (!CALLBACK_TRACKER.executing[toggleBtn])
     CALLBACK_TRACKER.executing[toggleBtn] = {};
 
-  const duration = Number(
-    getComputedStyle(element)
-      .getPropertyValue(PROPERTY_NAMES.duration)
-      .match(/\d+/)
-  );
+  const { duration, delay } = getTotalAnimTime(element);
 
   setParentCssProperties(element);
 
@@ -211,7 +220,7 @@ const animate = (element, action, id, opts = {}) => {
     removeDimensionMax(element.parentElement, 'height');
     removeDimensionMax(element.parentElement, 'width');
     setTimeout(() => element.removeAttribute('disabled'), 100);
-    removeParentCssProperties(element);
+    removeCustomCssProperties(element.parentElement);
 
     if (
       typeof complete === 'function' &&
@@ -219,12 +228,15 @@ const animate = (element, action, id, opts = {}) => {
     ) {
       CALLBACK_TRACKER.executing[toggleBtn].complete = true;
       complete();
-
       setTimeout(() => {
         delete CALLBACK_TRACKER.executing[toggleBtn];
       }, 0);
     }
-  }, duration);
+
+    setTimeout(() => {
+      if (resetAfter) removeCustomCssProperties(element);
+    }, 0);
+  }, duration + delay);
 };
 
 const eventHandler = (triggerBtn, id, opts = {}) => {
@@ -247,9 +259,6 @@ const init = (animationId, opts = {}) => {
     cursor,
     widthTransition = true,
     heightTransition = true,
-    hide = false,
-    start,
-    complete,
   } = opts;
 
   document.querySelectorAll(toggleBtn).forEach(btn => {
@@ -272,14 +281,7 @@ const init = (animationId, opts = {}) => {
 
     btn.addEventListener('click', e => {
       e.stopPropagation();
-      eventHandler(e.target, animationId, {
-        start,
-        complete,
-        toggleBtn,
-        hide,
-        widthTransition,
-        heightTransition,
-      });
+      eventHandler(e.target, animationId, opts);
     });
   });
 };
@@ -292,18 +294,18 @@ const jsCssAnimations = (function () {
       for (const [animName, animId] of Object.entries(ANIMATIONS_ID)) {
         handlers[action][animName] = (element, opts = {}) => {
           const {
-            duration,
-            timingFunction,
             widthTransition = false,
             heightTransition = false,
             hide = true,
+            resetAfter = true,
           } = opts;
 
-          updateCssProperties(element, { duration, timingFunction });
+          updateCssProperties(element, opts);
           animate(element, action, animId, {
             widthTransition,
             heightTransition,
             hide,
+            resetAfter,
           });
         };
       }
