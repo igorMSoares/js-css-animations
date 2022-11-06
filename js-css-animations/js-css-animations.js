@@ -235,7 +235,7 @@ const animate = (element, action, id, opts = {}) => {
 
     setTimeout(() => {
       if (resetAfter) removeCustomCssProperties(element);
-    }, 0);
+    }, duration + delay);
   }, duration + delay);
 };
 
