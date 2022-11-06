@@ -143,6 +143,7 @@ const getToggleSelector = eventTarget => {
 
 const animate = (element, action, id, opts = {}) => {
   element.setAttribute('disabled', 'true');
+  console.log(CLASS_NAMES[action][id]);
   const {
     complete,
     start,
@@ -283,18 +284,41 @@ const init = (animationId, opts = {}) => {
   });
 };
 
-const jsCssAnimations = Object.freeze({
-  animate: (type, opts) => {
-    init(ANIMATIONS_ID[type], opts);
-  },
-  hide: (element, motion) => {
-    element.classList.remove(CLASS_NAMES.show[ANIMATIONS_ID[motion]]);
-    element.classList.add(CLASS_NAMES.hide[ANIMATIONS_ID[motion]]);
-  },
-  show: (element, motion) => {
-    element.classList.remove(CLASS_NAMES.hide[ANIMATIONS_ID[motion]]);
-    element.classList.add(CLASS_NAMES.show[ANIMATIONS_ID[motion]]);
-  },
-});
+const jsCssAnimations = (function () {
+  const animationHandlers = (function () {
+    const handlers = {};
+    ['show', 'hide'].forEach(action => {
+      handlers[action] = {};
+      for (const [animName, animId] of Object.entries(ANIMATIONS_ID)) {
+        handlers[action][animName] = (element, opts = {}) => {
+          const {
+            duration,
+            timingFunction,
+            widthTransition = false,
+            heightTransition = false,
+            hide = true,
+          } = opts;
+
+          updateCssProperties(element, { duration, timingFunction });
+          animate(element, action, animId, {
+            widthTransition,
+            heightTransition,
+            hide,
+          });
+        };
+      }
+    });
+
+    return handlers;
+  })();
+
+  return Object.freeze({
+    animate: (type, opts) => {
+      init(ANIMATIONS_ID[type], opts);
+    },
+    hide: animationHandlers.hide,
+    show: animationHandlers.show,
+  });
+})();
 
 export default jsCssAnimations;

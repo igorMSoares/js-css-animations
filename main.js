@@ -3,7 +3,10 @@ import jsCssAnimations from './js-css-animations/js-css-animations.js';
 jsCssAnimations.animate('slideDown', {
   complete: () => {
     const img = document.querySelector('.my-custom-btn img');
-    jsCssAnimations.show(img, 'slideLeft');
+    jsCssAnimations.show.slideLeft(img, {
+      duration: '100ms',
+      timingFunction: 'ease-in-out',
+    });
   },
 });
 jsCssAnimations.animate('slideRight', {
@@ -24,6 +27,13 @@ jsCssAnimations.animate('slideRight', {
   },
   complete: () => {
     const img = document.querySelector('.my-custom-btn img');
-    jsCssAnimations.hide(img, 'slideLeft');
+    jsCssAnimations.hide.slideLeft(img, {
+      duration: '1000ms',
+      timingFunction: 'ease',
+    });
   },
 });
+
+jsCssAnimations.show.slideDown(
+  document.querySelector('.content p:nth-child(1)')
+);
