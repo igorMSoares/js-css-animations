@@ -209,7 +209,7 @@ const animate = (element, action, id, opts = {}) => {
         ? element.classList.remove(CLASS_NAMES.hidden)
         : element.classList.remove(CLASS_NAMES.collapsed);
     }
-  }, 0);
+  }, delay);
 
   setTimeout(() => {
     if (action === 'hide') {
