@@ -1,7 +1,12 @@
-import initAnimations from './js-css-animations/js-css-animations.js';
+import jsCssAnimations from './js-css-animations/js-css-animations.js';
 
-initAnimations('slideDown');
-initAnimations('slideRight', {
+jsCssAnimations.animate('slideDown', {
+  complete: () => {
+    const img = document.querySelector('.my-custom-btn img');
+    jsCssAnimations.show(img, 'slideLeft');
+  },
+});
+jsCssAnimations.animate('slideRight', {
   toggleBtn: '.my-custom-btn',
   toggleSelector: '.content p:nth-child(2)',
   cursor: 'default',
@@ -16,5 +21,9 @@ initAnimations('slideRight', {
       img.classList.add('rotate-cw');
     }
     if (rotateClass) img.classList.remove(rotateClass);
+  },
+  complete: () => {
+    const img = document.querySelector('.my-custom-btn img');
+    jsCssAnimations.hide(img, 'slideLeft');
   },
 });

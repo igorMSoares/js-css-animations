@@ -283,8 +283,18 @@ const init = (animationId, opts = {}) => {
   });
 };
 
-const initAnimations = (type, opts) => {
-  init(ANIMATIONS_ID[type], opts);
-};
+const jsCssAnimations = Object.freeze({
+  animate: (type, opts) => {
+    init(ANIMATIONS_ID[type], opts);
+  },
+  hide: (element, motion) => {
+    element.classList.remove(CLASS_NAMES.show[ANIMATIONS_ID[motion]]);
+    element.classList.add(CLASS_NAMES.hide[ANIMATIONS_ID[motion]]);
+  },
+  show: (element, motion) => {
+    element.classList.remove(CLASS_NAMES.hide[ANIMATIONS_ID[motion]]);
+    element.classList.add(CLASS_NAMES.show[ANIMATIONS_ID[motion]]);
+  },
+});
 
-export default initAnimations;
+export default jsCssAnimations;
