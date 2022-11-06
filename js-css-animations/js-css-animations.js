@@ -151,6 +151,10 @@ const animate = (element, action, id, opts = {}) => {
     widthTransition,
     heightTransition,
   } = opts;
+
+  if (!CALLBACK_TRACKER.executing[toggleBtn])
+    CALLBACK_TRACKER.executing[toggleBtn] = {};
+
   const duration = Number(
     getComputedStyle(element)
       .getPropertyValue(PROPERTY_NAMES.duration)
@@ -171,7 +175,11 @@ const animate = (element, action, id, opts = {}) => {
   const parentMeasures = getParentMeasures(element);
   setParentMaxMeasures({ element, parentMeasures, action, dimension });
 
-  if (typeof start === 'function' && !CALLBACK_TRACKER.executing[toggleBtn]) {
+  if (
+    typeof start === 'function' &&
+    !CALLBACK_TRACKER.executing[toggleBtn].start
+  ) {
+    CALLBACK_TRACKER.executing[toggleBtn].start = true;
     start();
   }
 
@@ -206,16 +214,16 @@ const animate = (element, action, id, opts = {}) => {
 
     if (
       typeof complete === 'function' &&
-      !CALLBACK_TRACKER.executing[toggleBtn]
+      !CALLBACK_TRACKER.executing[toggleBtn].complete
     ) {
+      CALLBACK_TRACKER.executing[toggleBtn].complete = true;
       complete();
+
+      setTimeout(() => {
+        delete CALLBACK_TRACKER.executing[toggleBtn];
+      }, 0);
     }
-
-    delete CALLBACK_TRACKER.executing[toggleBtn];
   }, duration);
-
-  if (!CALLBACK_TRACKER.executing[toggleBtn])
-    CALLBACK_TRACKER.executing[toggleBtn] = true;
 };
 
 const eventHandler = (triggerBtn, id, opts = {}) => {
