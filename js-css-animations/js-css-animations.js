@@ -192,47 +192,74 @@ const init = (animationId, opts = {}, animationType = 'visibility') => {
 };
 
 const jsCssAnimations = (function () {
-  const animationHandlers = (function () {
-    const motion = (() => {
-      return {};
-    })();
+  // const animations = (function () {
+  //   const handlers = {};
+  //   ['show', 'hide'].forEach(action => {
+  //     handlers[action] = {};
+  //     for (const [animName, animId] of Object.entries(VISIBILITY_ANIMS_ID)) {
+  //       handlers[action][animName] = (element, opts = {}) => {
+  //         const {
+  //           widthTransition = false,
+  //           heightTransition = false,
+  //           hide = true,
+  //           resetAfter = true,
+  //         } = opts;
 
-    const handlers = {};
-    ['show', 'hide'].forEach(action => {
-      handlers[action] = {};
-      for (const [animName, animId] of Object.entries(VISIBILITY_ANIMS_ID)) {
-        handlers[action][animName] = (element, opts = {}) => {
-          const {
-            widthTransition = false,
-            heightTransition = false,
-            hide = true,
-            resetAfter = true,
-          } = opts;
+  //         updateCssProperties(element, opts);
+  //         animate(element, action, animId, {
+  //           widthTransition,
+  //           heightTransition,
+  //           hide,
+  //           resetAfter,
+  //         });
+  //       };
+  //     }
+  //   });
 
-          updateCssProperties(element, opts);
-          animate(element, action, animId, {
-            widthTransition,
-            heightTransition,
-            hide,
-            resetAfter,
-          });
-        };
-      }
+  //   return handlers;
+  // })();
+
+  const listAnimations = animType => {
+    const animations = {};
+    [VISIBILITY_ANIMS_ID, MOTION_ANIMS_ID].forEach(animIds => {
+      Object.keys(animIds).forEach(animName => {
+        animations[animName] = opts => init(animIds[animName], opts, animType);
+      });
     });
+    return animations;
+  };
 
-    return handlers;
+  const animationHandlers = (() => {
+    const allAnimations = {};
+    ['visibility', 'motion'].forEach(animType => {
+      allAnimations[animType] = listAnimations(animType);
+    });
+    return allAnimations;
   })();
 
-  return Object.freeze({
-    animate: (animName, opts, animType = 'visibility') => {
-      const animId = isVisibility(animType)
-        ? VISIBILITY_ANIMS_ID[animName]
-        : MOTION_ANIMS_ID[animName];
-
-      init(animId, opts, animType);
+  const verifyAnimationName = {
+    get(animations, name) {
+      if (!(name in animations))
+        throw new ReferenceError(`Invalid animation: "${name}"`);
+      return animations[name];
     },
-    hide: animationHandlers.hide,
-    show: animationHandlers.show,
+  };
+
+  const visibilityAnimations = new Proxy(
+    animationHandlers.visibility,
+    verifyAnimationName
+  );
+
+  const motionAnimations = new Proxy(
+    animationHandlers.motion,
+    verifyAnimationName
+  );
+
+  return Object.freeze({
+    visibility: visibilityAnimations,
+    motion: motionAnimations,
+    // hide: animations.hide,
+    // show: animations.show,
   });
 })();
 

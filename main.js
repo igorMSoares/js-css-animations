@@ -1,12 +1,8 @@
 import jsCssAnimations from './js-css-animations/js-css-animations.js';
 
-jsCssAnimations.animate('slideDown', {
-  // complete: () => {
-  //   const btn = document.querySelector('.my-custom-btn img');
-  //   jsCssAnimations.show.slideLeft(btn, {
-  //     timingFunction: 'ease-in-out',
-  //   });
-  // },
+jsCssAnimations.visibility.slideDown({
+  duration: '5000ms',
+  timingFunction: 'ease',
 });
 
 // jsCssAnimations.show.slideDown(
@@ -18,9 +14,10 @@ jsCssAnimations.animate('slideDown', {
 //   }
 // );
 
-jsCssAnimations.animate('fade', {
+jsCssAnimations.motion.rotateUpasdCw({
   toggleBtn: '.my-custom-btn',
-  toggleSelector: '.content p:nth-child(2)',
+  toggleSelector: '.my-custom-btn img',
+  // toggleSelector: '.content p:nth-child(2)',
   duration: '400ms',
   timingFunction: 'ease-in-out',
   // start: () => {
