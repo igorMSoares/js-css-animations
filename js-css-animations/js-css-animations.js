@@ -161,8 +161,8 @@ const animate = (element, action, id, opts = {}) => {
     start,
     toggleBtn,
     hide,
-    widthTransition,
-    heightTransition,
+    widthTransition = true,
+    heightTransition = true,
     resetAfter,
   } = opts;
 
