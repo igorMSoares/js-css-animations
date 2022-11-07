@@ -1,96 +1,29 @@
 import {
-  getParentMeasures,
-  setParentMaxMeasures,
-  removeDimensionMax,
-} from './measurements.js';
+  VISIBILITY_ANIMS_ID,
+  MOTION_ANIMS_ID,
+  PROPERTY_NAMES,
+  CLASS_NAMES,
+  CUSTOM_CSS_PROPERTIES,
+} from './globals.js';
 
-const VISIBILITY_ANIMS_ID = Object.freeze({
-  collapse: 0,
-  slideUp: 1,
-  slideDown: 2,
-  slideLeft: 3,
-  slideRight: 4,
-  fade: 5,
-  rotateUpCw: 6,
-  rotateUpCCw: 7,
-});
-
-const MOTION_ANIMS_ID = Object.freeze({
-  rotateUpCw: 0,
-  rotateUpCCw: 1,
-});
-
-const PROPERTY_NAMES = Object.freeze({
-  duration: '--js-css-animation--duration',
-  timingFunction: '--js-css-animation--timing-function',
-  delay: '--js-css-animation--delay',
-  fillMode: '--js-css-animation--fill-mode',
-  cursor: '--js-css-animation--cursor',
-  blur: '--js-css-animation--blur',
-});
-
-const CLASS_NAMES = Object.freeze({
-  dimensionsTransitions: 'js-anim--dimensions-transitions',
-  heightTransition: 'js-anim--height-transition',
-  widthTransition: 'js-anim--width-transition',
-  toggleBtn: 'js-anim--toggle-btn',
-  btnCursor: 'js-anim--btn-cursor',
-  collapsed: 'js-anim--collapsed',
-  hidden: 'js-anim--hidden',
-  hide: [
-    'js-anim--collapse',
-    'js-anim--slide-up',
-    'js-anim--slide-down',
-    'js-anim--slide-left',
-    'js-anim--slide-right',
-    'js-anim--fade-out',
-  ],
-  show: [
-    'js-anim--expand',
-    'js-anim--slide-up__back',
-    'js-anim--slide-down__back',
-    'js-anim--slide-left__back',
-    'js-anim--slide-right__back',
-    'js-anim--fade-in',
-  ],
-  move: ['js-anim--rotate-up__cw', 'js-anim--rotate-up__ccw'],
-  moveBack: ['js-anim--rotate-up__cw__back', 'js-anim--rotate-up__ccw__back'],
-});
+import {
+  initParentTransitions,
+  handleVisibilityToggle,
+  endVisibilityToggle,
+  setDimensionsTransitions,
+} from './dimensions.js';
 
 const CALLBACK_TRACKER = Object.freeze({
   executing: {},
 });
 
-const CUSTOM_CSS_PROPERTIES = Object.freeze(
-  Object.keys(PROPERTY_NAMES).filter(k => k !== 'cursor')
-);
-
-const getRootCssProperty = property => {
-  return getComputedStyle(document.documentElement).getPropertyValue(
-    PROPERTY_NAMES[property]
-  );
-};
-
-const setParentCssProperties = element => {
-  let currentProp;
-  CUSTOM_CSS_PROPERTIES.forEach(prop => {
-    currentProp = getComputedStyle(element).getPropertyValue(
-      PROPERTY_NAMES[prop]
-    );
-
-    if (currentProp !== getRootCssProperty(prop)) {
-      setCssProperty(element.parentElement, PROPERTY_NAMES[prop], currentProp);
-    }
-  });
-};
-
-const removeCustomCssProperties = element => {
+export const removeCustomCssProperties = element => {
   CUSTOM_CSS_PROPERTIES.forEach(prop => {
     element.style.removeProperty(PROPERTY_NAMES[prop]);
   });
 };
 
-const setCssProperty = (element, property, value) => {
+export const setCssProperty = (element, property, value) => {
   element.style.setProperty(PROPERTY_NAMES[property], value);
 };
 
@@ -100,46 +33,6 @@ const updateCssProperties = (element, opts) => {
       setCssProperty(element, prop, opts[prop]);
     }
   });
-};
-
-const getCurrentTransition = element => {
-  const currTransition = getComputedStyle(element).transition;
-  return currTransition !== getDefaultComputedStyle(element).transition
-    ? currTransition
-    : '';
-};
-
-const getClassTransition = className => {
-  return [
-    ...[...document.styleSheets].find(ss => ss.href.match(/js-animations\.css/))
-      .cssRules,
-  ].find(r => r.cssText.match(`\\.${className}`)).style.transition;
-};
-
-const appendTransition = (element, className, currTransition) => {
-  const classTransition = getClassTransition(className);
-  if (classTransition) {
-    element.style.setProperty(
-      'transition',
-      `${classTransition}, ${currTransition}`
-    );
-  }
-};
-
-const setDimensionsTransitions = (element, wTransit, hTransit) => {
-  const currTransition = getCurrentTransition(element);
-  let className;
-
-  if (wTransit && hTransit) {
-    className = CLASS_NAMES.dimensionsTransitions;
-  } else if (wTransit) {
-    className = CLASS_NAMES.widthTransition;
-  } else if (hTransit) {
-    className = CLASS_NAMES.heightTransition;
-  }
-
-  if (className) element.classList.add(className);
-  if (currTransition) appendTransition(element, className, currTransition);
 };
 
 const getToggleSelector = eventTarget => {
@@ -167,54 +60,18 @@ const getTotalAnimTime = element => {
   return total;
 };
 
-const getDimension = (wTransit, hTransit) => {
-  let dimension;
-  if (wTransit && hTransit) dimension = 'all';
-  else if (wTransit) dimension = 'width';
-  else if (hTransit) dimension = 'height';
-  return dimension;
-};
-
-const initParentTransitions = args => {
-  const { element, action, widthTransition, heightTransition } = args;
-  const parentMeasures = getParentMeasures(element);
-  const dimension = getDimension(widthTransition, heightTransition);
-  setParentCssProperties(element);
-  setParentMaxMeasures({
-    element,
-    parentMeasures,
-    action,
-    dimension,
-  });
-  return { parentMeasures, dimension };
-};
-
-const handleVisibilityToggle = (element, args) => {
-  setParentMaxMeasures(args);
-  if (args.action === 'show') {
-    args.hide
-      ? element.classList.remove(CLASS_NAMES.hidden)
-      : element.classList.remove(CLASS_NAMES.collapsed);
-  }
-};
-
-const endVisibilityToggle = (element, action, hide) => {
-  if (action === 'hide') {
-    hide
-      ? element.classList.add(CLASS_NAMES.hidden)
-      : element.classList.add(CLASS_NAMES.collapsed);
-  }
-  removeDimensionMax(element.parentElement, 'height');
-  removeDimensionMax(element.parentElement, 'width');
-  removeCustomCssProperties(element.parentElement);
-};
-
 const isVisibility = animType => animType === 'visibility';
 
-const animateV2 = (animType, element, action, id, opts = {}) => {
+const animate = (animType, element, action, id, opts = {}) => {
   element.setAttribute('js-anim--disabled', 'true');
   const { complete, start, toggleBtn, resetAfter, hide } = opts;
   const { duration, delay } = getTotalAnimTime(element);
+  const OPPOSITE_ACTION = Object.freeze({
+    hide: 'show',
+    show: 'hide',
+    move: 'moveBack',
+    moveBack: 'move',
+  });
   let parentMeasures, dimension;
 
   if (!CALLBACK_TRACKER.executing[toggleBtn])
@@ -229,13 +86,6 @@ const animateV2 = (animType, element, action, id, opts = {}) => {
       heightTransition,
     }));
   }
-
-  const OPPOSITE_ACTION = Object.freeze({
-    hide: 'show',
-    show: 'hide',
-    move: 'moveBack',
-    moveBack: 'move',
-  });
 
   if (
     typeof start === 'function' &&
@@ -285,91 +135,6 @@ const animateV2 = (animType, element, action, id, opts = {}) => {
   }, duration + delay);
 };
 
-const animate = (element, action, id, opts = {}) => {
-  element.setAttribute('js-anim--disabled', 'true');
-  const {
-    complete,
-    start,
-    toggleBtn,
-    hide,
-    widthTransition = true,
-    heightTransition = true,
-    resetAfter,
-  } = opts;
-
-  if (!CALLBACK_TRACKER.executing[toggleBtn])
-    CALLBACK_TRACKER.executing[toggleBtn] = {};
-
-  const { duration, delay } = getTotalAnimTime(element);
-
-  setParentCssProperties(element);
-
-  let dimension;
-  if (widthTransition && heightTransition) dimension = 'all';
-  else if (widthTransition) dimension = 'width';
-  else if (heightTransition) dimension = 'height';
-  const parentMeasures = getParentMeasures(element);
-  setParentMaxMeasures({ element, parentMeasures, action, dimension });
-
-  const oppositeAction = {
-    hide: 'show',
-    show: 'hide',
-  };
-
-  if (
-    typeof start === 'function' &&
-    !CALLBACK_TRACKER.executing[toggleBtn].start
-  ) {
-    CALLBACK_TRACKER.executing[toggleBtn].start = true;
-    start();
-  }
-
-  element.classList.add(CLASS_NAMES[action][id]);
-  element.classList.remove(CLASS_NAMES[oppositeAction[action]][id]);
-
-  setTimeout(() => {
-    setParentMaxMeasures({
-      parentState: 'final',
-      element,
-      parentMeasures,
-      action,
-      dimension,
-    });
-    if (action === 'show') {
-      hide
-        ? element.classList.remove(CLASS_NAMES.hidden)
-        : element.classList.remove(CLASS_NAMES.collapsed);
-    }
-  }, delay);
-
-  setTimeout(() => {
-    if (action === 'hide') {
-      hide
-        ? element.classList.add(CLASS_NAMES.hidden)
-        : element.classList.add(CLASS_NAMES.collapsed);
-    }
-    removeDimensionMax(element.parentElement, 'height');
-    removeDimensionMax(element.parentElement, 'width');
-    setTimeout(() => element.removeAttribute('js-anim--disabled'), 100);
-    removeCustomCssProperties(element.parentElement);
-
-    if (
-      typeof complete === 'function' &&
-      !CALLBACK_TRACKER.executing[toggleBtn].complete
-    ) {
-      CALLBACK_TRACKER.executing[toggleBtn].complete = true;
-      complete();
-      setTimeout(() => {
-        delete CALLBACK_TRACKER.executing[toggleBtn];
-      }, 0);
-    }
-
-    setTimeout(() => {
-      if (resetAfter) removeCustomCssProperties(element);
-    }, duration + delay);
-  }, duration + delay);
-};
-
 const eventHandler = (triggerBtn, id, animType, opts = {}) => {
   document.querySelectorAll(getToggleSelector(triggerBtn)).forEach(element => {
     const classList = [...element.classList];
@@ -386,7 +151,7 @@ const eventHandler = (triggerBtn, id, animType, opts = {}) => {
       : 'move';
 
     if (!element.getAttribute('js-anim--disabled'))
-      animateV2(animType, element, action, id, opts);
+      animate(animType, element, action, id, opts);
   });
 };
 
