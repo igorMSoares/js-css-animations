@@ -49,10 +49,6 @@ export const CLASS_NAMES = Object.freeze({
   moveBack: ['js-anim--rotate-up__cw__back', 'js-anim--rotate-up__ccw__back'],
 });
 
-export const CALLBACK_TRACKER = Object.freeze({
-  executing: {},
-});
-
 export const CUSTOM_CSS_PROPERTIES = Object.freeze(
   Object.keys(PROPERTY_NAMES).filter(k => k !== 'cursor')
 );

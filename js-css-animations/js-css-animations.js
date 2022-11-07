@@ -192,32 +192,34 @@ const init = (animationId, opts = {}, animationType = 'visibility') => {
 };
 
 const jsCssAnimations = (function () {
-  // const animations = (function () {
-  //   const handlers = {};
-  //   ['show', 'hide'].forEach(action => {
-  //     handlers[action] = {};
-  //     for (const [animName, animId] of Object.entries(VISIBILITY_ANIMS_ID)) {
-  //       handlers[action][animName] = (element, opts = {}) => {
-  //         const {
-  //           widthTransition = false,
-  //           heightTransition = false,
-  //           hide = true,
-  //           resetAfter = true,
-  //         } = opts;
+  const actionHandlers = (function () {
+    const handlers = {};
+    ['show', 'hide', 'move', 'moveBack'].forEach(action => {
+      handlers[action] = {};
+      const { animIds, animType } = action.match(/^move|moveBack$/)
+        ? { animIds: MOTION_ANIMS_ID, animType: 'motion' }
+        : { animIds: VISIBILITY_ANIMS_ID, animType: 'visibility' };
 
-  //         updateCssProperties(element, opts);
-  //         animate(element, action, animId, {
-  //           widthTransition,
-  //           heightTransition,
-  //           hide,
-  //           resetAfter,
-  //         });
-  //       };
-  //     }
-  //   });
-
-  //   return handlers;
-  // })();
+      for (const [name, id] of Object.entries(animIds)) {
+        handlers[action][name] = (element, opts = {}) => {
+          const {
+            widthTransition = false,
+            heightTransition = false,
+            hide = true,
+            resetAfter = true,
+          } = opts;
+          updateCssProperties(element, opts);
+          animate(animType, element, action, id, {
+            widthTransition,
+            heightTransition,
+            hide,
+            resetAfter,
+          });
+        };
+      }
+    });
+    return handlers;
+  })();
 
   const listAnimations = animType => {
     const animations = {};
@@ -249,17 +251,25 @@ const jsCssAnimations = (function () {
     animationHandlers.visibility,
     verifyAnimationName
   );
-
   const motionAnimations = new Proxy(
     animationHandlers.motion,
+    verifyAnimationName
+  );
+  const hideAnimations = new Proxy(actionHandlers.hide, verifyAnimationName);
+  const showAnimations = new Proxy(actionHandlers.show, verifyAnimationName);
+  const moveAnimations = new Proxy(actionHandlers.move, verifyAnimationName);
+  const moveBackAnimations = new Proxy(
+    actionHandlers.moveBack,
     verifyAnimationName
   );
 
   return Object.freeze({
     visibility: visibilityAnimations,
     motion: motionAnimations,
-    // hide: animations.hide,
-    // show: animations.show,
+    hide: hideAnimations,
+    show: showAnimations,
+    move: moveAnimations,
+    moveBack: moveBackAnimations,
   });
 })();
 
