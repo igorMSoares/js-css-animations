@@ -167,36 +167,79 @@ const getTotalAnimTime = element => {
   return total;
 };
 
-const isVisibilityAnim = animType => animType === 'visibility';
+const getDimension = (wTransit, hTransit) => {
+  let dimension;
+  if (wTransit && hTransit) dimension = 'all';
+  else if (wTransit) dimension = 'width';
+  else if (hTransit) dimension = 'height';
+  return dimension;
+};
+
+const initParentTransitions = (
+  element,
+  action,
+  widthTransition,
+  heightTransition
+) => {
+  const parentMeasures = getParentMeasures(element);
+  const dimension = getDimension(widthTransition, heightTransition);
+  setParentCssProperties(element);
+  setParentMaxMeasures({
+    element,
+    parentMeasures,
+    action,
+    dimension,
+  });
+  return { parentMeasures, dimension };
+};
+
+const handleVisibilityToggle = (element, opts) => {
+  setParentMaxMeasures(opts);
+  if (opts.action === 'show') {
+    opts.hide
+      ? element.classList.remove(CLASS_NAMES.hidden)
+      : element.classList.remove(CLASS_NAMES.collapsed);
+  }
+};
+
+const endVisibilityToggle = (element, action, hide) => {
+  if (action === 'hide') {
+    hide
+      ? element.classList.add(CLASS_NAMES.hidden)
+      : element.classList.add(CLASS_NAMES.collapsed);
+  }
+  removeDimensionMax(element.parentElement, 'height');
+  removeDimensionMax(element.parentElement, 'width');
+  removeCustomCssProperties(element.parentElement);
+};
+
+const isVisibility = animType => animType === 'visibility';
 
 const animateV2 = (animType, element, action, id, opts = {}) => {
   element.setAttribute('js-anim--disabled', 'true');
-  const { complete, start, toggleBtn, resetAfter } = opts;
+  const { complete, start, toggleBtn, resetAfter, hide } = opts;
+  const { duration, delay } = getTotalAnimTime(element);
+  let parentMeasures, dimension;
 
   if (!CALLBACK_TRACKER.executing[toggleBtn])
     CALLBACK_TRACKER.executing[toggleBtn] = {};
 
-  const { duration, delay } = getTotalAnimTime(element);
-  let parentMeasures, dimension, hide;
-
-  if (isVisibilityAnim(animType)) {
-    hide = opts.hide;
+  if (isVisibility(animType)) {
     const { widthTransition = true, heightTransition = true } = opts;
-    setParentCssProperties(element);
-
-    if (widthTransition && heightTransition) dimension = 'all';
-    else if (widthTransition) dimension = 'width';
-    else if (heightTransition) dimension = 'height';
-    parentMeasures = getParentMeasures(element);
-    setParentMaxMeasures({ element, parentMeasures, action, dimension });
+    ({ parentMeasures, dimension } = initParentTransitions(
+      element,
+      action,
+      widthTransition,
+      heightTransition
+    ));
   }
 
-  const oppositeAction = {
+  const OPPOSITE_ACTION = Object.freeze({
     hide: 'show',
     show: 'hide',
     move: 'moveBack',
     moveBack: 'move',
-  };
+  });
 
   if (
     typeof start === 'function' &&
@@ -207,35 +250,24 @@ const animateV2 = (animType, element, action, id, opts = {}) => {
   }
 
   element.classList.add(CLASS_NAMES[action][id]);
-  element.classList.remove(CLASS_NAMES[oppositeAction[action]][id]);
+  element.classList.remove(CLASS_NAMES[OPPOSITE_ACTION[action]][id]);
 
-  if (isVisibilityAnim(animType)) {
+  if (isVisibility(animType)) {
     setTimeout(() => {
-      setParentMaxMeasures({
+      handleVisibilityToggle(element, {
         parentState: 'final',
         element,
         parentMeasures,
         action,
         dimension,
+        hide,
       });
-      if (action === 'show' && id < 6) {
-        hide
-          ? element.classList.remove(CLASS_NAMES.hidden)
-          : element.classList.remove(CLASS_NAMES.collapsed);
-      }
     }, delay);
   }
 
   setTimeout(() => {
-    if (isVisibilityAnim(animType)) {
-      if (action === 'hide' && id < 6) {
-        hide
-          ? element.classList.add(CLASS_NAMES.hidden)
-          : element.classList.add(CLASS_NAMES.collapsed);
-      }
-      removeDimensionMax(element.parentElement, 'height');
-      removeDimensionMax(element.parentElement, 'width');
-      removeCustomCssProperties(element.parentElement);
+    if (isVisibility(animType)) {
+      endVisibilityToggle(element, action, hide);
     }
 
     setTimeout(() => element.removeAttribute('js-anim--disabled'), 100);
@@ -345,7 +377,7 @@ const animate = (element, action, id, opts = {}) => {
 const eventHandler = (triggerBtn, id, animType, opts = {}) => {
   document.querySelectorAll(getToggleSelector(triggerBtn)).forEach(element => {
     const classList = [...element.classList];
-    const action = isVisibilityAnim(animType)
+    const action = isVisibility(animType)
       ? classList.find(
           c => c === CLASS_NAMES.collapsed || c === CLASS_NAMES.hidden
         )
@@ -382,7 +414,7 @@ const init = (animationId, opts = {}, animationType = 'visibility') => {
 
     document.querySelectorAll(getToggleSelector(btn)).forEach(el => {
       updateCssProperties(el, opts);
-      if (isVisibilityAnim(animationType)) {
+      if (isVisibility(animationType)) {
         setDimensionsTransitions(
           el.parentElement,
           widthTransition,
@@ -432,7 +464,7 @@ const jsCssAnimations = (function () {
 
   return Object.freeze({
     animate: (animName, opts, animType = 'visibility') => {
-      const animId = isVisibilityAnim(animType)
+      const animId = isVisibility(animType)
         ? VISIBILITY_ANIMS_ID[animName]
         : MOTION_ANIMS_ID[animName];
 
