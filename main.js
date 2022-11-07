@@ -1,17 +1,26 @@
 import jsCssAnimations from './js-css-animations/js-css-animations.js';
 
-// jsCssAnimations.animate('slideDown', {
-//   complete: () => {
-//     const btn = document.querySelector('.my-custom-btn img');
-//     jsCssAnimations.show.slideLeft(btn, {
-//       timingFunction: 'ease-in-out',
-//     });
-//   },
-// });
+jsCssAnimations.animate('slideDown', {
+  // complete: () => {
+  //   const btn = document.querySelector('.my-custom-btn img');
+  //   jsCssAnimations.show.slideLeft(btn, {
+  //     timingFunction: 'ease-in-out',
+  //   });
+  // },
+});
+
+// jsCssAnimations.show.slideDown(
+//   document.querySelector('.content p:nth-child(1)'),
+//   {
+//     delay: '400ms',
+//     fillMode: 'backwards',
+//     timingFunction: 'ease-in-out',
+//   }
+// );
+
 // jsCssAnimations.animate('fade', {
 //   toggleBtn: '.my-custom-btn',
 //   toggleSelector: '.content p:nth-child(2)',
-//   cursor: 'default',
 //   duration: '400ms',
 //   timingFunction: 'ease-in-out',
 //   // start: () => {
@@ -26,16 +35,11 @@ import jsCssAnimations from './js-css-animations/js-css-animations.js';
 //   // },
 // });
 
-jsCssAnimations.animate('rotateUpCw', {
-  toggleBtn: '.my-custom-btn',
-  toggleSelector: '.my-custom-btn img',
-});
-
-jsCssAnimations.show.slideDown(
-  document.querySelector('.content p:nth-child(1)'),
+jsCssAnimations.animate(
+  'rotateUpCw',
   {
-    delay: '400ms',
-    fillMode: 'backwards',
-    timingFunction: 'ease-in-out',
-  }
+    toggleBtn: '.my-custom-btn',
+    toggleSelector: '.my-custom-btn img',
+  },
+  'motion'
 );
