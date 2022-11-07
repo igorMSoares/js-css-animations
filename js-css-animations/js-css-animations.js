@@ -10,6 +10,9 @@ const ANIMATIONS_ID = Object.freeze({
   slideDown: 2,
   slideLeft: 3,
   slideRight: 4,
+  fade: 5,
+  rotateUpCw: 6,
+  rotateUpCCw: 7,
 });
 
 const PROPERTY_NAMES = Object.freeze({
@@ -18,6 +21,7 @@ const PROPERTY_NAMES = Object.freeze({
   delay: '--js-css-animation--delay',
   fillMode: '--js-css-animation--fill-mode',
   cursor: '--js-css-animation--cursor',
+  blur: '--js-css-animation--blur',
 });
 
 const CLASS_NAMES = Object.freeze({
@@ -34,6 +38,7 @@ const CLASS_NAMES = Object.freeze({
     'js-anim--slide-down',
     'js-anim--slide-left',
     'js-anim--slide-right',
+    'js-anim--fade-out',
   ],
   show: [
     'js-anim--expand',
@@ -41,7 +46,10 @@ const CLASS_NAMES = Object.freeze({
     'js-anim--slide-down__back',
     'js-anim--slide-left__back',
     'js-anim--slide-right__back',
+    'js-anim--fade-in',
   ],
+  rotate: ['js-anim--rotate-up__cw', 'js-anim--rotate-up__ccw'],
+  rotateBack: ['js-anim--rotate-up__cw__back', 'js-anim--rotate-up__ccw__back'],
 });
 
 const CALLBACK_TRACKER = Object.freeze({
@@ -176,6 +184,8 @@ const animate = (element, action, id, opts = {}) => {
   const oppositeAction = {
     hide: 'show',
     show: 'hide',
+    rotate: 'rotateBack',
+    rotateBack: 'rotate',
   };
 
   let dimension;
@@ -193,8 +203,10 @@ const animate = (element, action, id, opts = {}) => {
     start();
   }
 
-  element.classList.add(CLASS_NAMES[action][id]);
-  element.classList.remove(CLASS_NAMES[oppositeAction[action]][id]);
+  element.classList.add(CLASS_NAMES[action][id < 6 ? id : id - 6]);
+  element.classList.remove(
+    CLASS_NAMES[oppositeAction[action]][id < 6 ? id : id - 6]
+  );
 
   setTimeout(() => {
     setParentMaxMeasures({
@@ -204,7 +216,7 @@ const animate = (element, action, id, opts = {}) => {
       action,
       dimension,
     });
-    if (action === 'show') {
+    if (action === 'show' && id < 6) {
       hide
         ? element.classList.remove(CLASS_NAMES.hidden)
         : element.classList.remove(CLASS_NAMES.collapsed);
@@ -212,7 +224,7 @@ const animate = (element, action, id, opts = {}) => {
   }, delay);
 
   setTimeout(() => {
-    if (action === 'hide') {
+    if (action === 'hide' && id < 6) {
       hide
         ? element.classList.add(CLASS_NAMES.hidden)
         : element.classList.add(CLASS_NAMES.collapsed);
@@ -242,12 +254,20 @@ const animate = (element, action, id, opts = {}) => {
 const eventHandler = (triggerBtn, id, opts = {}) => {
   document.querySelectorAll(getToggleSelector(triggerBtn)).forEach(element => {
     const classList = [...element.classList];
-    const action = classList.find(
-      c => c === CLASS_NAMES.collapsed || c === CLASS_NAMES.hidden
-    )
-      ? 'show'
-      : 'hide';
+    const action =
+      id < 6
+        ? classList.find(
+            c => c === CLASS_NAMES.collapsed || c === CLASS_NAMES.hidden
+          )
+          ? 'show'
+          : 'hide'
+        : classList.find(c => c.match(/rotate.+back/))
+        ? 'rotate'
+        : classList.find(c => c.match(/rotate/))
+        ? 'rotateBack'
+        : 'rotate';
 
+    console.log({ action });
     if (!element.getAttribute('disabled')) animate(element, action, id, opts);
   });
 };

@@ -118,11 +118,70 @@
   }
 }
 
+@keyframes js-anim--fade-out {
+  from {
+    opacity: 1;
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    filter: blur(var(--js-css-animation--blur));
+  }
+}
+
+@keyframes js-anim--fade-in {
+  from {
+    opacity: 0;
+    filter: blur(var(--js-css-animation--blur));
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes js-anim--rotate-up__ccw {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(-180deg);
+  }
+}
+
+@keyframes js-anim--rotate-up__ccw__back {
+  from {
+    transform: rotate(-180deg);
+  }
+  to {
+    transform: rotate(0);
+  }
+}
+
+@keyframes js-anim--rotate-up__cw {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(180deg);
+  }
+}
+
+@keyframes js-anim--rotate-up__cw__back {
+  from {
+    transform: rotate(180deg);
+  }
+  to {
+    transform: rotate(0);
+  }
+}
+
 :root {
   --js-css-animation--duration: 800ms;
   --js-css-animation--timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955);
   --js-css-animation--delay: 0;
   --js-css-animation--fill-mode: forwards;
+  --js-css-animation--blur: 0.5px;
 }
 
 .js-anim--dimensions-transitions {
@@ -151,11 +210,41 @@
 .js-anim--slide-left,
 .js-anim--slide-left__back,
 .js-anim--slide-right,
-.js-anim--slide-right__back {
+.js-anim--slide-right__back,
+.js-anim--fade-in,
+.js-anim--fade-out,
+.js-anim--rotate-up__cw,
+.js-anim--rotate-up__cw__back,
+.js-anim--rotate-up__ccw,
+.js-anim--rotate-up__ccw__back {
   animation-duration: var(--js-css-animation--duration);
   animation-timing-function: var(--js-css-animation--timing-function);
   animation-delay: var(--js-css-animation--delay);
   animation-fill-mode: var(--js-css-animation--fill-mode);
+}
+
+.js-anim--rotate-up__cw {
+  animation-name: js-anim--rotate-up__cw;
+}
+
+.js-anim--rotate-up__cw__back {
+  animation-name: js-anim--rotate-up__cw__back;
+}
+
+.js-anim--rotate-up__ccw {
+  animation-name: js-anim--rotate-up__ccw;
+}
+
+.js-anim--rotate-up__ccw__back {
+  animation-name: js-anim--rotate-up__ccw__back;
+}
+
+.js-anim--fade-out {
+  animation-name: js-anim--fade-out;
+}
+
+.js-anim--fade-in {
+  animation-name: js-anim--fade-in;
 }
 
 .js-anim--collapse {
