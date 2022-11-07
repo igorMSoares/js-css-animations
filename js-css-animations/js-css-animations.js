@@ -175,12 +175,8 @@ const getDimension = (wTransit, hTransit) => {
   return dimension;
 };
 
-const initParentTransitions = (
-  element,
-  action,
-  widthTransition,
-  heightTransition
-) => {
+const initParentTransitions = args => {
+  const { element, action, widthTransition, heightTransition } = args;
   const parentMeasures = getParentMeasures(element);
   const dimension = getDimension(widthTransition, heightTransition);
   setParentCssProperties(element);
@@ -193,10 +189,10 @@ const initParentTransitions = (
   return { parentMeasures, dimension };
 };
 
-const handleVisibilityToggle = (element, opts) => {
-  setParentMaxMeasures(opts);
-  if (opts.action === 'show') {
-    opts.hide
+const handleVisibilityToggle = (element, args) => {
+  setParentMaxMeasures(args);
+  if (args.action === 'show') {
+    args.hide
       ? element.classList.remove(CLASS_NAMES.hidden)
       : element.classList.remove(CLASS_NAMES.collapsed);
   }
@@ -226,12 +222,12 @@ const animateV2 = (animType, element, action, id, opts = {}) => {
 
   if (isVisibility(animType)) {
     const { widthTransition = true, heightTransition = true } = opts;
-    ({ parentMeasures, dimension } = initParentTransitions(
+    ({ parentMeasures, dimension } = initParentTransitions({
       element,
       action,
       widthTransition,
-      heightTransition
-    ));
+      heightTransition,
+    }));
   }
 
   const OPPOSITE_ACTION = Object.freeze({
