@@ -8,8 +8,14 @@ export const VISIBILITY_ANIMS_ID = Object.freeze({
 });
 
 export const MOTION_ANIMS_ID = Object.freeze({
-  rotateUpCw: 0,
-  rotateUpCCw: 1,
+  rotateUp: 0,
+  rotateUpCCW: 1,
+  rotateRight: 2,
+  rotateRightCCW: 3,
+  rotateDown: 4,
+  rotateDownCCW: 5,
+  rotateLeft: 6,
+  rotateLeftCCW: 7,
 });
 
 export const PROPERTY_NAMES = Object.freeze({
@@ -19,6 +25,7 @@ export const PROPERTY_NAMES = Object.freeze({
   fillMode: '--js-css-animation--fill-mode',
   cursor: '--js-css-animation--cursor',
   blur: '--js-css-animation--blur',
+  rotationDeg: '--js-css-animation--rotation-deg',
 });
 
 export const CLASS_NAMES = Object.freeze({
@@ -29,6 +36,7 @@ export const CLASS_NAMES = Object.freeze({
   btnCursor: 'js-anim--btn-cursor',
   collapsed: 'js-anim--collapsed',
   hidden: 'js-anim--hidden',
+  rotated: 'js-anim--rotated',
   hide: [
     'js-anim--collapse',
     'js-anim--slide-up',
@@ -45,8 +53,26 @@ export const CLASS_NAMES = Object.freeze({
     'js-anim--slide-right__back',
     'js-anim--fade-in',
   ],
-  move: ['js-anim--rotate-up__cw', 'js-anim--rotate-up__ccw'],
-  moveBack: ['js-anim--rotate-up__cw__back', 'js-anim--rotate-up__ccw__back'],
+  move: [
+    'js-anim--rotate-up',
+    'js-anim--rotate-up__ccw',
+    'js-anim--rotate-right',
+    'js-anim--rotate-right__ccw',
+    'js-anim--rotate-down',
+    'js-anim--rotate-down__ccw',
+    'js-anim--rotate-left',
+    'js-anim--rotate-left__ccw',
+  ],
+  moveBack: [
+    'js-anim--rotate-up',
+    'js-anim--rotate-up',
+    'js-anim--rotate-up',
+    'js-anim--rotate-up',
+    'js-anim--rotate-up',
+    'js-anim--rotate-up',
+    'js-anim--rotate-up',
+    'js-anim--rotate-up',
+  ],
 });
 
 export const CUSTOM_CSS_PROPERTIES = Object.freeze(
