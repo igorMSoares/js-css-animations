@@ -33,6 +33,7 @@ export const setCssProperty = (element, property, value) => {
 };
 
 const updateCssProperties = (element, opts) => {
+  removeCustomCssProperties(element);
   CUSTOM_CSS_PROPERTIES.forEach(prop => {
     if (typeof opts[prop] === 'string') {
       setCssProperty(element, prop, opts[prop]);
@@ -107,11 +108,10 @@ const animate = (animType, element, action, id, opts = {}) => {
     }));
   }
 
-  if (
-    typeof start === 'function' &&
-    !CALLBACK_TRACKER.executing[toggleBtn].start
-  ) {
-    CALLBACK_TRACKER.executing[toggleBtn].start = true;
+  if (typeof start === 'function') {
+    if (toggleBtn && !CALLBACK_TRACKER.executing[toggleBtn].start) {
+      CALLBACK_TRACKER.executing[toggleBtn].start = true;
+    }
     start();
   }
 
@@ -119,8 +119,15 @@ const animate = (animType, element, action, id, opts = {}) => {
     currentTransition = getCurrentTransition(element);
     removeMotionCssClasses(element);
   }
+
   element.classList.remove(CLASS_NAMES[OPPOSITE_ACTION[action]][id]);
-  element.classList.add(CLASS_NAMES[action][id]);
+  if (delay) {
+    setTimeout(() => {
+      element.classList.add(CLASS_NAMES[action][id]);
+    }, parseInt(delay));
+  } else {
+    element.classList.add(CLASS_NAMES[action][id]);
+  }
 
   if (isVisibility(animType)) {
     setTimeout(() => {
@@ -149,11 +156,10 @@ const animate = (animType, element, action, id, opts = {}) => {
 
     setTimeout(() => element.removeAttribute('js-anim--disabled'), 100);
 
-    if (
-      typeof complete === 'function' &&
-      !CALLBACK_TRACKER.executing[toggleBtn].complete
-    ) {
-      CALLBACK_TRACKER.executing[toggleBtn].complete = true;
+    if (typeof complete === 'function') {
+      if (toggleBtn && !CALLBACK_TRACKER.executing[toggleBtn].complete) {
+        CALLBACK_TRACKER.executing[toggleBtn].complete = true;
+      }
       complete();
     }
 
@@ -163,9 +169,7 @@ const animate = (animType, element, action, id, opts = {}) => {
       }, delay);
     }
 
-    setTimeout(() => {
-      if (resetAfter) removeCustomCssProperties(element);
-    }, duration + delay);
+    if (resetAfter) removeCustomCssProperties(element);
   }, duration + delay);
 };
 
@@ -245,6 +249,8 @@ const jsCssAnimations = (function () {
       for (const [name, id] of Object.entries(animIds)) {
         handlers[name] = (element, opts = {}) => {
           const {
+            start,
+            complete,
             widthTransition = false,
             heightTransition = false,
             hide = true,
@@ -262,6 +268,8 @@ const jsCssAnimations = (function () {
           }
           updateCssProperties(element, opts);
           animate(animType, element, action, id, {
+            start,
+            complete,
             widthTransition,
             heightTransition,
             hide,
