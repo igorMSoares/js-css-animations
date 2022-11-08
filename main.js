@@ -1,13 +1,13 @@
 import jsCssAnimations from './js-css-animations/js-css-animations.js';
 
-jsCssAnimations.init.collapse({
-  timingFunction: 'ease',
-  resetAfter: false,
-  start: () => {
-    const elem = document.querySelector('.my-custom-btn img');
-    jsCssAnimations.rotateDownCCW(elem);
-  },
-});
+// jsCssAnimations.init.collapse({
+//   timingFunction: 'ease',
+//   resetAfter: false,
+//   start: () => {
+//     const elem = document.querySelector('.my-custom-btn img');
+//     // jsCssAnimations.rotateDownCCW(elem);
+//   },
+// });
 
 jsCssAnimations.init.slideUp({
   toggleBtn: '.my-custom-btn',
@@ -16,9 +16,9 @@ jsCssAnimations.init.slideUp({
   start: () => {
     const elem = document.querySelector('.my-custom-btn img');
     if ([...elem.classList].find(c => c.match(/rotate-down/))) {
-      jsCssAnimations.rotateUp(elem, { duration: '1000ms' });
+      jsCssAnimations.rotateUp('img', { duration: '1000ms' });
     } else {
-      jsCssAnimations.rotateDownCCW(elem);
+      jsCssAnimations.rotateDownCCW('img');
     }
   },
   // complete: () => {
@@ -27,8 +27,12 @@ jsCssAnimations.init.slideUp({
   // },
 });
 
-const elem = document.querySelector('.content p:nth-child(1)');
-jsCssAnimations.slideUp(elem);
-setTimeout(() => {
-  jsCssAnimations.slideDown(elem, { action: 'show' });
-}, 1000);
+jsCssAnimations.slideUp('.content p', {
+  duration: '1000ms',
+  heightTransition: true,
+  widthTransition: true,
+  hide: false,
+});
+// setTimeout(() => {
+//   jsCssAnimations.slideDown(elem, { action: 'show' });
+// }, 1000);

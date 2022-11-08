@@ -188,20 +188,22 @@ const getAction = (element, animType) => {
     : null;
 };
 
-const eventHandler = (triggerBtn, id, animType, opts = {}) => {
-  document.querySelectorAll(getToggleSelector(triggerBtn)).forEach(element => {
-    const action = getAction(element, animType);
+const eventHandler = (el, animType, animationId, opts) => {
+  return e => {
+    e.stopPropagation();
+
+    const action = getAction(el, animType);
     if (!action)
       throw new ReferenceError(
         `Can't find a valid action for this animation type`
       );
 
-    if (!element.getAttribute('js-anim--disabled'))
-      animate(animType, element, action, id, opts);
-  });
+    if (!el.getAttribute('js-anim--disabled'))
+      animate(animType, el, action, animationId, opts);
+  };
 };
 
-const init = (animationId, opts = {}, animationType) => {
+const init = (animationId, opts = {}, animType) => {
   const {
     toggleBtn = `.${CLASS_NAMES.toggleBtn}`,
     toggleSelector,
@@ -220,21 +222,45 @@ const init = (animationId, opts = {}, animationType) => {
     }
 
     document.querySelectorAll(getToggleSelector(btn)).forEach(el => {
-      updateCssProperties(el, opts);
-      if (isVisibility(animationType)) {
-        setDimensionsTransitions(
-          el.parentElement,
-          widthTransition,
-          heightTransition
-        );
-      }
-    });
+      preset(el, {
+        animType,
+        widthTransition,
+        heightTransition,
+        opts,
+      });
 
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      eventHandler(e.target, animationId, animationType, opts);
+      btn.addEventListener(
+        'click',
+        eventHandler(el, animType, animationId, opts)
+      );
     });
   });
+};
+
+const getTargets = element => {
+  const el =
+    element instanceof HTMLElement
+      ? [element]
+      : typeof element === 'string'
+      ? document.querySelectorAll(element)
+      : null;
+  if (!el)
+    throw new ReferenceError(
+      `Invalid element: '${element}' Expected HTMLElement or a valid element id`
+    );
+  return el;
+};
+
+const preset = (el, args) => {
+  const { opts, animType, widthTransition, heightTransition } = args;
+  updateCssProperties(el, opts);
+  if (isVisibility(animType)) {
+    setDimensionsTransitions(
+      el.parentElement,
+      widthTransition,
+      heightTransition
+    );
+  }
 };
 
 const jsCssAnimations = (function () {
@@ -247,12 +273,12 @@ const jsCssAnimations = (function () {
           : { animIds: VISIBILITY_ANIMS_ID, animType: 'visibility' };
 
       for (const [name, id] of Object.entries(animIds)) {
-        handlers[name] = (element, opts = {}) => {
+        handlers[name] = (target, opts = {}) => {
           const {
             start,
             complete,
-            widthTransition = false,
-            heightTransition = false,
+            widthTransition = true,
+            heightTransition = true,
             hide = true,
             resetAfter = true,
           } = opts;
@@ -266,14 +292,24 @@ const jsCssAnimations = (function () {
           ) {
             action = verb;
           }
-          updateCssProperties(element, opts);
-          animate(animType, element, action, id, {
-            start,
-            complete,
-            widthTransition,
-            heightTransition,
-            hide,
-            resetAfter,
+
+          getTargets(target).forEach(element => {
+            preset(element, {
+              animType,
+              widthTransition,
+              heightTransition,
+              opts,
+            });
+
+            if (!element.getAttribute('js-anim--disabled'))
+              animate(animType, element, action, id, {
+                start,
+                complete,
+                widthTransition,
+                heightTransition,
+                hide,
+                resetAfter,
+              });
           });
         };
       }
