@@ -10,8 +10,13 @@ import {
   initParentTransitions,
   handleVisibilityToggle,
   endVisibilityToggle,
-  setDimensionsTransitions,
 } from './dimensions.js';
+
+import {
+  setDimensionsTransitions,
+  appendTransition,
+  getCurrentTransition,
+} from './transitions.js';
 
 const CALLBACK_TRACKER = Object.freeze({
   executing: {},
@@ -61,6 +66,13 @@ const getTotalAnimTime = element => {
 };
 
 const isVisibility = animType => animType === 'visibility';
+const isMotion = animType => animType === 'motion';
+
+const removeMotionCssClasses = element => {
+  Object.values(MOTION_ANIMS_ID).forEach(animId => {
+    element.classList.remove(CLASS_NAMES.move[animId]);
+  });
+};
 
 const animate = (animType, element, action, id, opts = {}) => {
   element.setAttribute('js-anim--disabled', 'true');
@@ -72,7 +84,7 @@ const animate = (animType, element, action, id, opts = {}) => {
     move: 'moveBack',
     moveBack: 'move',
   });
-  let parentMeasures, dimension;
+  let parentMeasures, dimension, currentTransition;
 
   if (!CALLBACK_TRACKER.executing[toggleBtn])
     CALLBACK_TRACKER.executing[toggleBtn] = {};
@@ -95,8 +107,12 @@ const animate = (animType, element, action, id, opts = {}) => {
     start();
   }
 
-  element.classList.add(CLASS_NAMES[action][id]);
+  if (isMotion(animType)) {
+    currentTransition = getCurrentTransition(element);
+    removeMotionCssClasses(element);
+  }
   element.classList.remove(CLASS_NAMES[OPPOSITE_ACTION[action]][id]);
+  element.classList.add(CLASS_NAMES[action][id]);
 
   if (isVisibility(animType)) {
     setTimeout(() => {
@@ -109,11 +125,18 @@ const animate = (animType, element, action, id, opts = {}) => {
         hide,
       });
     }, delay);
+  } else if (isMotion(animType)) {
+    if (currentTransition) {
+      appendTransition(element, CLASS_NAMES[action][id], currentTransition);
+    }
+    if (action === 'move') element.classList.add(CLASS_NAMES.rotated);
   }
 
   setTimeout(() => {
     if (isVisibility(animType)) {
       endVisibilityToggle(element, action, hide);
+    } else if (isMotion(animType) && action === 'moveBack') {
+      element.classList.remove(CLASS_NAMES.rotated);
     }
 
     setTimeout(() => element.removeAttribute('js-anim--disabled'), 100);
@@ -124,6 +147,9 @@ const animate = (animType, element, action, id, opts = {}) => {
     ) {
       CALLBACK_TRACKER.executing[toggleBtn].complete = true;
       complete();
+    }
+
+    if (toggleBtn) {
       setTimeout(() => {
         delete CALLBACK_TRACKER.executing[toggleBtn];
       }, delay);
@@ -135,27 +161,35 @@ const animate = (animType, element, action, id, opts = {}) => {
   }, duration + delay);
 };
 
+const getAction = (element, animType) => {
+  const classList = [...element.classList];
+  return isVisibility(animType)
+    ? classList.find(
+        c => c === CLASS_NAMES.collapsed || c === CLASS_NAMES.hidden
+      )
+      ? 'show'
+      : 'hide'
+    : isMotion(animType)
+    ? classList.includes(CLASS_NAMES.rotated)
+      ? 'moveBack'
+      : 'move'
+    : null;
+};
+
 const eventHandler = (triggerBtn, id, animType, opts = {}) => {
   document.querySelectorAll(getToggleSelector(triggerBtn)).forEach(element => {
-    const classList = [...element.classList];
-    const action = isVisibility(animType)
-      ? classList.find(
-          c => c === CLASS_NAMES.collapsed || c === CLASS_NAMES.hidden
-        )
-        ? 'show'
-        : 'hide'
-      : classList.find(c => c.match(/rotate.+back/))
-      ? 'move'
-      : classList.find(c => c.match(/rotate/))
-      ? 'moveBack'
-      : 'move';
+    const action = getAction(element, animType);
+    if (!action)
+      throw new ReferenceError(
+        `Can't find a valid action for this animation type`
+      );
 
     if (!element.getAttribute('js-anim--disabled'))
       animate(animType, element, action, id, opts);
   });
 };
 
-const init = (animationId, opts = {}, animationType = 'visibility') => {
+const init = (animationId, opts = {}, animationType) => {
   const {
     toggleBtn = `.${CLASS_NAMES.toggleBtn}`,
     toggleSelector,
@@ -192,16 +226,16 @@ const init = (animationId, opts = {}, animationType = 'visibility') => {
 };
 
 const jsCssAnimations = (function () {
-  const actionHandlers = (function () {
+  const animationFunctions = (function () {
     const handlers = {};
-    ['show', 'hide', 'move', 'moveBack'].forEach(action => {
-      handlers[action] = {};
-      const { animIds, animType } = action.match(/^move|moveBack$/)
-        ? { animIds: MOTION_ANIMS_ID, animType: 'motion' }
-        : { animIds: VISIBILITY_ANIMS_ID, animType: 'visibility' };
+    ['show', 'hide', 'move'].forEach(action => {
+      const { animIds, animType } =
+        action === 'move'
+          ? { animIds: MOTION_ANIMS_ID, animType: 'motion' }
+          : { animIds: VISIBILITY_ANIMS_ID, animType: 'visibility' };
 
       for (const [name, id] of Object.entries(animIds)) {
-        handlers[action][name] = (element, opts = {}) => {
+        handlers[name] = (element, opts = {}) => {
           const {
             widthTransition = false,
             heightTransition = false,
@@ -221,56 +255,33 @@ const jsCssAnimations = (function () {
     return handlers;
   })();
 
-  const listAnimations = animType => {
+  const eventBoundAnimations = (() => {
     const animations = {};
     [VISIBILITY_ANIMS_ID, MOTION_ANIMS_ID].forEach(animIds => {
+      const animType =
+        animIds === VISIBILITY_ANIMS_ID ? 'visibility' : 'motion';
       Object.keys(animIds).forEach(animName => {
         animations[animName] = opts => init(animIds[animName], opts, animType);
       });
     });
     return animations;
-  };
-
-  const animationHandlers = (() => {
-    const allAnimations = {};
-    ['visibility', 'motion'].forEach(animType => {
-      allAnimations[animType] = listAnimations(animType);
-    });
-    return allAnimations;
   })();
 
   const verifyAnimationName = {
     get(animations, name) {
       if (!(name in animations))
-        throw new ReferenceError(`Invalid animation: "${name}"`);
+        throw new ReferenceError(`${name} is not a valid animation`);
       return animations[name];
     },
   };
 
-  const visibilityAnimations = new Proxy(
-    animationHandlers.visibility,
-    verifyAnimationName
-  );
-  const motionAnimations = new Proxy(
-    animationHandlers.motion,
-    verifyAnimationName
-  );
-  const hideAnimations = new Proxy(actionHandlers.hide, verifyAnimationName);
-  const showAnimations = new Proxy(actionHandlers.show, verifyAnimationName);
-  const moveAnimations = new Proxy(actionHandlers.move, verifyAnimationName);
-  const moveBackAnimations = new Proxy(
-    actionHandlers.moveBack,
-    verifyAnimationName
-  );
-
-  return Object.freeze({
-    visibility: visibilityAnimations,
-    motion: motionAnimations,
-    hide: hideAnimations,
-    show: showAnimations,
-    move: moveAnimations,
-    moveBack: moveBackAnimations,
+  const eventAnimations = new Proxy(eventBoundAnimations, verifyAnimationName);
+  const animationsHandler = Object.freeze({
+    init: eventAnimations,
+    ...animationFunctions,
   });
+
+  return new Proxy(animationsHandler, verifyAnimationName);
 })();
 
 export default jsCssAnimations;
