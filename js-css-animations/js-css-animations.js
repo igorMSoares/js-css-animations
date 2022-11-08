@@ -228,9 +228,9 @@ const init = (animationId, opts = {}, animationType) => {
 const jsCssAnimations = (function () {
   const animationFunctions = (function () {
     const handlers = {};
-    ['show', 'hide', 'move'].forEach(action => {
+    ['show', 'hide', 'move'].forEach(verb => {
       const { animIds, animType } =
-        action === 'move'
+        verb === 'move'
           ? { animIds: MOTION_ANIMS_ID, animType: 'motion' }
           : { animIds: VISIBILITY_ANIMS_ID, animType: 'visibility' };
 
@@ -242,6 +242,14 @@ const jsCssAnimations = (function () {
             hide = true,
             resetAfter = true,
           } = opts;
+          let action = opts.action ?? verb;
+          if (
+            (action !== verb && action === 'move' && !MOTION_ANIMS_ID[name]) ||
+            (['show', 'hide'].includes(action) && !VISIBILITY_ANIMS_ID[name])
+          ) {
+            action = verb;
+          }
+
           updateCssProperties(element, opts);
           animate(animType, element, action, id, {
             widthTransition,

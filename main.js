@@ -26,3 +26,9 @@ jsCssAnimations.init.slideUp({
   //   jsCssAnimations.rotateDown(elem, { delay: '500ms', resetAfter: false });
   // },
 });
+
+const elem = document.querySelector('.content p:nth-child(1)');
+jsCssAnimations.slideUp(elem);
+setTimeout(() => {
+  jsCssAnimations.slideDown(elem, { action: 'show' });
+}, 1000);
