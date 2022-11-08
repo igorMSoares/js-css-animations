@@ -68,6 +68,13 @@ const getTotalAnimTime = element => {
 const isVisibility = animType => animType === 'visibility';
 const isMotion = animType => animType === 'motion';
 
+const removeVisibilityCssClasses = element => {
+  Object.values(VISIBILITY_ANIMS_ID).forEach(animId => {
+    element.classList.remove(CLASS_NAMES.hide[animId]);
+    element.classList.remove(CLASS_NAMES.show[animId]);
+  });
+};
+
 const removeMotionCssClasses = element => {
   Object.values(MOTION_ANIMS_ID).forEach(animId => {
     element.classList.remove(CLASS_NAMES.move[animId]);
@@ -90,6 +97,7 @@ const animate = (animType, element, action, id, opts = {}) => {
     CALLBACK_TRACKER.executing[toggleBtn] = {};
 
   if (isVisibility(animType)) {
+    if (!toggleBtn) removeVisibilityCssClasses(element);
     const { widthTransition = true, heightTransition = true } = opts;
     ({ parentMeasures, dimension } = initParentTransitions({
       element,
@@ -244,12 +252,14 @@ const jsCssAnimations = (function () {
           } = opts;
           let action = opts.action ?? verb;
           if (
-            (action !== verb && action === 'move' && !MOTION_ANIMS_ID[name]) ||
-            (['show', 'hide'].includes(action) && !VISIBILITY_ANIMS_ID[name])
+            (action !== verb &&
+              action === 'move' &&
+              MOTION_ANIMS_ID[name] === undefined) ||
+            (['show', 'hide'].includes(action) &&
+              VISIBILITY_ANIMS_ID[name] === undefined)
           ) {
             action = verb;
           }
-
           updateCssProperties(element, opts);
           animate(animType, element, action, id, {
             widthTransition,
