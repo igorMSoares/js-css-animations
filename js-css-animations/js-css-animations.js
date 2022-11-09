@@ -117,8 +117,10 @@ const animate = (animType, element, action, id, opts = {}) => {
   if (typeof start === 'function') {
     if (toggleBtn && !CALLBACK_TRACKER.executing[toggleBtn].start) {
       CALLBACK_TRACKER.executing[toggleBtn].start = true;
+      start();
+    } else if (!toggleBtn) {
+      start();
     }
-    start();
   }
 
   if (isMotion(animType)) {
@@ -165,8 +167,10 @@ const animate = (animType, element, action, id, opts = {}) => {
     if (typeof complete === 'function') {
       if (toggleBtn && !CALLBACK_TRACKER.executing[toggleBtn].complete) {
         CALLBACK_TRACKER.executing[toggleBtn].complete = true;
+        complete();
+      } else if (!toggleBtn) {
+        complete();
       }
-      complete();
     }
 
     if (toggleBtn) {
