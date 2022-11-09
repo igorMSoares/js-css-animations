@@ -11,7 +11,7 @@ import jsCssAnimations from './js-css-animations/js-css-animations.js';
 
 jsCssAnimations.init.slideUp({
   toggleBtn: '.my-custom-btn',
-  toggleSelector: '.content p:nth-child(2)',
+  toggleSelector: '.p1',
   timingFunction: 'ease-in-out',
   start: () => {
     const elem = document.querySelector('.my-custom-btn img');
@@ -27,13 +27,12 @@ jsCssAnimations.init.slideUp({
   // },
 });
 
-jsCssAnimations.slideUp('.content p', {
-  duration: 1500,
-  resetAfter: false,
-  heightTransition: true,
-  widthTransition: true,
-  hide: false,
-});
+// jsCssAnimations.slideUp('.content p', {
+//   resetAfter: false,
+//   heightTransition: true,
+//   widthTransition: true,
+//   hide: false,
+// });
 // setTimeout(() => {
 //   jsCssAnimations.slideDown(elem, { action: 'show' });
 // }, 1000);
