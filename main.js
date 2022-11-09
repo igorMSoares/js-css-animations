@@ -16,7 +16,7 @@ jsCssAnimations.init.slideUp({
   start: () => {
     const elem = document.querySelector('.my-custom-btn img');
     if ([...elem.classList].find(c => c.match(/rotate-down/))) {
-      jsCssAnimations.rotateUp('img', { duration: '1000ms' });
+      jsCssAnimations.rotateUp('img', { duration: 3500 });
     } else {
       jsCssAnimations.rotateDownCCW('img');
     }
@@ -28,7 +28,8 @@ jsCssAnimations.init.slideUp({
 });
 
 jsCssAnimations.slideUp('.content p', {
-  duration: '1000ms',
+  duration: 1500,
+  resetAfter: false,
   heightTransition: true,
   widthTransition: true,
   hide: false,

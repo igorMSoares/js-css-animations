@@ -35,7 +35,13 @@ export const setCssProperty = (element, property, value) => {
 const updateCssProperties = (element, opts) => {
   removeCustomCssProperties(element);
   CUSTOM_CSS_PROPERTIES.forEach(prop => {
-    if (typeof opts[prop] === 'string') {
+    if (typeof opts[prop] === 'string' || typeof opts[prop] === 'number') {
+      if (
+        ['delay', 'duration'].includes(prop) &&
+        typeof opts[prop] === 'number'
+      ) {
+        opts[prop] = `${opts[prop]}ms`;
+      }
       setCssProperty(element, prop, opts[prop]);
     }
   });
@@ -57,11 +63,11 @@ const getToggleSelector = eventTarget => {
 const getTotalAnimTime = element => {
   const total = {};
   ['duration', 'delay'].forEach(prop => {
-    total[prop] = Number(
-      getComputedStyle(element)
-        .getPropertyValue(PROPERTY_NAMES[prop])
-        .match(/\d+/)
-    );
+    let match = getComputedStyle(element)
+      .getPropertyValue(PROPERTY_NAMES[prop])
+      .match(/(\d+\.\d+|\d+)(ms|s)?/);
+    total[prop] =
+      match.at(-1) === 's' ? Number(match[1]) * 1000 : Number(match[1]);
   });
   return total;
 };
