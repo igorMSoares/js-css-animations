@@ -77,14 +77,19 @@ const isMotion = animType => animType === 'motion';
 
 const removeVisibilityCssClasses = element => {
   Object.values(VISIBILITY_ANIMS_ID).forEach(animId => {
-    element.classList.remove(CLASS_NAMES.hide[animId]);
-    element.classList.remove(CLASS_NAMES.show[animId]);
+    element.classList.remove(
+      CLASS_NAMES.show[animId],
+      CLASS_NAMES.hide[animId]
+    );
   });
 };
 
 const removeMotionCssClasses = element => {
   Object.values(MOTION_ANIMS_ID).forEach(animId => {
-    element.classList.remove(CLASS_NAMES.move[animId]);
+    element.classList.remove(
+      CLASS_NAMES.move[animId],
+      CLASS_NAMES.moveBack[animId]
+    );
   });
 };
 
