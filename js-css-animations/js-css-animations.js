@@ -93,9 +93,9 @@ const removeMotionCssClasses = element => {
   });
 };
 
-const animate = (animType, element, action, id, opts = {}) => {
+const animate = (element, action, id, opts = {}) => {
   element.setAttribute('js-anim--disabled', 'true');
-  const { complete, start, toggleBtn, resetAfter, hide } = opts;
+  const { animType, complete, start, toggleBtn, resetAfter, hide } = opts;
   const { duration, delay } = getTotalAnimTime(element);
   const OPPOSITE_ACTION = Object.freeze({
     hide: 'show',
@@ -203,26 +203,27 @@ const getAction = (element, animType) => {
     : null;
 };
 
-const eventHandler = (el, animType, animationId, opts) => {
+const eventHandler = (el, animationId, opts) => {
   return e => {
     e.stopPropagation();
 
-    const action = getAction(el, animType);
+    const action = getAction(el, opts.animType);
     if (!action)
       throw new ReferenceError(
         `Can't find a valid action for this animation type`
       );
 
     if (!el.getAttribute('js-anim--disabled'))
-      animate(animType, el, action, animationId, opts);
+      animate(el, action, animationId, opts);
   };
 };
 
-const init = (animationId, opts = {}, animType) => {
+const init = (animationId, opts = {}) => {
   const {
     toggleBtn = `.${CLASS_NAMES.toggleBtn}`,
     toggleSelector,
     cursor,
+    animType,
     widthTransition = true,
     heightTransition = true,
   } = opts;
@@ -244,10 +245,7 @@ const init = (animationId, opts = {}, animType) => {
         opts,
       });
 
-      btn.addEventListener(
-        'click',
-        eventHandler(el, animType, animationId, opts)
-      );
+      btn.addEventListener('click', eventHandler(el, animationId, opts));
     });
   });
 };
@@ -317,7 +315,7 @@ const jsCssAnimations = (function () {
             });
 
             if (!element.getAttribute('js-anim--disabled'))
-              animate(animType, element, action, id, {
+              animate(element, action, id, {
                 start,
                 complete,
                 widthTransition,
@@ -338,7 +336,8 @@ const jsCssAnimations = (function () {
       const animType =
         animIds === VISIBILITY_ANIMS_ID ? 'visibility' : 'motion';
       Object.keys(animIds).forEach(animName => {
-        animations[animName] = opts => init(animIds[animName], opts, animType);
+        animations[animName] = opts =>
+          init(animIds[animName], { animType, ...opts });
       });
     });
     return animations;
