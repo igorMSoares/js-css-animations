@@ -47,17 +47,17 @@ const updateCssProperties = (element, opts) => {
   });
 };
 
-const getToggleSelector = eventTarget => {
+const getTargetSelector = eventTarget => {
   let toggleBtn = eventTarget;
-  while (toggleBtn && !toggleBtn.getAttribute('toggle-selector')) {
+  while (toggleBtn && !toggleBtn.getAttribute('target-selector')) {
     /** bubbles up untill the attribute is found */
     toggleBtn = toggleBtn.parentElement;
   }
 
   if (!toggleBtn)
-    throw new ReferenceError('toggle-selector attribute not found');
+    throw new ReferenceError('target-selector attribute not found');
 
-  return toggleBtn.getAttribute('toggle-selector');
+  return toggleBtn.getAttribute('target-selector');
 };
 
 const getTotalAnimTime = element => {
@@ -65,7 +65,7 @@ const getTotalAnimTime = element => {
   ['duration', 'delay'].forEach(prop => {
     let match = getComputedStyle(element)
       .getPropertyValue(PROPERTY_NAMES[prop])
-      .match(/(\d+\.\d+|\d+)(ms|s)?/);
+      .match(/(\d?\.\d+|\d+)(ms|s)?/);
     total[prop] =
       match.at(-1) === 's' ? Number(match[1]) * 1000 : Number(match[1]);
   });
@@ -228,10 +228,10 @@ const init = (animationId, opts = {}, animType) => {
       setCssProperty(btn, 'cursor', cursor);
     }
     if (typeof toggleSelector === 'string') {
-      btn.setAttribute('toggle-selector', toggleSelector);
+      btn.setAttribute('target-selector', toggleSelector);
     }
 
-    document.querySelectorAll(getToggleSelector(btn)).forEach(el => {
+    document.querySelectorAll(getTargetSelector(btn)).forEach(el => {
       preset(el, {
         animType,
         widthTransition,
