@@ -20,7 +20,7 @@ jsCssAnimations.init.slideUp({
     if ([...elem.classList].find(c => c.match(/rotate-down/))) {
       jsCssAnimations.rotateUp('img', { duration: 3500 });
     } else {
-      jsCssAnimations.rotateDownCCW('img');
+      jsCssAnimations.rotateDownCCW('img', { duration: 3500 });
     }
   },
   // complete: () => {

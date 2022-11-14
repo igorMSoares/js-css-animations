@@ -125,6 +125,9 @@ const animate = (element, action, id, opts = {}) => {
       widthTransition,
       heightTransition,
     }));
+  } else if (isMotion(animType)) {
+    currentTransition = getCurrentTransition(element);
+    removeMotionCssClasses(element);
   }
 
   if (typeof start === 'function') {
@@ -134,11 +137,6 @@ const animate = (element, action, id, opts = {}) => {
     } else if (!toggleBtn) {
       start();
     }
-  }
-
-  if (isMotion(animType)) {
-    currentTransition = getCurrentTransition(element);
-    removeMotionCssClasses(element);
   }
 
   element.classList.remove(CLASS_NAMES[OPPOSITE_ACTION[action]][id]);
@@ -159,14 +157,14 @@ const animate = (element, action, id, opts = {}) => {
     if (currentTransition) {
       appendTransition(element, CLASS_NAMES[action][id], currentTransition);
     }
-    if (action === 'move') element.classList.add(CLASS_NAMES.rotated);
+    if (action === 'move') element.classList.add(CLASS_NAMES.moved);
   }
 
   setTimeout(() => {
     if (isVisibility(animType)) {
       endVisibilityToggle(element, action, hide);
     } else if (isMotion(animType) && action === 'moveBack') {
-      element.classList.remove(CLASS_NAMES.rotated);
+      element.classList.remove(CLASS_NAMES.moved);
     }
 
     setTimeout(() => enable(element), 100);
@@ -199,7 +197,7 @@ const getAction = (element, animType) => {
       ? 'show'
       : 'hide'
     : isMotion(animType)
-    ? classList.includes(CLASS_NAMES.rotated)
+    ? classList.includes(CLASS_NAMES.moved)
       ? 'moveBack'
       : 'move'
     : null;
