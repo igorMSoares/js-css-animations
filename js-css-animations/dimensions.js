@@ -10,10 +10,7 @@ import {
   removeDimensionMax,
 } from './measurements.js';
 
-import {
-  setCssProperty,
-  removeCustomCssProperties,
-} from './js-css-animations.js';
+import { setCssProperty, removeCustomCssProperties } from './animate.js';
 
 const getRootCssProperty = property => {
   return getComputedStyle(document.documentElement).getPropertyValue(
