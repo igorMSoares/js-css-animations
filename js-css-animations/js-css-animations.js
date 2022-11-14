@@ -281,9 +281,9 @@ const getTargets = element => {
 const jsCssAnimations = (function () {
   const animationFunctions = (function () {
     const handlers = {};
-    ['show', 'hide', 'move'].forEach(verb => {
+    ['show', 'hide', 'move'].forEach(action => {
       const { animIds, animType } =
-        verb === 'move'
+        action === 'move'
           ? { animIds: MOTION_ANIMS_ID, animType: 'motion' }
           : { animIds: VISIBILITY_ANIMS_ID, animType: 'visibility' };
 
@@ -307,7 +307,7 @@ const jsCssAnimations = (function () {
             });
 
             if (isEnabled(element))
-              animate(element, verb, id, {
+              animate(element, action, id, {
                 animType,
                 start,
                 complete,
@@ -319,11 +319,11 @@ const jsCssAnimations = (function () {
           });
         };
 
-        if (verb === 'move') {
+        if (action === 'move') {
           handlers[name] = handler;
         } else {
-          if (!handlers[verb]) handlers[verb] = {};
-          handlers[verb][name] = handler;
+          if (!handlers[action]) handlers[action] = {};
+          handlers[action][name] = handler;
         }
       }
     });
