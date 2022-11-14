@@ -350,9 +350,19 @@ const jsCssAnimations = (function () {
   };
 
   const eventAnimations = new Proxy(eventBoundAnimations, verifyAnimationName);
+  const showVisibilityAnim = new Proxy(
+    animationFunctions.show,
+    verifyAnimationName
+  );
+  const hideVisibilityAnim = new Proxy(
+    animationFunctions.hide,
+    verifyAnimationName
+  );
   const animationsHandler = Object.freeze({
     init: eventAnimations,
     ...animationFunctions,
+    show: showVisibilityAnim,
+    hide: hideVisibilityAnim,
   });
 
   return new Proxy(animationsHandler, verifyAnimationName);
