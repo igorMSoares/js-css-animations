@@ -18,14 +18,20 @@ jsCssAnimations.init.slideLeft({
   staggerDelay: '0.75s',
   start: () => {
     const elem = document.querySelector('.my-custom-btn img');
-    if ([...elem.classList].find(c => c.match(/rotate-down/))) {
-      jsCssAnimations.rotateUp('img', { duration: 500, staggerDelay: 500 });
+    if (jsCssAnimations.isRotated('img')) {
+      jsCssAnimations.rotateUp('img', {
+        duration: 500,
+        staggerDelay: 500,
+        resetAfter: false,
+      });
       // jsCssAnimations.hide.slideLeft('.p2');
     } else {
       // jsCssAnimations.show.slideRight('.p2');
-      jsCssAnimations.rotateDownCCW('img', {
+      jsCssAnimations.rotate('img', {
+        rotationDeg: '-90deg',
         duration: 500,
         staggerDelay: 500,
+        resetAfter: false,
       });
     }
   },

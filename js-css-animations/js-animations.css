@@ -190,7 +190,8 @@
 .js-anim--rotate-down,
 .js-anim--rotate-down__ccw,
 .js-anim--rotate-left,
-.js-anim--rotate-left__ccw {
+.js-anim--rotate-left__ccw,
+.js-anim--rotated {
   transform: rotate(var(--js-css-animation--rotation-deg));
   transition-property: transform;
   transition-duration: var(--js-css-animation--duration);

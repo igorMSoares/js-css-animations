@@ -254,7 +254,10 @@ const eventHandler = (el, animationId, opts) => {
 };
 
 const preset = (el, args) => {
-  const { opts, animType, widthTransition, heightTransition } = args;
+  const { opts, animType, widthTransition, heightTransition, animationId } =
+    args;
+  if (!isMotion(animType) || animationId !== MOTION_ANIMS_ID.rotate)
+    opts.rotationDeg = undefined;
 
   updateCssProperties(el, opts);
 
@@ -302,6 +305,7 @@ const init = (animationId, opts = {}) => {
           heightTransition,
           opts,
           queryIndex: i,
+          animationId,
         });
 
         btn.addEventListener(
@@ -358,6 +362,7 @@ const jsCssAnimations = (function () {
               heightTransition,
               opts,
               queryIndex: i,
+              animationId: id,
             });
 
             if (isEnabled(element))
@@ -398,6 +403,12 @@ const jsCssAnimations = (function () {
     return animations;
   })();
 
+  const checkRotation = selector => {
+    const el = document.querySelector(selector);
+    const transform = getComputedStyle(el).transform;
+    return transform !== 'none' && transform !== 'matrix(1, 0, 0, 1, 0, 0)';
+  };
+
   const verifyAnimationName = {
     get(animations, name) {
       if (!(name in animations))
@@ -420,6 +431,7 @@ const jsCssAnimations = (function () {
     ...animationFunctions,
     show: showVisibilityAnim,
     hide: hideVisibilityAnim,
+    isRotated: checkRotation,
   });
 
   return new Proxy(animationsHandler, verifyAnimationName);
