@@ -35,6 +35,10 @@ jsCssAnimations.init.slideLeft({
       });
     }
   },
+  complete: () => {
+    const elem = document.querySelector('.p1');
+    console.log(jsCssAnimations.isHidden(elem));
+  },
   // complete: () => {
   //   const elem = document.querySelector('.content p:nth-child(1)');
   //   jsCssAnimations.rotateDown(elem, { delay: '500ms', resetAfter: false });

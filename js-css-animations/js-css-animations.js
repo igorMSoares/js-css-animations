@@ -320,18 +320,24 @@ const init = (animationId, opts = {}) => {
   });
 };
 
-const getTargets = element => {
+const selectElement = (selector, all = false) => {
   const el =
-    element instanceof HTMLElement
-      ? [element]
-      : typeof element === 'string'
-      ? document.querySelectorAll(element)
+    selector instanceof HTMLElement
+      ? [selector]
+      : typeof selector === 'string'
+      ? all
+        ? document.querySelectorAll(selector)
+        : document.querySelector(selector)
       : null;
   if (!el)
     throw new ReferenceError(
-      `Invalid element: '${element}' Expected HTMLElement or a valid element selector`
+      `Invalid element: '${selector}' Expected HTMLElement or a valid element selector`
     );
-  return el;
+  return all ? el : el.pop();
+};
+
+const getTargets = element => {
+  return selectElement(element, true);
 };
 
 const jsCssAnimations = (function () {
@@ -417,6 +423,19 @@ const jsCssAnimations = (function () {
     },
   };
 
+  const checkVisibility = (selector, mode) => {
+    const el = selectElement(selector);
+    let result;
+    if (mode === 'hidden') {
+      result =
+        getComputedStyle(el).visibility === 'hidden' ||
+        getComputedStyle(el).display === 'none';
+    } else if (mode === 'visible') {
+      result = !checkVisibility(selector, 'hidden');
+    }
+    return result;
+  };
+
   const eventAnimations = new Proxy(eventBoundAnimations, verifyAnimationName);
   const showVisibilityAnim = new Proxy(
     animationFunctions.show,
@@ -432,6 +451,8 @@ const jsCssAnimations = (function () {
     show: showVisibilityAnim,
     hide: hideVisibilityAnim,
     isRotated: checkRotation,
+    isVisible: selector => checkVisibility(selector, 'visible'),
+    isHidden: selector => checkVisibility(selector, 'hidden'),
   });
 
   return new Proxy(animationsHandler, verifyAnimationName);
