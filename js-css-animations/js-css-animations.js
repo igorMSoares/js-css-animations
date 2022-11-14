@@ -114,7 +114,15 @@ const targetsStack = {};
 
 const animate = (element, action, id, opts = {}) => {
   disable(element);
-  const { animType, toggleBtn, start, complete, resetAfter, hide } = opts;
+  const {
+    animType,
+    toggleBtn,
+    start,
+    complete,
+    resetAfter,
+    hide,
+    overflowHidden = true,
+  } = opts;
   const { duration, delay } = getTotalAnimTime(element);
   const OPPOSITE_ACTION = Object.freeze({
     hide: 'show',
@@ -145,6 +153,7 @@ const animate = (element, action, id, opts = {}) => {
       action,
       widthTransition,
       heightTransition,
+      overflowHidden,
     }));
   } else if (isMotion(animType)) {
     currentTransition = getCurrentTransition(element);
@@ -336,6 +345,7 @@ const jsCssAnimations = (function () {
             start,
             complete,
             hide,
+            overflowHidden,
             widthTransition = true,
             heightTransition = true,
             resetAfter = true,
@@ -359,6 +369,7 @@ const jsCssAnimations = (function () {
                 heightTransition,
                 hide,
                 resetAfter,
+                overflowHidden,
               });
           });
         };
