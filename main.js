@@ -9,20 +9,24 @@ import jsCssAnimations from './js-css-animations/js-css-animations.js';
 //   },
 // });
 
-jsCssAnimations.init.slideUp({
+jsCssAnimations.init.slideLeft({
   toggleBtn: '.my-custom-btn',
-  toggleSelector: '.p1',
+  toggleSelector: '.p1, .p2',
   timingFunction: 'ease-in-out',
   duration: '1.5s',
-  delay: '1s',
+  delay: 250,
+  staggerDelay: '0.75s',
   start: () => {
     const elem = document.querySelector('.my-custom-btn img');
     if ([...elem.classList].find(c => c.match(/rotate-down/))) {
-      jsCssAnimations.rotateUp('img', { duration: 3500 });
-      jsCssAnimations.hide.slideLeft('.p2');
+      jsCssAnimations.rotateUp('img', { duration: 500, staggerDelay: 500 });
+      // jsCssAnimations.hide.slideLeft('.p2');
     } else {
-      jsCssAnimations.show.slideRight('.p2');
-      jsCssAnimations.rotateDownCCW('img', { duration: 3500 });
+      // jsCssAnimations.show.slideRight('.p2');
+      jsCssAnimations.rotateDownCCW('img', {
+        duration: 500,
+        staggerDelay: 500,
+      });
     }
   },
   // complete: () => {

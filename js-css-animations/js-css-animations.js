@@ -60,14 +60,20 @@ const getTargetSelector = eventTarget => {
   return toggleBtn.getAttribute('target-selector');
 };
 
+const DURATION_REGEX = Object.freeze(new RegExp(/(\d?\.\d+|\d+)(ms|s)?/));
+
+const getTimeInMs = string => {
+  if (string === undefined) return 0;
+  let match = string.match(DURATION_REGEX);
+  return match.at(-1) === 's' ? Number(match[1]) * 1000 : Number(match[1]);
+};
+
 const getTotalAnimTime = element => {
   const total = {};
   ['duration', 'delay'].forEach(prop => {
-    let match = getComputedStyle(element)
-      .getPropertyValue(PROPERTY_NAMES[prop])
-      .match(/(\d?\.\d+|\d+)(ms|s)?/);
-    total[prop] =
-      match.at(-1) === 's' ? Number(match[1]) * 1000 : Number(match[1]);
+    total[prop] = getTimeInMs(
+      getComputedStyle(element).getPropertyValue(PROPERTY_NAMES[prop])
+    );
   });
   return total;
 };
@@ -104,6 +110,8 @@ const enable = element => {
 const isEnabled = element =>
   !(element.getAttribute('js-anim--disabled') === 'true');
 
+const targetsStack = {};
+
 const animate = (element, action, id, opts = {}) => {
   disable(element);
   const { animType, toggleBtn, start, complete, resetAfter, hide } = opts;
@@ -115,6 +123,11 @@ const animate = (element, action, id, opts = {}) => {
     moveBack: 'move',
   });
   let parentMeasures, dimension, currentTransition;
+
+  if (opts.staggerDelay && toggleBtn) {
+    if (!targetsStack[toggleBtn]) targetsStack[toggleBtn] = [];
+    targetsStack[toggleBtn].push(element);
+  }
 
   if (!CALLBACK_TRACKER.executing[toggleBtn])
     CALLBACK_TRACKER.executing[toggleBtn] = {};
@@ -169,7 +182,14 @@ const animate = (element, action, id, opts = {}) => {
     } else if (isMotion(animType) && action === 'moveBack') {
       element.classList.remove(CLASS_NAMES.moved);
     }
-    enable(element);
+
+    if (opts.staggerDelay) {
+      if (opts.queryIndex === opts.totalTargets - 1) {
+        targetsStack[toggleBtn].forEach(el => enable(el));
+      }
+    } else {
+      enable(element);
+    }
 
     if (typeof complete === 'function') {
       if (toggleBtn && !CALLBACK_TRACKER.executing[toggleBtn].complete) {
@@ -215,14 +235,22 @@ const eventHandler = (el, animationId, opts) => {
         `Can't find a valid action for this animation type`
       );
 
-    if (isEnabled(e.target) && isEnabled(el))
-      animate(el, action, animationId, opts);
+    if (isEnabled(el)) animate(el, action, animationId, opts);
   };
 };
 
 const preset = (el, args) => {
   const { opts, animType, widthTransition, heightTransition } = args;
+
   updateCssProperties(el, opts);
+
+  if (opts.staggerDelay) {
+    const staggeredDelay =
+      getTimeInMs(opts.delay?.toString()) +
+      getTimeInMs(opts.staggerDelay.toString()) * args.queryIndex;
+    setCssProperty(el, 'delay', `${staggeredDelay}ms`);
+  }
+
   if (isVisibility(animType)) {
     setDimensionsTransitions(
       el.parentElement,
@@ -251,16 +279,26 @@ const init = (animationId, opts = {}) => {
       btn.setAttribute('target-selector', toggleSelector);
     }
 
-    document.querySelectorAll(getTargetSelector(btn)).forEach(el => {
-      preset(el, {
-        animType,
-        widthTransition,
-        heightTransition,
-        opts,
-      });
+    document
+      .querySelectorAll(getTargetSelector(btn))
+      .forEach((el, i, queryList) => {
+        preset(el, {
+          animType,
+          widthTransition,
+          heightTransition,
+          opts,
+          queryIndex: i,
+        });
 
-      btn.addEventListener('click', eventHandler(el, animationId, opts));
-    });
+        btn.addEventListener(
+          'click',
+          eventHandler(el, animationId, {
+            ...opts,
+            totalTargets: queryList.length,
+            queryIndex: i,
+          })
+        );
+      });
   });
 };
 
@@ -298,12 +336,13 @@ const jsCssAnimations = (function () {
             resetAfter = true,
           } = opts;
 
-          getTargets(target).forEach(element => {
+          getTargets(target).forEach((element, i) => {
             preset(element, {
               animType,
               widthTransition,
               heightTransition,
               opts,
+              queryIndex: i,
             });
 
             if (isEnabled(element))
