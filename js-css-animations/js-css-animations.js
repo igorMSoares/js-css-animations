@@ -101,6 +101,9 @@ const enable = element => {
   element.removeAttribute('js-anim--disabled');
 };
 
+const isEnabled = element =>
+  !(element.getAttribute('js-anim--disabled') === 'true');
+
 const animate = (element, action, id, opts = {}) => {
   disable(element);
   const { animType, toggleBtn, start, complete, resetAfter, hide } = opts;
@@ -166,8 +169,7 @@ const animate = (element, action, id, opts = {}) => {
     } else if (isMotion(animType) && action === 'moveBack') {
       element.classList.remove(CLASS_NAMES.moved);
     }
-
-    setTimeout(() => enable(element), 100);
+    enable(element);
 
     if (typeof complete === 'function') {
       if (toggleBtn && !CALLBACK_TRACKER.executing[toggleBtn].complete) {
@@ -213,7 +215,7 @@ const eventHandler = (el, animationId, opts) => {
         `Can't find a valid action for this animation type`
       );
 
-    if (!el.getAttribute('js-anim--disabled'))
+    if (isEnabled(e.target) && isEnabled(el))
       animate(el, action, animationId, opts);
   };
 };
@@ -304,7 +306,7 @@ const jsCssAnimations = (function () {
               opts,
             });
 
-            if (!element.getAttribute('js-anim--disabled'))
+            if (isEnabled(element))
               animate(element, verb, id, {
                 animType,
                 start,
