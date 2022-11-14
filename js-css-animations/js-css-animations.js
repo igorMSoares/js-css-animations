@@ -142,13 +142,7 @@ const animate = (element, action, id, opts = {}) => {
   }
 
   element.classList.remove(CLASS_NAMES[OPPOSITE_ACTION[action]][id]);
-  if (delay) {
-    setTimeout(() => {
-      element.classList.add(CLASS_NAMES[action][id]);
-    }, parseInt(delay));
-  } else {
-    element.classList.add(CLASS_NAMES[action][id]);
-  }
+  element.classList.add(CLASS_NAMES[action][id]);
 
   if (isVisibility(animType)) {
     setTimeout(() => {
@@ -160,7 +154,7 @@ const animate = (element, action, id, opts = {}) => {
         dimension,
         hide,
       });
-    }, delay);
+    }, 0);
   } else if (isMotion(animType)) {
     if (currentTransition) {
       appendTransition(element, CLASS_NAMES[action][id], currentTransition);

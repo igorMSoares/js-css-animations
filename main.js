@@ -14,6 +14,7 @@ jsCssAnimations.init.slideUp({
   toggleSelector: '.p1',
   timingFunction: 'ease-in-out',
   duration: '1.5s',
+  delay: '1s',
   start: () => {
     const elem = document.querySelector('.my-custom-btn img');
     if ([...elem.classList].find(c => c.match(/rotate-down/))) {
