@@ -318,6 +318,7 @@ const jsCssAnimations = (function () {
 
             if (!element.getAttribute('js-anim--disabled'))
               animate(element, action, id, {
+                animType,
                 start,
                 complete,
                 widthTransition,
