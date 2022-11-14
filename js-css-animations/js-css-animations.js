@@ -93,9 +93,17 @@ const removeMotionCssClasses = element => {
   });
 };
 
-const animate = (element, action, id, opts = {}) => {
+const disable = element => {
   element.setAttribute('js-anim--disabled', 'true');
-  const { animType, complete, start, toggleBtn, resetAfter, hide } = opts;
+};
+
+const enable = element => {
+  element.removeAttribute('js-anim--disabled');
+};
+
+const animate = (element, action, id, opts = {}) => {
+  disable(element);
+  const { animType, toggleBtn, start, complete, resetAfter, hide } = opts;
   const { duration, delay } = getTotalAnimTime(element);
   const OPPOSITE_ACTION = Object.freeze({
     hide: 'show',
@@ -167,7 +175,7 @@ const animate = (element, action, id, opts = {}) => {
       element.classList.remove(CLASS_NAMES.rotated);
     }
 
-    setTimeout(() => element.removeAttribute('js-anim--disabled'), 100);
+    setTimeout(() => enable(element), 100);
 
     if (typeof complete === 'function') {
       if (toggleBtn && !CALLBACK_TRACKER.executing[toggleBtn].complete) {
