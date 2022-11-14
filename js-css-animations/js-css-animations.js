@@ -218,6 +218,18 @@ const eventHandler = (el, animationId, opts) => {
   };
 };
 
+const preset = (el, args) => {
+  const { opts, animType, widthTransition, heightTransition } = args;
+  updateCssProperties(el, opts);
+  if (isVisibility(animType)) {
+    setDimensionsTransitions(
+      el.parentElement,
+      widthTransition,
+      heightTransition
+    );
+  }
+};
+
 const init = (animationId, opts = {}) => {
   const {
     toggleBtn = `.${CLASS_NAMES.toggleBtn}`,
@@ -259,21 +271,9 @@ const getTargets = element => {
       : null;
   if (!el)
     throw new ReferenceError(
-      `Invalid element: '${element}' Expected HTMLElement or a valid element id`
+      `Invalid element: '${element}' Expected HTMLElement or a valid element selector`
     );
   return el;
-};
-
-const preset = (el, args) => {
-  const { opts, animType, widthTransition, heightTransition } = args;
-  updateCssProperties(el, opts);
-  if (isVisibility(animType)) {
-    setDimensionsTransitions(
-      el.parentElement,
-      widthTransition,
-      heightTransition
-    );
-  }
 };
 
 const jsCssAnimations = (function () {
@@ -286,25 +286,15 @@ const jsCssAnimations = (function () {
           : { animIds: VISIBILITY_ANIMS_ID, animType: 'visibility' };
 
       for (const [name, id] of Object.entries(animIds)) {
-        handlers[name] = (target, opts = {}) => {
+        const handler = (target, opts = {}) => {
           const {
             start,
             complete,
+            hide,
             widthTransition = true,
             heightTransition = true,
-            hide = true,
             resetAfter = true,
           } = opts;
-          let action = opts.action ?? verb;
-          if (
-            (action !== verb &&
-              action === 'move' &&
-              MOTION_ANIMS_ID[name] === undefined) ||
-            (['show', 'hide'].includes(action) &&
-              VISIBILITY_ANIMS_ID[name] === undefined)
-          ) {
-            action = verb;
-          }
 
           getTargets(target).forEach(element => {
             preset(element, {
@@ -315,7 +305,7 @@ const jsCssAnimations = (function () {
             });
 
             if (!element.getAttribute('js-anim--disabled'))
-              animate(element, action, id, {
+              animate(element, verb, id, {
                 animType,
                 start,
                 complete,
@@ -326,6 +316,13 @@ const jsCssAnimations = (function () {
               });
           });
         };
+
+        if (verb === 'move') {
+          handlers[name] = handler;
+        } else {
+          if (!handlers[verb]) handlers[verb] = {};
+          handlers[verb][name] = handler;
+        }
       }
     });
     return handlers;

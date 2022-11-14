@@ -19,7 +19,9 @@ jsCssAnimations.init.slideUp({
     const elem = document.querySelector('.my-custom-btn img');
     if ([...elem.classList].find(c => c.match(/rotate-down/))) {
       jsCssAnimations.rotateUp('img', { duration: 3500 });
+      jsCssAnimations.hide.slideLeft('.p2');
     } else {
+      jsCssAnimations.show.slideRight('.p2');
       jsCssAnimations.rotateDownCCW('img', { duration: 3500 });
     }
   },
