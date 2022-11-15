@@ -33,6 +33,10 @@ main {
   width: fit-content;
 }
 
+.delay-counter {
+  margin: 0;
+}
+
 .p2 {
   color: darkolivegreen;
   font-weight: 900;

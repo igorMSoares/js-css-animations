@@ -1,10 +1,11 @@
 import { init, animate, preset, isEnabled } from './animate.js';
 import { VISIBILITY_ANIMS_ID, MOTION_ANIMS_ID } from './globals.js';
 
-const selectElement = (selector, all = false) => {
+const selectElement = (selector, quantity = {}) => {
+  const { all } = quantity;
   const el =
     selector instanceof HTMLElement
-      ? [selector]
+      ? selector
       : typeof selector === 'string'
       ? all
         ? document.querySelectorAll(selector)
@@ -14,11 +15,43 @@ const selectElement = (selector, all = false) => {
     throw new ReferenceError(
       `Invalid element: '${selector}' Expected HTMLElement or a valid element selector`
     );
-  return all ? el : el.pop();
+  return el;
 };
 
 const getTargets = element => {
-  return selectElement(element, true);
+  return selectElement(element, { all: true });
+};
+
+const toggle = (selector, animA, animB, opts = {}) => {
+  const { duration, delay, staggerDelay, timingFunction, blur, rotationDeg } =
+    opts;
+  const args = {
+    duration,
+    delay,
+    staggerDelay,
+    timingFunction,
+    blur,
+    rotationDeg,
+  };
+
+  const element = selectElement(selector);
+  const currentAnim = element.getAttribute('js-css-animation--current');
+  const newAnim =
+    !currentAnim || ![animA, animB].includes(currentAnim)
+      ? animA
+      : currentAnim === animA
+      ? animB
+      : animA;
+  const animType =
+    MOTION_ANIMS_ID[newAnim] !== undefined ? 'motion' : 'visibility';
+  element.setAttribute('js-css-animation--current', newAnim);
+  if (animType === 'visibility') {
+    checkVisibility(element, 'hidden')
+      ? jsCssAnimations.show[newAnim](selector, args)
+      : jsCssAnimations.hide[newAnim](selector, args);
+  } else if (animType === 'motion') {
+    jsCssAnimations[newAnim](selector, args);
+  }
 };
 
 const animationFunctions = (function () {
@@ -130,6 +163,7 @@ const jsCssAnimations = (function () {
     ...animationFunctions,
     show: showVisibilityAnim,
     hide: hideVisibilityAnim,
+    toggle: toggle,
     isRotated: checkRotation,
     isVisible: selector => checkVisibility(selector, 'visible'),
     isHidden: selector => checkVisibility(selector, 'hidden'),
