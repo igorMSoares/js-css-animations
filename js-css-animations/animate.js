@@ -13,7 +13,7 @@ import {
 } from './dimensions.js';
 
 import {
-  setDimensionsTransitions,
+  removeInlineTransition,
   appendTransition,
   getCurrentTransition,
 } from './transitions.js';
@@ -21,6 +21,12 @@ import {
 const CALLBACK_TRACKER = Object.freeze({
   executing: {},
 });
+
+const initCallBackTracker = toggleBtn => {
+  if (!CALLBACK_TRACKER.executing[toggleBtn]) {
+    CALLBACK_TRACKER.executing[toggleBtn] = {};
+  }
+};
 
 export const removeCustomCssProperties = element => {
   CUSTOM_CSS_PROPERTIES.forEach(prop => {
@@ -34,6 +40,7 @@ export const setCssProperty = (element, property, value) => {
 
 const updateCssProperties = (element, opts) => {
   removeCustomCssProperties(element);
+  removeInlineTransition(element);
   CUSTOM_CSS_PROPERTIES.forEach(prop => {
     if (typeof opts[prop] === 'string' || typeof opts[prop] === 'number') {
       if (
@@ -62,9 +69,10 @@ const getTargetSelector = eventTarget => {
 
 const DURATION_REGEX = Object.freeze(new RegExp(/(\d?\.\d+|\d+)(ms|s)?/));
 
-const getTimeInMs = string => {
-  if (string === undefined) return 0;
-  let match = string.match(DURATION_REGEX);
+const getTimeInMs = value => {
+  if (value === undefined) return 0;
+  if (typeof value === 'number') return value;
+  let match = value.match(DURATION_REGEX);
   return match.at(-1) === 's' ? Number(match[1]) * 1000 : Number(match[1]);
 };
 
@@ -81,22 +89,11 @@ const getTotalAnimTime = element => {
 const isVisibility = animType => animType === 'visibility';
 const isMotion = animType => animType === 'motion';
 
-const removeVisibilityCssClasses = element => {
-  Object.values(VISIBILITY_ANIMS_ID).forEach(animId => {
-    element.classList.remove(
-      CLASS_NAMES.show[animId],
-      CLASS_NAMES.hide[animId]
-    );
-  });
-};
-
 const removeMotionCssClasses = element => {
-  Object.values(MOTION_ANIMS_ID).forEach(animId => {
-    element.classList.remove(
-      CLASS_NAMES.move[animId],
-      CLASS_NAMES.moveBack[animId]
-    );
-  });
+  const className = [...element.classList].find(cl =>
+    cl.match(/js\-anim\-\-rotate/)
+  );
+  element.classList.remove(className);
 };
 
 const disable = element => {
@@ -119,7 +116,6 @@ const animate = (element, action, id, opts = {}) => {
     toggleBtn,
     start,
     complete,
-    resetAfter,
     hide,
     overflowHidden = true,
   } = opts;
@@ -131,23 +127,14 @@ const animate = (element, action, id, opts = {}) => {
     moveBack: 'move',
   });
   let parentMeasures, dimension, currentTransition;
-  const defaultDuration = getTimeInMs(
-    getComputedStyle(document.documentElement).getPropertyValue(
-      PROPERTY_NAMES.duration
-    )
-  );
+  const { widthTransition = true, heightTransition = true } = opts;
 
   if (toggleBtn) {
     if (!targetsStack[toggleBtn]) targetsStack[toggleBtn] = [];
     targetsStack[toggleBtn].push(element);
-
-    if (!CALLBACK_TRACKER.executing[toggleBtn])
-      CALLBACK_TRACKER.executing[toggleBtn] = {};
   }
 
   if (isVisibility(animType)) {
-    if (!toggleBtn) removeVisibilityCssClasses(element);
-    const { widthTransition = true, heightTransition = true } = opts;
     ({ parentMeasures, dimension } = initParentTransitions({
       element,
       action,
@@ -161,7 +148,8 @@ const animate = (element, action, id, opts = {}) => {
   }
 
   if (typeof start === 'function') {
-    if (toggleBtn && !CALLBACK_TRACKER.executing[toggleBtn].start) {
+    if (toggleBtn && !CALLBACK_TRACKER.executing[toggleBtn]?.start) {
+      initCallBackTracker(toggleBtn);
       CALLBACK_TRACKER.executing[toggleBtn].start = true;
       start();
     } else if (!toggleBtn) {
@@ -169,8 +157,8 @@ const animate = (element, action, id, opts = {}) => {
     }
   }
 
-  element.classList.remove(CLASS_NAMES[OPPOSITE_ACTION[action]][id]);
   element.classList.add(CLASS_NAMES[action][id]);
+  element.classList.remove(CLASS_NAMES[OPPOSITE_ACTION[action]][id]);
 
   if (isVisibility(animType)) {
     setTimeout(() => {
@@ -192,13 +180,20 @@ const animate = (element, action, id, opts = {}) => {
 
   setTimeout(() => {
     if (isVisibility(animType)) {
-      endVisibilityToggle(element, action, hide);
+      endVisibilityToggle(element, {
+        action,
+        hide,
+        widthTransition,
+        heightTransition,
+      });
+      element.classList.remove(CLASS_NAMES[action][id]);
     } else if (isMotion(animType) && action === 'moveBack') {
       element.classList.remove(CLASS_NAMES.moved);
     }
 
     if (typeof complete === 'function') {
-      if (toggleBtn && !CALLBACK_TRACKER.executing[toggleBtn].complete) {
+      if (toggleBtn && !CALLBACK_TRACKER.executing[toggleBtn]?.complete) {
+        initCallBackTracker(toggleBtn);
         CALLBACK_TRACKER.executing[toggleBtn].complete = true;
         complete();
       } else if (!toggleBtn) {
@@ -217,10 +212,6 @@ const animate = (element, action, id, opts = {}) => {
     } else if (!toggleBtn) {
       enable(element);
     }
-
-    setTimeout(() => {
-      if (resetAfter) removeCustomCssProperties(element);
-    }, defaultDuration);
   }, duration + delay);
 };
 
@@ -239,6 +230,22 @@ const getAction = (element, animType) => {
     : null;
 };
 
+const preset = (el, args) => {
+  const { opts, animationId } = args;
+  const { animType } = opts;
+  if (!isMotion(animType) || animationId !== MOTION_ANIMS_ID.rotate)
+    opts.rotationDeg = undefined;
+
+  updateCssProperties(el, opts);
+
+  if (opts.staggerDelay) {
+    const staggeredDelay =
+      getTimeInMs(opts.delay) +
+      getTimeInMs(opts.staggerDelay) * opts.queryIndex;
+    setCssProperty(el, 'delay', `${staggeredDelay}ms`);
+  }
+};
+
 const eventHandler = (el, animationId, opts) => {
   return e => {
     e.stopPropagation();
@@ -249,32 +256,13 @@ const eventHandler = (el, animationId, opts) => {
         `Can't find a valid action for this animation type`
       );
 
+    preset(el, {
+      animationId,
+      opts,
+    });
+
     if (isEnabled(el)) animate(el, action, animationId, opts);
   };
-};
-
-const preset = (el, args) => {
-  const { opts, animType, widthTransition, heightTransition, animationId } =
-    args;
-  if (!isMotion(animType) || animationId !== MOTION_ANIMS_ID.rotate)
-    opts.rotationDeg = undefined;
-
-  updateCssProperties(el, opts);
-
-  if (opts.staggerDelay) {
-    const staggeredDelay =
-      getTimeInMs(opts.delay?.toString()) +
-      getTimeInMs(opts.staggerDelay.toString()) * args.queryIndex;
-    setCssProperty(el, 'delay', `${staggeredDelay}ms`);
-  }
-
-  if (isVisibility(animType)) {
-    setDimensionsTransitions(
-      el.parentElement,
-      widthTransition,
-      heightTransition
-    );
-  }
 };
 
 const init = (animationId, opts = {}) => {
@@ -282,9 +270,6 @@ const init = (animationId, opts = {}) => {
     toggleBtn = `.${CLASS_NAMES.toggleBtn}`,
     toggleSelector,
     cursor,
-    animType,
-    widthTransition = true,
-    heightTransition = true,
   } = opts;
 
   document.querySelectorAll(toggleBtn).forEach(btn => {
@@ -299,15 +284,6 @@ const init = (animationId, opts = {}) => {
     document
       .querySelectorAll(getTargetSelector(btn))
       .forEach((el, i, queryList) => {
-        preset(el, {
-          animType,
-          widthTransition,
-          heightTransition,
-          opts,
-          queryIndex: i,
-          animationId,
-        });
-
         btn.addEventListener(
           'click',
           eventHandler(el, animationId, {

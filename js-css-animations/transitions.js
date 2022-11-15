@@ -52,12 +52,13 @@ const getAllTransitions = cssProperties => {
 
 export const getCurrentTransition = element => {
   let currTransition = getComputedStyle(element).transition;
-  if (currTransition !== getDefaultComputedStyle(element).transition) {
-    if (currTransition === '') {
-      currTransition = getAllTransitions(getComputedStyle(element));
-    }
+  if (
+    currTransition !== getDefaultComputedStyle(element).transition &&
+    !element.style.getPropertyValue('transition')
+  ) {
+    currTransition = getAllTransitions(getComputedStyle(element));
   } else {
-    currTransition = '';
+    currTransition = null;
   }
   return currTransition;
 };
@@ -76,20 +77,21 @@ export const getClassTransition = className => {
 export const appendTransition = (element, className, currTransition) => {
   const classTransition = getClassTransition(className);
 
-  if (classTransition) {
+  if (
+    classTransition &&
+    currTransition &&
+    !currTransition.match(/max\-width|max\-height/)
+  ) {
     element.style.setProperty(
       'transition',
-      currTransition.match(/transform|max\-width|max\-height/)
-        ? `${currTransition}`
-        : `${classTransition}, ${currTransition}`
+      `${classTransition}, ${currTransition}`
     );
+    element.setAttribute('js-css-anim--inline-transition', 'true');
   }
 };
 
-export const setDimensionsTransitions = (element, wTransit, hTransit) => {
-  const currTransition = getCurrentTransition(element);
+const getTransitionClassName = (wTransit, hTransit) => {
   let className;
-
   if (wTransit && hTransit) {
     className = CLASS_NAMES.dimensionsTransitions;
   } else if (wTransit) {
@@ -97,9 +99,29 @@ export const setDimensionsTransitions = (element, wTransit, hTransit) => {
   } else if (hTransit) {
     className = CLASS_NAMES.heightTransition;
   }
+  return className;
+};
+
+export const setDimensionsTransitions = (element, wTransit, hTransit) => {
+  const currTransition = getCurrentTransition(element);
+  const className = getTransitionClassName(wTransit, hTransit);
 
   if (className) {
     element.classList.add(className);
     if (currTransition) appendTransition(element, className, currTransition);
   }
+};
+
+export const removeInlineTransition = element => {
+  if (element.getAttribute('js-css-anim--inline-transition')) {
+    element.style.removeProperty('transition');
+    element.removeAttribute('js-css-anim--inline-transition');
+  }
+};
+
+export const removeDimensionsTransitions = (element, wTransit, hTransit) => {
+  const className = getTransitionClassName(wTransit, hTransit);
+
+  if (className) element.classList.remove(className);
+  removeInlineTransition(element);
 };

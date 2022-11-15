@@ -10,6 +10,11 @@ import {
   removeDimensionMax,
 } from './measurements.js';
 
+import {
+  setDimensionsTransitions,
+  removeDimensionsTransitions,
+} from './transitions.js';
+
 import { setCssProperty, removeCustomCssProperties } from './animate.js';
 
 const getRootCssProperty = property => {
@@ -51,6 +56,11 @@ const initParentTransitions = args => {
   const { element, action, widthTransition, heightTransition } = args;
   const parentMeasures = getParentMeasures(element);
   const dimension = getDimension(widthTransition, heightTransition);
+  setDimensionsTransitions(
+    element.parentElement,
+    widthTransition,
+    heightTransition
+  );
   setParentCssProperties(element);
   if (args.overflowHidden) setOverflowHidden(element.parentElement);
   setParentMaxMeasures({
@@ -71,15 +81,17 @@ const handleVisibilityToggle = (element, args) => {
   }
 };
 
-const endVisibilityToggle = (element, action, hide) => {
-  if (action === 'hide') {
-    hide
+const endVisibilityToggle = (element, opts) => {
+  const { widthTransition: wTransit, heightTransition: hTransit } = opts;
+  if (opts.action === 'hide') {
+    opts.hide
       ? element.classList.add(CLASS_NAMES.hidden)
       : element.classList.add(CLASS_NAMES.collapsed);
   }
   removeDimensionMax(element.parentElement, 'height');
   removeDimensionMax(element.parentElement, 'width');
   removeCustomCssProperties(element.parentElement);
+  removeDimensionsTransitions(element.parentElement, wTransit, hTransit);
   removeOverflowHidden(element.parentElement);
 };
 

@@ -32,3 +32,8 @@ main {
   border: 2px solid darkolivegreen;
   width: fit-content;
 }
+
+.p2 {
+  color: darkolivegreen;
+  font-weight: 900;
+}
