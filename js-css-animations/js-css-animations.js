@@ -36,18 +36,18 @@ const animationFunctions = (function () {
           complete,
           hide,
           overflowHidden,
+          staggerDelay,
           widthTransition = true,
           heightTransition = true,
-          resetAfter = true,
         } = opts;
 
         getTargets(target).forEach((element, i) => {
+          opts.animType = animType;
+          opts.queryIndex = i;
           preset(element, {
-            animType,
             widthTransition,
             heightTransition,
             opts,
-            queryIndex: i,
             animationId: id,
           });
 
@@ -59,8 +59,8 @@ const animationFunctions = (function () {
               widthTransition,
               heightTransition,
               hide,
-              resetAfter,
               overflowHidden,
+              staggerDelay,
             });
         });
       };
