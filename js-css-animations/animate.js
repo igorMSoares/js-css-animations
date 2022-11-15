@@ -267,7 +267,7 @@ const eventHandler = (el, animationId, opts) => {
 const init = (animationId, opts = {}) => {
   const {
     toggleBtn = `.${CLASS_NAMES.toggleBtn}`,
-    toggleSelector,
+    targetSelector,
     cursor,
   } = opts;
 
@@ -276,8 +276,8 @@ const init = (animationId, opts = {}) => {
     if (typeof cursor === 'string') {
       setCssProperty(btn, 'cursor', cursor);
     }
-    if (typeof toggleSelector === 'string') {
-      btn.setAttribute('target-selector', toggleSelector);
+    if (typeof targetSelector === 'string') {
+      btn.setAttribute('target-selector', targetSelector);
     }
 
     document
