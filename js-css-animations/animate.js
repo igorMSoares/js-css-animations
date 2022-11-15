@@ -1,5 +1,4 @@
 import {
-  VISIBILITY_ANIMS_ID,
   MOTION_ANIMS_ID,
   PROPERTY_NAMES,
   CLASS_NAMES,
@@ -212,7 +211,7 @@ const animate = (element, action, id, opts = {}) => {
     } else if (!toggleBtn) {
       enable(element);
     }
-  }, duration + delay);
+  }, duration + delay - 10);
 };
 
 const getAction = (element, animType) => {
