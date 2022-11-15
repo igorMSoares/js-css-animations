@@ -19,7 +19,8 @@ const selectElement = (selector, quantity = {}) => {
 };
 
 const getTargets = element => {
-  return selectElement(element, { all: true });
+  const elements = selectElement(element, { all: true });
+  return elements instanceof NodeList ? elements : [elements];
 };
 
 const toggle = (selector, animA, animB, opts = {}) => {

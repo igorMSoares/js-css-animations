@@ -70,14 +70,79 @@
         </section>
 
         <section>
-          <h3>bla bla bla</h3>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi
-            optio impedit voluptate inventore sint corporis quia fugiat est, at
-            ex dicta quam. Quo dolorem, nemo odit facere, unde esse sunt vel
-            quasi, laborum nihil tempore reprehenderit ducimus laudantium
-            eligendi nostrum ipsum tenetur illum? Ut, dolor.
-          </p>
+          <h2>Collapse / Expand</h2>
+          <button class="collapse-expand--btn">Click to toggle</button>
+          <div class="box">
+            <p class="collapse-expand--p">
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+              Excepturi optio impedit voluptate inventore sint corporis quia
+              fugiat est, at ex dicta quam. Quo dolorem, nemo odit facere, unde
+              esse sunt vel quasi, laborum nihil tempore reprehenderit ducimus
+              laudantium eligendi nostrum ipsum tenetur illum? Ut, dolor.
+            </p>
+          </div>
+          <button class="collapse-expand--btn__mult">
+            Click to toggle both columns
+          </button>
+          <div class="collapse-expand--wrapper row box">
+            <div class="col">
+              <p class="collapse-expand--p__mult">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta
+                repudiandae amet doloremque ab deserunt quis officia culpa
+                debitis quos est corporis ipsum accusamus illum et cupiditate,
+                alias nulla incidunt? Autem ratione reprehenderit, officiis
+                repellat adipisci delectus voluptate doloremque dicta earum
+                laudantium eligendi, cumque quaerat, incidunt veritatis! Earum
+                velit cum tenetur labore excepturi, error dicta libero. Rem odit
+                perspiciatis magni quia!
+              </p>
+            </div>
+            <div class="col">
+              <p class="collapse-expand--p__mult">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta
+                repudiandae amet doloremque ab deserunt quis officia culpa
+                debitis quos est corporis ipsum accusamus illum et cupiditate,
+                alias nulla incidunt? Autem ratione reprehenderit, officiis
+                repellat adipisci delectus voluptate doloremque dicta earum
+                laudantium eligendi, cumque quaerat, incidunt veritatis! Earum
+                velit cum tenetur labore excepturi, error dicta libero. Rem odit
+                perspiciatis magni quia!
+              </p>
+            </div>
+          </div>
+        </section>
+        <section>
+          <h2>Fade In / Fade Out</h2>
+          <button class="fade--btn" target-selector=".fade--p">Fade</button>
+          <div>
+            <p class="fade--p">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse ut
+              reprehenderit doloremque. Dolorum placeat tempore similique, rerum
+              cum voluptates, delectus consectetur deleniti excepturi veritatis
+              quisquam fugit numquam magni debitis ullam error sapiente quam
+              dignissimos, iste adipisci dolores in! Sequi repudiandae quasi
+              sed, veniam cumque inventore hic maiores, maxime rem in delectus,
+              molestias consequatur quisquam est. At inventore quas cupiditate
+              vitae!
+            </p>
+          </div>
+        </section>
+        <section>
+          <h2>Rotations</h2>
+          <label for="rotation-angle"
+            >Rotation angle in degrees
+            <input
+              type="text"
+              value="0"
+              pattern="-?(\d+\.\d+|\d+)"
+              name="rotation-angle"
+              id="rotation-angle"
+          /></label>
+          <button class="rotation--btn">Rotate</button>
+          <p class="rotation--input-error"></p>
+          <div class="rotation-area">
+            <p class="rotation-area--text">↑</p>
+          </div>
         </section>
       </div>
     </main>
