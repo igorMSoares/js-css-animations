@@ -75,7 +75,7 @@ const initParentTransitions = args => {
 const handleVisibilityToggle = (element, args) => {
   setParentMaxMeasures(args);
   if (args.action === 'show') {
-    args.hide
+    args.hidden
       ? element.classList.remove(CLASS_NAMES.hidden)
       : element.classList.remove(CLASS_NAMES.collapsed);
   }
@@ -84,7 +84,7 @@ const handleVisibilityToggle = (element, args) => {
 const endVisibilityToggle = (element, opts) => {
   const { widthTransition: wTransit, heightTransition: hTransit } = opts;
   if (opts.action === 'hide') {
-    opts.hide
+    opts.hidden
       ? element.classList.add(CLASS_NAMES.hidden)
       : element.classList.add(CLASS_NAMES.collapsed);
   }

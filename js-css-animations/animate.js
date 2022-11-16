@@ -123,8 +123,8 @@ const animate = (element, action, id, opts = {}) => {
     triggerBtn,
     start,
     complete,
-    hide,
-    dimensionsTransition = hide ? false : true,
+    hidden,
+    dimensionsTransition = hidden ? false : true,
     overflowHidden = true,
   } = opts;
   const { duration, delay } = getTotalAnimTime(element);
@@ -179,7 +179,7 @@ const animate = (element, action, id, opts = {}) => {
         parentMeasures,
         action,
         dimension,
-        hide,
+        hidden,
       });
     }, 0);
   } else if (isMotion(animType)) {
@@ -193,7 +193,7 @@ const animate = (element, action, id, opts = {}) => {
     if (isVisibility(animType)) {
       endVisibilityToggle(element, {
         action,
-        hide,
+        hidden,
         widthTransition,
         heightTransition,
       });
