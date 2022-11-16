@@ -1,7 +1,7 @@
 import jsCssAnimations from './js-css-animations/js-css-animations.js';
 
 jsCssAnimations.init.slideUp({
-  toggleBtn: '.btn--slide-up',
+  triggerBtn: '.btn--slide-up',
   staggerDelay: 500,
   duration: '1s',
   start: () => {
@@ -10,14 +10,14 @@ jsCssAnimations.init.slideUp({
 });
 
 jsCssAnimations.init.slideRight({
-  toggleBtn: '.btn--slide-right',
+  triggerBtn: '.btn--slide-right',
   start: () => {
     jsCssAnimations.toggle('#anchor2 img', 'rotateRight', 'rotateUp');
   },
 });
 
 jsCssAnimations.init.slideDown({
-  toggleBtn: '.btn--slide-down',
+  triggerBtn: '.btn--slide-down',
   delay: '1.5s',
   start: () => {
     jsCssAnimations.toggle('img', 'rotateDownCCW', 'rotateUp', {
@@ -39,7 +39,7 @@ jsCssAnimations.init.slideDown({
 });
 
 jsCssAnimations.init.slideLeft({
-  toggleBtn: '.btn--slide-left',
+  triggerBtn: '.btn--slide-left',
   staggerDelay: 500,
   start: () => {
     jsCssAnimations.toggle('img', 'slideLeft', 'slideLeft', {
@@ -49,19 +49,19 @@ jsCssAnimations.init.slideLeft({
 });
 
 jsCssAnimations.init.collapse({
-  toggleBtn: '.collapse-expand--btn',
+  triggerBtn: '.collapse-expand--btn',
   targetSelector: '.collapse-expand--p',
 });
 
 jsCssAnimations.init.collapse({
-  toggleBtn: '.collapse-expand--btn__mult',
+  triggerBtn: '.collapse-expand--btn__mult',
   targetSelector: '.collapse-expand--p__mult',
   staggerDelay: 400,
   hide: true,
 });
 
 jsCssAnimations.init.fade({
-  toggleBtn: '.fade--btn',
+  triggerBtn: '.fade--btn',
   blur: '2px',
   hide: true,
   heightTransition: false,

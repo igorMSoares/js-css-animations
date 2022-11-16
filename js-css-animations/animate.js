@@ -21,9 +21,9 @@ const CALLBACK_TRACKER = Object.freeze({
   executing: {},
 });
 
-const initCallBackTracker = toggleBtn => {
-  if (!CALLBACK_TRACKER.executing[toggleBtn]) {
-    CALLBACK_TRACKER.executing[toggleBtn] = {};
+const initCallBackTracker = triggerBtn => {
+  if (!CALLBACK_TRACKER.executing[triggerBtn]) {
+    CALLBACK_TRACKER.executing[triggerBtn] = {};
   }
 };
 
@@ -54,16 +54,16 @@ const updateCssProperties = (element, opts) => {
 };
 
 const getTargetSelector = eventTarget => {
-  let toggleBtn = eventTarget;
-  while (toggleBtn && !toggleBtn.getAttribute('target-selector')) {
+  let triggerBtn = eventTarget;
+  while (triggerBtn && !triggerBtn.getAttribute('target-selector')) {
     /** bubbles up untill the attribute is found */
-    toggleBtn = toggleBtn.parentElement;
+    triggerBtn = triggerBtn.parentElement;
   }
 
-  if (!toggleBtn)
+  if (!triggerBtn)
     throw new ReferenceError('target-selector attribute not found');
 
-  return toggleBtn.getAttribute('target-selector');
+  return triggerBtn.getAttribute('target-selector');
 };
 
 const DURATION_REGEX = Object.freeze(new RegExp(/(\d?\.\d+|\d+)(ms|s)?/));
@@ -120,7 +120,7 @@ const animate = (element, action, id, opts = {}) => {
   disable(element);
   const {
     animType,
-    toggleBtn,
+    triggerBtn,
     start,
     complete,
     hide,
@@ -136,9 +136,9 @@ const animate = (element, action, id, opts = {}) => {
   let parentMeasures, dimension, currentTransition;
   const { widthTransition = true, heightTransition = true } = opts;
 
-  if (toggleBtn) {
-    if (!targetsStack[toggleBtn]) targetsStack[toggleBtn] = [];
-    targetsStack[toggleBtn].push(element);
+  if (triggerBtn) {
+    if (!targetsStack[triggerBtn]) targetsStack[triggerBtn] = [];
+    targetsStack[triggerBtn].push(element);
   }
 
   if (isVisibility(animType)) {
@@ -155,11 +155,11 @@ const animate = (element, action, id, opts = {}) => {
   }
 
   if (typeof start === 'function') {
-    if (toggleBtn && !CALLBACK_TRACKER.executing[toggleBtn]?.start) {
-      initCallBackTracker(toggleBtn);
-      CALLBACK_TRACKER.executing[toggleBtn].start = true;
+    if (triggerBtn && !CALLBACK_TRACKER.executing[triggerBtn]?.start) {
+      initCallBackTracker(triggerBtn);
+      CALLBACK_TRACKER.executing[triggerBtn].start = true;
       start();
-    } else if (!toggleBtn) {
+    } else if (!triggerBtn) {
       start();
     }
   }
@@ -200,24 +200,24 @@ const animate = (element, action, id, opts = {}) => {
     }
 
     if (typeof complete === 'function') {
-      if (toggleBtn && !CALLBACK_TRACKER.executing[toggleBtn]?.complete) {
-        initCallBackTracker(toggleBtn);
-        CALLBACK_TRACKER.executing[toggleBtn].complete = true;
+      if (triggerBtn && !CALLBACK_TRACKER.executing[triggerBtn]?.complete) {
+        initCallBackTracker(triggerBtn);
+        CALLBACK_TRACKER.executing[triggerBtn].complete = true;
         complete();
-      } else if (!toggleBtn) {
+      } else if (!triggerBtn) {
         complete();
       }
     }
 
-    if (toggleBtn && opts.queryIndex === opts.totalTargets - 1) {
+    if (triggerBtn && opts.queryIndex === opts.totalTargets - 1) {
       opts.staggerDelay
-        ? delete CALLBACK_TRACKER.executing[toggleBtn]
+        ? delete CALLBACK_TRACKER.executing[triggerBtn]
         : setTimeout(() => {
-            delete CALLBACK_TRACKER.executing[toggleBtn];
+            delete CALLBACK_TRACKER.executing[triggerBtn];
           }, delay);
-      targetsStack[toggleBtn].forEach(el => enable(el));
-      targetsStack[toggleBtn] = [];
-    } else if (!toggleBtn) {
+      targetsStack[triggerBtn].forEach(el => enable(el));
+      targetsStack[triggerBtn] = [];
+    } else if (!triggerBtn) {
       enable(element);
     }
   }, duration + delay);
@@ -280,12 +280,12 @@ const eventHandler = (el, animationId, opts) => {
 
 const init = (animationId, opts = {}) => {
   const {
-    toggleBtn = `.${CLASS_NAMES.toggleBtn}`,
+    triggerBtn = `.${CLASS_NAMES.triggerBtn}`,
     targetSelector,
     cursor,
   } = opts;
 
-  document.querySelectorAll(toggleBtn).forEach(btn => {
+  document.querySelectorAll(triggerBtn).forEach(btn => {
     btn.classList.add(CLASS_NAMES.btnCursor);
     if (typeof cursor === 'string') {
       setCssProperty(btn, 'cursor', cursor);

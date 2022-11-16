@@ -36,7 +36,7 @@ export const CLASS_NAMES = Object.freeze({
   dimensionsTransitions: 'js-anim--dimensions-transitions',
   heightTransition: 'js-anim--height-transition',
   widthTransition: 'js-anim--width-transition',
-  toggleBtn: 'js-anim--toggle-btn',
+  triggerBtn: 'js-anim--trigger-btn',
   btnCursor: 'js-anim--btn-cursor',
   collapsed: 'js-anim--collapsed',
   hidden: 'js-anim--hidden',
