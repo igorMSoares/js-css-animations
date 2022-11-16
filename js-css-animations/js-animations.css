@@ -142,7 +142,7 @@
 
 @keyframes js-anim--rotation-loop {
   to {
-    transform: rotate(var(--js-css-animation--rotation-deg));
+    transform: rotate(var(--js-css-animation--rotation-angle));
   }
 }
 
@@ -203,7 +203,7 @@
 .js-anim--rotate-left,
 .js-anim--rotate-left__ccw,
 .js-anim--rotated {
-  transform: rotate(var(--js-css-animation--rotation-deg));
+  transform: rotate(var(--js-css-animation--rotation-angle));
   transition-property: transform;
   transition-duration: var(--js-css-animation--duration);
   transition-timing-function: var(--js-css-animation--timing-function);
@@ -211,11 +211,11 @@
 }
 
 .js-anim--rotate-up {
-  --js-css-animation--rotation-deg: 0deg;
+  --js-css-animation--rotation-angle: 0deg;
 }
 
 .js-anim--rotate-up__ccw {
-  --js-css-animation--rotation-deg: -360deg;
+  --js-css-animation--rotation-angle: -360deg;
 }
 
 .js-anim--rotate-up,
@@ -234,27 +234,27 @@
 
 .js-anim--rotate-right,
 .js-anim--rotate-left__ccw {
-  --js-css-animation--rotation-deg: calc(
+  --js-css-animation--rotation-angle: calc(
     90deg * var(--js-css-animation--rotation-sign)
   );
 }
 
 .js-anim--rotate-down,
 .js-anim--rotate-down__ccw {
-  --js-css-animation--rotation-deg: calc(
+  --js-css-animation--rotation-angle: calc(
     180deg * var(--js-css-animation--rotation-sign)
   );
 }
 
 .js-anim--rotate-left,
 .js-anim--rotate-right__ccw {
-  --js-css-animation--rotation-deg: calc(
+  --js-css-animation--rotation-angle: calc(
     270deg * var(--js-css-animation--rotation-sign)
   );
 }
 
 .js-anim--rotation-loop {
-  --js-css-animation--rotation-deg: 0deg;
+  --js-css-animation--rotation-angle: 0deg;
   --js-css-animation--iteration: infinite;
   animation-name: js-anim--rotation-loop;
 }

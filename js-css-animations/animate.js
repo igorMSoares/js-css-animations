@@ -247,7 +247,7 @@ const preset = (el, args) => {
       animationId
     )
   )
-    opts.rotationDeg = undefined;
+    opts.angle = undefined;
 
   updateCssProperties(el, opts);
 

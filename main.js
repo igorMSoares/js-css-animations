@@ -66,9 +66,6 @@ jsCssAnimations.init.fade({
   hide: true,
   heightTransition: false,
   widthTransition: false,
-  // start: () => {
-  //   window.scroll({ top: document.documentElement.scrollHeight });
-  // },
 });
 
 document.querySelector('.rotation--btn').addEventListener('click', () => {
@@ -98,7 +95,7 @@ document.querySelector('.rotation--btn').addEventListener('click', () => {
   }
 
   jsCssAnimations.rotate('.rotation-area', {
-    rotationDeg: `${angle}deg`,
+    angle: `${angle}deg`,
     duration: '2s',
     timingFunction: 'ease-in-out',
   });

@@ -31,30 +31,10 @@ const toggle = (selector, animA, animB, opts = {}) => {
     'staggerDelay',
     'timingFunction',
     'blur',
-    'rotationDeg',
+    'angle',
     'iteration',
     'direction',
   ].forEach(prop => (args[prop] = opts[prop]));
-  // const {
-  //   duration,
-  //   delay,
-  //   staggerDelay,
-  //   timingFunction,
-  //   blur,
-  //   rotationDeg,
-  //   iteration,
-  //   direction,
-  // } = opts;
-  // const args = {
-  //   duration,
-  //   delay,
-  //   staggerDelay,
-  //   timingFunction,
-  //   blur,
-  //   rotationDeg,
-  //   iteration,
-  //   direction,
-  // };
 
   const element = selectElement(selector);
   const currentAnim = element.getAttribute('js-css-animation--current');

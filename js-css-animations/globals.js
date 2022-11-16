@@ -27,7 +27,7 @@ export const PROPERTY_NAMES = Object.freeze({
   fillMode: '--js-css-animation--fill-mode',
   cursor: '--js-css-animation--cursor',
   blur: '--js-css-animation--blur',
-  rotationDeg: '--js-css-animation--rotation-deg',
+  angle: '--js-css-animation--rotation-angle',
   iteration: '--js-css-animation--iteration',
   direction: '--js-css-animation--direction',
 });
