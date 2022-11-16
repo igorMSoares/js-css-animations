@@ -45,11 +45,11 @@ const getDimension = (wTransit, hTransit) => {
 };
 
 const setOverflowHidden = el => {
-  el.style.setProperty('overflow', 'hidden');
+  el.classList.add(CLASS_NAMES.overflowHidden);
 };
 
 const removeOverflowHidden = el => {
-  el.style.removeProperty('overflow');
+  el.classList.remove(CLASS_NAMES.overflowHidden);
 };
 
 const initParentTransitions = args => {

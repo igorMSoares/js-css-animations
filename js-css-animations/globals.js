@@ -33,6 +33,7 @@ export const PROPERTY_NAMES = Object.freeze({
 });
 
 export const CLASS_NAMES = Object.freeze({
+  overflowHidden: 'js-anim--overflow-hidden',
   dimensionsTransitions: 'js-anim--dimensions-transitions',
   heightTransition: 'js-anim--height-transition',
   widthTransition: 'js-anim--width-transition',

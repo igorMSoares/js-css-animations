@@ -319,3 +319,13 @@
   --js-css-animation--cursor: pointer;
   cursor: var(--js-css-animation--cursor);
 }
+
+.js-anim--overflow-hidden {
+  overflow: hidden;
+}
+
+@supports (overflow: clip) {
+  .js-anim--overflow-hidden {
+    overflow: clip;
+  }
+}
