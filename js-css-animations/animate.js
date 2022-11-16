@@ -124,6 +124,7 @@ const animate = (element, action, id, opts = {}) => {
     start,
     complete,
     hide,
+    dimensionsTransition = hide ? false : true,
     overflowHidden = true,
   } = opts;
   const { duration, delay } = getTotalAnimTime(element);
@@ -134,7 +135,10 @@ const animate = (element, action, id, opts = {}) => {
     moveBack: 'move',
   });
   let parentMeasures, dimension, currentTransition;
-  const { widthTransition = true, heightTransition = true } = opts;
+  const {
+    widthTransition = dimensionsTransition,
+    heightTransition = dimensionsTransition,
+  } = opts;
 
   if (triggerBtn) {
     if (!targetsStack[triggerBtn]) targetsStack[triggerBtn] = [];

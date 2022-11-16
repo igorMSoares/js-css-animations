@@ -64,8 +64,6 @@ jsCssAnimations.init.fade({
   triggerBtn: '.fade--btn',
   blur: '2px',
   hide: true,
-  heightTransition: false,
-  widthTransition: false,
 });
 
 document.querySelector('.rotation--btn').addEventListener('click', () => {

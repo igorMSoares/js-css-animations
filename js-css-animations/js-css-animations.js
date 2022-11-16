@@ -72,16 +72,15 @@ const animationFunctions = (function () {
           hide,
           overflowHidden,
           staggerDelay,
-          widthTransition = true,
-          heightTransition = true,
+          widthTransition,
+          heightTransition,
+          dimensionsTransition,
         } = opts;
 
         getTargets(target).forEach((element, i) => {
           opts.animType = animType;
           opts.queryIndex = i;
           preset(element, {
-            widthTransition,
-            heightTransition,
             opts,
             animationId: id,
           });
@@ -93,6 +92,7 @@ const animationFunctions = (function () {
               complete,
               widthTransition,
               heightTransition,
+              dimensionsTransition,
               hide,
               overflowHidden,
               staggerDelay,
