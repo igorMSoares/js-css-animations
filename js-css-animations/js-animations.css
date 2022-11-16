@@ -140,12 +140,20 @@
   }
 }
 
+@keyframes js-anim--rotation-loop {
+  to {
+    transform: rotate(var(--js-css-animation--rotation-deg));
+  }
+}
+
 :root {
   --js-css-animation--duration: 800ms;
   --js-css-animation--timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955);
   --js-css-animation--delay: 0ms;
   --js-css-animation--fill-mode: both;
   --js-css-animation--blur: 0.5px;
+  --js-css-animation--direction: normal;
+  --js-css-animation--iteration: 1;
 }
 
 .js-anim--dimensions-transitions {
@@ -176,11 +184,14 @@
 .js-anim--slide-right,
 .js-anim--slide-right__back,
 .js-anim--fade-in,
-.js-anim--fade-out {
+.js-anim--fade-out,
+.js-anim--rotation-loop {
   animation-duration: var(--js-css-animation--duration);
   animation-timing-function: var(--js-css-animation--timing-function);
   animation-delay: var(--js-css-animation--delay);
   animation-fill-mode: var(--js-css-animation--fill-mode);
+  animation-direction: var(--js-css-animation--direction);
+  animation-iteration-count: var(--js-css-animation--iteration);
 }
 
 .js-anim--rotate-up,
@@ -240,6 +251,12 @@
   --js-css-animation--rotation-deg: calc(
     270deg * var(--js-css-animation--rotation-sign)
   );
+}
+
+.js-anim--rotation-loop {
+  --js-css-animation--rotation-deg: 0deg;
+  --js-css-animation--iteration: infinite;
+  animation-name: js-anim--rotation-loop;
 }
 
 .js-anim--fade-out {

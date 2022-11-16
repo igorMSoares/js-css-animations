@@ -103,3 +103,9 @@ document.querySelector('.rotation--btn').addEventListener('click', () => {
     timingFunction: 'ease-in-out',
   });
 });
+
+jsCssAnimations.show.fade('#anchor img', {
+  iteration: 'infinite',
+  duration: '1s',
+  direction: 'alternate',
+});

@@ -17,6 +17,7 @@ export const MOTION_ANIMS_ID = Object.freeze({
   rotateLeft: 6,
   rotateLeftCCW: 7,
   rotate: 8,
+  rotationLoop: 9,
 });
 
 export const PROPERTY_NAMES = Object.freeze({
@@ -27,6 +28,8 @@ export const PROPERTY_NAMES = Object.freeze({
   cursor: '--js-css-animation--cursor',
   blur: '--js-css-animation--blur',
   rotationDeg: '--js-css-animation--rotation-deg',
+  iteration: '--js-css-animation--iteration',
+  direction: '--js-css-animation--direction',
 });
 
 export const CLASS_NAMES = Object.freeze({
@@ -64,8 +67,10 @@ export const CLASS_NAMES = Object.freeze({
     'js-anim--rotate-left',
     'js-anim--rotate-left__ccw',
     'js-anim--rotated',
+    'js-anim--rotation-loop',
   ],
   moveBack: [
+    'js-anim--rotate-up',
     'js-anim--rotate-up',
     'js-anim--rotate-up',
     'js-anim--rotate-up',

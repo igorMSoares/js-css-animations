@@ -108,6 +108,14 @@ const isEnabled = element =>
 
 const targetsStack = {};
 
+const hasIterationProp = element => {
+  return (
+    element.style
+      .getPropertyValue(PROPERTY_NAMES.iteration)
+      .match(/^(infinite|\d+)$/) !== null
+  );
+};
+
 const animate = (element, action, id, opts = {}) => {
   disable(element);
   const {
@@ -185,7 +193,8 @@ const animate = (element, action, id, opts = {}) => {
         widthTransition,
         heightTransition,
       });
-      element.classList.remove(CLASS_NAMES[action][id]);
+      if (!hasIterationProp(element))
+        element.classList.remove(CLASS_NAMES[action][id]);
     } else if (isMotion(animType) && action === 'moveBack') {
       element.classList.remove(CLASS_NAMES.moved);
     }
@@ -232,7 +241,12 @@ const getAction = (element, animType) => {
 const preset = (el, args) => {
   const { opts, animationId } = args;
   const { animType } = opts;
-  if (!isMotion(animType) || animationId !== MOTION_ANIMS_ID.rotate)
+  if (
+    !isMotion(animType) ||
+    ![MOTION_ANIMS_ID.rotate, MOTION_ANIMS_ID.rotationLoop].includes(
+      animationId
+    )
+  )
     opts.rotationDeg = undefined;
 
   updateCssProperties(el, opts);
