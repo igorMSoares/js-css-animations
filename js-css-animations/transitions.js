@@ -51,9 +51,10 @@ const getAllTransitions = cssProperties => {
 };
 
 export const getCurrentTransition = element => {
+  const defaultComputedTransition = 'all 0s ease 0s';
   let currTransition = getComputedStyle(element).transition;
   if (
-    currTransition !== getDefaultComputedStyle(element).transition &&
+    currTransition !== defaultComputedTransition &&
     !element.style.getPropertyValue('transition')
   ) {
     currTransition = getAllTransitions(getComputedStyle(element));
