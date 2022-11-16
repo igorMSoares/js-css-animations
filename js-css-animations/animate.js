@@ -211,7 +211,7 @@ const animate = (element, action, id, opts = {}) => {
     } else if (!toggleBtn) {
       enable(element);
     }
-  }, duration + delay - 10);
+  }, duration + delay);
 };
 
 const getAction = (element, animType) => {

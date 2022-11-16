@@ -20,6 +20,9 @@ jsCssAnimations.init.slideDown({
   toggleBtn: '.btn--slide-down',
   delay: '1.5s',
   start: () => {
+    jsCssAnimations.toggle('img', 'rotateDownCCW', 'rotateUp', {
+      delay: '1.5s',
+    });
     document.querySelector('.delay-counter').innerText = '1.5 seconds Delay';
     jsCssAnimations.show.collapse('.delay-counter', {
       hide: true,
@@ -32,7 +35,6 @@ jsCssAnimations.init.slideDown({
         document.querySelector('.delay-counter').innerText = '';
       },
     });
-    jsCssAnimations.toggle('img', 'rotateDownCCW', 'rotateUp');
   },
 });
 
@@ -40,7 +42,7 @@ jsCssAnimations.init.slideLeft({
   toggleBtn: '.btn--slide-left',
   staggerDelay: 500,
   start: () => {
-    jsCssAnimations.toggle('img', 'rotateLeftCCW', 'rotateUp', {
+    jsCssAnimations.toggle('img', 'slideLeft', 'slideLeft', {
       staggerDelay: 400,
     });
   },
