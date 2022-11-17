@@ -5,17 +5,15 @@ import {
   CUSTOM_CSS_PROPERTIES,
 } from './globals.js';
 
-import {
-  initParentTransitions,
-  handleVisibilityToggle,
-  endVisibilityToggle,
-} from './dimensions.js';
+import { initParentResize, endParentResize } from './resize-parent.js';
 
 import {
   removeInlineTransition,
   appendTransition,
   getCurrentTransition,
 } from './transitions.js';
+
+import { setParentMaxMeasures } from './measurements.js';
 
 const CALLBACK_TRACKER = Object.freeze({
   executing: {},
@@ -116,6 +114,25 @@ const hasIterationProp = element => {
   );
 };
 
+const handleVisibilityToggle = (element, args) => {
+  if (args.dimension) setParentMaxMeasures(args);
+  if (args.action === 'show') {
+    args.keepSpace
+      ? element.classList.remove(CLASS_NAMES.hidden)
+      : element.classList.remove(CLASS_NAMES.collapsed);
+  }
+};
+
+const endVisibilityToggle = (element, opts) => {
+  if (opts.action === 'hide') {
+    opts.keepSpace
+      ? element.classList.add(CLASS_NAMES.hidden)
+      : element.classList.add(CLASS_NAMES.collapsed);
+  }
+  if (opts.heightTransition || opts.widthTransition)
+    endParentResize(element, opts);
+};
+
 const animate = (element, action, id, opts = {}) => {
   disable(element);
   const {
@@ -145,8 +162,8 @@ const animate = (element, action, id, opts = {}) => {
     targetsStack[triggerBtn].push(element);
   }
 
-  if (isVisibility(animType)) {
-    ({ parentMeasures, dimension } = initParentTransitions({
+  if (isVisibility(animType) && (widthTransition || heightTransition)) {
+    ({ parentMeasures, dimension } = initParentResize({
       element,
       action,
       widthTransition,

@@ -52,8 +52,9 @@ const removeOverflowHidden = el => {
   el.classList.remove(CLASS_NAMES.overflowHidden);
 };
 
-const initParentTransitions = args => {
+const initParentResize = args => {
   const { element, action, widthTransition, heightTransition } = args;
+
   const parentMeasures = getParentMeasures(element);
   const dimension = getDimension(widthTransition, heightTransition);
   setDimensionsTransitions(
@@ -72,22 +73,8 @@ const initParentTransitions = args => {
   return { parentMeasures, dimension };
 };
 
-const handleVisibilityToggle = (element, args) => {
-  setParentMaxMeasures(args);
-  if (args.action === 'show') {
-    args.keepSpace
-      ? element.classList.remove(CLASS_NAMES.hidden)
-      : element.classList.remove(CLASS_NAMES.collapsed);
-  }
-};
-
-const endVisibilityToggle = (element, opts) => {
+const endParentResize = (element, opts) => {
   const { widthTransition: wTransit, heightTransition: hTransit } = opts;
-  if (opts.action === 'hide') {
-    opts.keepSpace
-      ? element.classList.add(CLASS_NAMES.hidden)
-      : element.classList.add(CLASS_NAMES.collapsed);
-  }
   removeDimensionMax(element.parentElement, 'height');
   removeDimensionMax(element.parentElement, 'width');
   removeCustomCssProperties(element.parentElement);
@@ -95,4 +82,4 @@ const endVisibilityToggle = (element, opts) => {
   removeOverflowHidden(element.parentElement);
 };
 
-export { initParentTransitions, handleVisibilityToggle, endVisibilityToggle };
+export { initParentResize, endParentResize };

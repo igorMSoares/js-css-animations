@@ -104,10 +104,10 @@ const getTransitionClassName = (wTransit, hTransit) => {
 };
 
 export const setDimensionsTransitions = (element, wTransit, hTransit) => {
-  const currTransition = getCurrentTransition(element);
   const className = getTransitionClassName(wTransit, hTransit);
 
   if (className) {
+    const currTransition = getCurrentTransition(element);
     element.classList.add(className);
     if (currTransition) appendTransition(element, className, currTransition);
   }
