@@ -41,7 +41,6 @@ const getRootCssProperty = property => {
  */
 const setParentCssProperties = element => {
   let currentProp;
-  console.log(element);
   CUSTOM_CSS_PROPERTIES.forEach(prop => {
     currentProp = getComputedStyle(element).getPropertyValue(
       PROPERTY_NAMES[prop]
