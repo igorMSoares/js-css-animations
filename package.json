@@ -1,0 +1,45 @@
+{
+  "devDependencies": {
+    "jsdoc": "~4.0.0"
+  },
+  "name": "css-js-effects",
+  "description": "Work in progress....",
+  "version": "1.0.0",
+  "main": "main.js",
+  "dependencies": {
+    "catharsis": "^0.9.0",
+    "argparse": "^2.0.1",
+    "bluebird": "^3.7.2",
+    "escape-string-regexp": "^2.0.0",
+    "graceful-fs": "^4.2.10",
+    "entities": "^2.1.0",
+    "klaw": "^3.0.0",
+    "linkify-it": "^3.0.3",
+    "js2xmlparser": "^4.0.2",
+    "lodash": "^4.17.21",
+    "markdown-it": "^12.3.2",
+    "mkdirp": "^1.0.4",
+    "markdown-it-anchor": "^8.6.5",
+    "marked": "^4.2.2",
+    "mdurl": "^1.0.1",
+    "requizzle": "^0.2.3",
+    "strip-json-comments": "^3.1.1",
+    "xmlcreate": "^2.0.4",
+    "uc.micro": "^1.0.6",
+    "underscore": "^1.13.6"
+  },
+  "scripts": {
+    "doc": "jsdoc -c jsdoc.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IguhSoares/js-css-animations.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IguhSoares/js-css-animations/issues"
+  },
+  "homepage": "https://github.com/IguhSoares/js-css-animations#readme"
+}
