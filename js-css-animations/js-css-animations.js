@@ -34,6 +34,11 @@ const toggle = (selector, animA, animB, opts = {}) => {
     'angle',
     'iteration',
     'direction',
+    'keepSpace',
+    'overflowHidden',
+    'dimensionsTransition',
+    'widthTransition',
+    'heightTransition',
   ].forEach(prop => (args[prop] = opts[prop]));
 
   const element = selectElement(selector);

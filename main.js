@@ -44,6 +44,8 @@ jsCssAnimations.init.slideLeft({
   start: () => {
     jsCssAnimations.toggle('img', 'slideLeft', 'slideLeft', {
       staggerDelay: 400,
+      overflowHidden: false,
+      keepSpace: true,
     });
   },
 });
