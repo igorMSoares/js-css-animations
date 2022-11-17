@@ -196,7 +196,7 @@ const removeDimensionMax = (element, dimension) => {
  *
  * If 'dimension' is undefined or different from 'all', 'width' or 'height',
  * no property will be set.
- * @param {{parentState: string, element: HTMLElement, parentMeasures: DimensionsMeasurements, action: string, dimension: string}} args - Object containing all the information needed
+ * @param {{parentState: string, element: HTMLElement, parentMeasures: DimensionsMeasurements, action: string, dimension: string|undefined}} args - Object containing all the information needed
  */
 const setParentMaxMeasures = args => {
   const {

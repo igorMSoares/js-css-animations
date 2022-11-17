@@ -65,7 +65,21 @@ export const PROPERTY_NAMES = Object.freeze({
 /**
  * CSS Class Names
  *
- * @type {Object.<string, string|string[]>}
+ * @type { {
+ * overflowHidden: string,
+ * dimensionsTransitions: string,
+ * heightTransition: string,
+ * widthTransition: string,
+ * triggerBtn: string,
+ * btnCursor: string,
+ * collapsed: string,
+ * hidden: string,
+ * moved: string,
+ * hide: string[],
+ * show: string[],
+ * move: string[],
+ * moveBack: string[]
+ * } }
  */
 export const CLASS_NAMES = Object.freeze({
   overflowHidden: 'js-anim--overflow-hidden',

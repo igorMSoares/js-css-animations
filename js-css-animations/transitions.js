@@ -139,7 +139,6 @@ const getTransitionClassName = (wTransit, hTransit) => {
   } else if (hTransit) {
     className = CLASS_NAMES.heightTransition;
   }
-  // @ts-ignore
   return className;
 };
 
