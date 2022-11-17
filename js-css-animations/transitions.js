@@ -69,10 +69,10 @@ export const getClassTransition = className => {
     ...[...document.styleSheets].find(ss => ss.href.match(/js-animations\.css/))
       .cssRules,
   ].find(r => r.cssText.match(`\\.${className}`));
-  if (css.style.transition === '') {
-    return getAllTransitions(css.style);
-  }
-  return css.style.transition;
+
+  return css.style.transition === ''
+    ? getAllTransitions(css.style)
+    : css.style.transition;
 };
 
 export const appendTransition = (element, className, currTransition) => {
