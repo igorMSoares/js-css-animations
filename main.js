@@ -25,12 +25,12 @@ jsCssAnimations.init.slideDown({
     });
     document.querySelector('.delay-counter').innerText = '1.5 seconds Delay';
     jsCssAnimations.show.collapse('.delay-counter', {
-      hidden: true,
+      keepSpace: true,
     });
   },
   complete: () => {
     jsCssAnimations.hide.fade('.delay-counter', {
-      hidden: true,
+      keepSpace: true,
       complete: () => {
         document.querySelector('.delay-counter').innerText = '';
       },
@@ -57,13 +57,13 @@ jsCssAnimations.init.collapse({
   triggerBtn: '.collapse-expand--btn__mult',
   targetSelector: '.collapse-expand--p__mult',
   staggerDelay: 400,
-  hidden: true,
+  keepSpace: true,
 });
 
 jsCssAnimations.init.fade({
   triggerBtn: '.fade--btn',
   blur: '2px',
-  hidden: true,
+  keepSpace: true,
 });
 
 document.querySelector('.rotation--btn').addEventListener('click', () => {
@@ -73,13 +73,13 @@ document.querySelector('.rotation--btn').addEventListener('click', () => {
   if (input.validity.patternMismatch) {
     jsCssAnimations.hide.fade(input, {
       duration: 200,
-      hidden: true,
+      keepSpace: true,
       complete: () => {
         msgArea.innerText = 'Type in a number (e.g.: 10, -22.5, 270)';
         setTimeout(() => {
           jsCssAnimations.show.fade('#rotation-angle', {
             duration: 200,
-            hidden: true,
+            keepSpace: true,
             complete: () => {
               input.value = '';
               setTimeout(() => {

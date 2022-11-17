@@ -69,7 +69,7 @@ const animationFunctions = (function () {
         const {
           start,
           complete,
-          hidden,
+          keepSpace,
           overflowHidden,
           staggerDelay,
           widthTransition,
@@ -93,7 +93,7 @@ const animationFunctions = (function () {
               widthTransition,
               heightTransition,
               dimensionsTransition,
-              hidden,
+              keepSpace,
               overflowHidden,
               staggerDelay,
             });
