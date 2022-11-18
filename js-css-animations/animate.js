@@ -17,12 +17,27 @@ import { setParentMaxMeasures } from './measurements.js';
 
 const CALLBACK_TRACKER = Object.freeze({
   executing: {},
+  init: function (btn) {
+    CALLBACK_TRACKER.executing[btn] = {};
+  },
+  remove: function (btn) {
+    delete this.executing[btn];
+  },
 });
 
-const initCallBackTracker = triggerBtn => {
-  if (!CALLBACK_TRACKER.executing[triggerBtn]) {
-    CALLBACK_TRACKER.executing[triggerBtn] = {};
-  }
+const TARGETS_STACK = {
+  add: function (elem, btn) {
+    if (!(btn in this)) this[btn] = [];
+    this[btn].push(elem);
+  },
+  remove: function (btn) {
+    if (!(btn in this)) return;
+    delete this[btn];
+  },
+  get: function (btn) {
+    if (!(btn in this)) return;
+    return this[btn];
+  },
 };
 
 export const removeCustomCssProperties = element => {
@@ -104,8 +119,6 @@ const enable = element => {
 const isEnabled = element =>
   !(element.getAttribute('js-anim--disabled') === 'true');
 
-const targetsStack = {};
-
 const hasIterationProp = element => {
   return (
     element.style
@@ -115,12 +128,14 @@ const hasIterationProp = element => {
 };
 
 const handleVisibilityToggle = (element, args) => {
-  if (args.dimension) setParentMaxMeasures(args);
-  if (args.action === 'show') {
-    args.keepSpace
-      ? element.classList.remove(CLASS_NAMES.hidden)
-      : element.classList.remove(CLASS_NAMES.collapsed);
-  }
+  setTimeout(() => {
+    if (args.dimension) setParentMaxMeasures(args);
+    if (args.action === 'show') {
+      args.keepSpace
+        ? element.classList.remove(CLASS_NAMES.hidden)
+        : element.classList.remove(CLASS_NAMES.collapsed);
+    }
+  }, 0);
 };
 
 const endVisibilityToggle = (element, opts) => {
@@ -133,6 +148,22 @@ const endVisibilityToggle = (element, opts) => {
     endParentResize(element, opts);
 };
 
+const initCallback = (btn, fn, type) => {
+  if (!['start', 'complete'].includes(type))
+    throw new ReferenceError(
+      `Invalid callback type: ${type}. Should be 'start' or 'complete'`
+    );
+  if (btn) {
+    if (!(btn in CALLBACK_TRACKER.executing)) CALLBACK_TRACKER.init(btn);
+    if (!CALLBACK_TRACKER.executing[btn][type]) {
+      CALLBACK_TRACKER.executing[btn][type] = true;
+      fn();
+    }
+  } else {
+    fn();
+  }
+};
+
 const animate = (element, action, id, opts = {}) => {
   disable(element);
   const {
@@ -141,7 +172,9 @@ const animate = (element, action, id, opts = {}) => {
     start,
     complete,
     keepSpace,
-    dimensionsTransition = keepSpace ? false : true,
+    dimensionsTransition = keepSpace || isMotion(animType) ? false : true,
+    widthTransition = dimensionsTransition,
+    heightTransition = dimensionsTransition,
     overflowHidden = true,
   } = opts;
   const { duration, delay } = getTotalAnimTime(element);
@@ -152,95 +185,87 @@ const animate = (element, action, id, opts = {}) => {
     moveBack: 'move',
   });
   let parentMeasures, dimension, currentTransition;
-  const {
-    widthTransition = dimensionsTransition,
-    heightTransition = dimensionsTransition,
-  } = opts;
 
-  if (triggerBtn) {
-    if (!targetsStack[triggerBtn]) targetsStack[triggerBtn] = [];
-    targetsStack[triggerBtn].push(element);
-  }
+  if (triggerBtn) TARGETS_STACK.add(element, triggerBtn);
 
-  if (isVisibility(animType) && (widthTransition || heightTransition)) {
-    ({ parentMeasures, dimension } = initParentResize({
-      element,
-      action,
-      widthTransition,
-      heightTransition,
-      overflowHidden,
-    }));
-  } else if (isMotion(animType)) {
-    currentTransition = getCurrentTransition(element);
-    removeMotionCssClasses(element);
-  }
+  const handleAnimation = {
+    begining: {
+      visibility: () => {
+        if (widthTransition || heightTransition) {
+          ({ parentMeasures, dimension } = initParentResize({
+            element,
+            action,
+            widthTransition,
+            heightTransition,
+            overflowHidden,
+          }));
+        }
+      },
+      motion: () => {
+        currentTransition = getCurrentTransition(element);
+        removeMotionCssClasses(element);
+      },
+    },
+    middle: {
+      visibility: () => {
+        handleVisibilityToggle(element, {
+          parentState: 'final',
+          element,
+          parentMeasures,
+          action,
+          dimension,
+          keepSpace,
+        });
+      },
+      motion: () => {
+        if (currentTransition) {
+          appendTransition(element, CLASS_NAMES[action][id], currentTransition);
+        }
+        if (action === 'move') element.classList.add(CLASS_NAMES.moved);
+      },
+    },
+    end: {
+      visibility: () => {
+        endVisibilityToggle(element, {
+          action,
+          keepSpace,
+          widthTransition,
+          heightTransition,
+        });
+        if (!hasIterationProp(element))
+          element.classList.remove(CLASS_NAMES[action][id]);
+      },
+      motion: () => {
+        if (action === 'moveBack') element.classList.remove(CLASS_NAMES.moved);
+      },
+    },
+    conclude: () => {
+      if (triggerBtn && opts.queryIndex === opts.totalTargets - 1) {
+        opts.staggerDelay
+          ? CALLBACK_TRACKER.remove(triggerBtn)
+          : setTimeout(() => CALLBACK_TRACKER.remove(triggerBtn), delay);
+        TARGETS_STACK.get(triggerBtn).forEach(el => enable(el));
+        TARGETS_STACK.remove(triggerBtn);
+      } else if (!triggerBtn) {
+        enable(element);
+      }
+    },
+  };
 
+  handleAnimation.begining[animType]();
   if (typeof start === 'function') {
-    if (triggerBtn && !CALLBACK_TRACKER.executing[triggerBtn]?.start) {
-      initCallBackTracker(triggerBtn);
-      CALLBACK_TRACKER.executing[triggerBtn].start = true;
-      start();
-    } else if (!triggerBtn) {
-      start();
-    }
+    initCallback(triggerBtn, start, 'start');
   }
-
   element.classList.add(CLASS_NAMES[action][id]);
   element.classList.remove(CLASS_NAMES[OPPOSITE_ACTION[action]][id]);
-
-  if (isVisibility(animType)) {
-    setTimeout(() => {
-      handleVisibilityToggle(element, {
-        parentState: 'final',
-        element,
-        parentMeasures,
-        action,
-        dimension,
-        keepSpace,
-      });
-    }, 0);
-  } else if (isMotion(animType)) {
-    if (currentTransition) {
-      appendTransition(element, CLASS_NAMES[action][id], currentTransition);
-    }
-    if (action === 'move') element.classList.add(CLASS_NAMES.moved);
-  }
+  handleAnimation.middle[animType]();
 
   setTimeout(() => {
-    if (isVisibility(animType)) {
-      endVisibilityToggle(element, {
-        action,
-        keepSpace,
-        widthTransition,
-        heightTransition,
-      });
-      if (!hasIterationProp(element))
-        element.classList.remove(CLASS_NAMES[action][id]);
-    } else if (isMotion(animType) && action === 'moveBack') {
-      element.classList.remove(CLASS_NAMES.moved);
-    }
-
+    handleAnimation.end[animType]();
     if (typeof complete === 'function') {
-      if (triggerBtn && !CALLBACK_TRACKER.executing[triggerBtn]?.complete) {
-        initCallBackTracker(triggerBtn);
-        CALLBACK_TRACKER.executing[triggerBtn].complete = true;
-        complete();
-      } else if (!triggerBtn) {
-        complete();
-      }
+      initCallback(triggerBtn, complete, 'complete');
     }
-
-    if (triggerBtn && opts.queryIndex === opts.totalTargets - 1) {
-      opts.staggerDelay
-        ? delete CALLBACK_TRACKER.executing[triggerBtn]
-        : setTimeout(() => {
-            delete CALLBACK_TRACKER.executing[triggerBtn];
-          }, delay);
-      targetsStack[triggerBtn].forEach(el => enable(el));
-      targetsStack[triggerBtn] = [];
-    } else if (!triggerBtn) {
-      enable(element);
-    }
+    handleAnimation.conclude();
   }, duration + delay);
 };
 
