@@ -23,6 +23,7 @@ jsCssAnimations.init.slideDown({
     jsCssAnimations.toggle('img', 'rotateDownCCW', 'rotateUp', {
       delay: '1.5s',
     });
+    // @ts-ignore
     document.querySelector('.delay-counter').innerText = '1.5 seconds Delay';
     jsCssAnimations.show.collapse('.delay-counter', {
       keepSpace: true,
@@ -32,6 +33,7 @@ jsCssAnimations.init.slideDown({
     jsCssAnimations.hide.fade('.delay-counter', {
       keepSpace: true,
       complete: () => {
+        // @ts-ignore
         document.querySelector('.delay-counter').innerText = '';
       },
     });
@@ -68,23 +70,28 @@ jsCssAnimations.init.fade({
   keepSpace: true,
 });
 
-document.querySelector('.rotation--btn').addEventListener('click', () => {
+document.querySelector('.rotation--btn')?.addEventListener('click', () => {
   const input = document.getElementById('rotation-angle');
   const msgArea = document.querySelector('.rotation--input-error');
+  // @ts-ignore
   const angle = input.value;
+  // @ts-ignore
   if (input.validity.patternMismatch) {
     jsCssAnimations.hide.fade(input, {
       duration: 200,
       keepSpace: true,
       complete: () => {
+        // @ts-ignore
         msgArea.innerText = 'Type in a number (e.g.: 10, -22.5, 270)';
         setTimeout(() => {
           jsCssAnimations.show.fade('#rotation-angle', {
             duration: 200,
             keepSpace: true,
             complete: () => {
+              // @ts-ignore
               input.value = '';
               setTimeout(() => {
+                // @ts-ignore
                 msgArea.innerText = '';
               }, 2500);
             },

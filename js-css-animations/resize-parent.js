@@ -46,7 +46,7 @@ const setParentCssProperties = element => {
       PROPERTY_NAMES[prop]
     );
 
-    if (currentProp !== getRootCssProperty(prop)) {
+    if (currentProp !== getRootCssProperty(prop) && element.parentElement) {
       setCssProperty(element.parentElement, prop, currentProp);
     }
   });
@@ -120,9 +120,9 @@ const initParentResize = args => {
 const endParentResize = (element, opts) => {
   const { widthTransition: wTransit, heightTransition: hTransit } = opts;
   const parentElement = element.parentElement ?? document.documentElement;
-  removeDimensionMax(element.parentElement, 'height');
-  removeDimensionMax(element.parentElement, 'width');
-  removeCustomCssProperties(element.parentElement);
+  removeDimensionMax(parentElement, 'height');
+  removeDimensionMax(parentElement, 'width');
+  removeCustomCssProperties(parentElement);
   removeDimensionsTransitions(parentElement, wTransit, hTransit);
   removeOverflowHidden(parentElement);
 };

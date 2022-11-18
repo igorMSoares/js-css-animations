@@ -15,41 +15,98 @@ import {
 
 import { setParentMaxMeasures } from './measurements.js';
 
+/**
+ * Keeps track of the callbacks being executed, preventing the callbacks to be executed
+ * multiple times if multiple elements are being animated by a single trigger.
+ *
+ * When a button triggers an animation, no matter how many elements are being animated,
+ * the start() and complete() callbacks should each be executed only once.
+ * @type {{
+ *  executing: Object.<string, Object<string, boolean>>,
+ *  init: Function,
+ *  remove: Function
+ * }}
+ */
 const CALLBACK_TRACKER = Object.freeze({
   executing: {},
+  /**
+   * Initiates the tracker
+   * @param {string} btn - A CSS selector representing the trigger button element
+   */
   init: function (btn) {
     CALLBACK_TRACKER.executing[btn] = {};
   },
+  /**
+   * Removes 'btn' from the tracker
+   * @param {string} btn - A CSS selector representing the trigger button element
+   */
   remove: function (btn) {
     delete this.executing[btn];
   },
 });
 
+/**
+ * Keeps track of all the targets being animated to ensure that the callback tracker
+ * will be removed only when all the targets have been animated. Also ensures that
+ * all targets will be re-enabled only when all targets have already been animated.
+ * @type {{add: Function, remove: Function, get: Function, stack: Object.<string, HTMLElement[]>}}
+ */
 const TARGETS_STACK = {
+  /**
+   * Adds an element to the stack
+   * @param {HTMLElement} elem - Element being animated
+   * @param {string} btn - Button that triggered the animation
+   */
   add: function (elem, btn) {
-    if (!(btn in this)) this[btn] = [];
-    this[btn].push(elem);
+    if (!(btn in this.stack)) this.stack[btn] = [];
+    this.stack[btn].push(elem);
   },
+  /**
+   * Removes from the stack all the elements animated by the same trigger button
+   * @param {string} btn - Button that triggered the animation
+   */
   remove: function (btn) {
-    if (!(btn in this)) return;
-    delete this[btn];
+    if (!(btn in this.stack)) return;
+    delete this.stack[btn];
   },
+  /**
+   * Gets all elements included in the stack for a given trigger button
+   * @param {string} btn - Button that triggered the animation
+   * @returns An array of elements that have been animated by the same trigger button
+   */
   get: function (btn) {
-    if (!(btn in this)) return;
-    return this[btn];
+    if (!(btn in this.stack)) return;
+    return this.stack[btn];
   },
+  stack: {},
 };
 
+/**
+ * Removes the CSS properties customized by the user
+ * @param {HTMLElement} element - The DOM element with the custom CSS properties
+ */
 export const removeCustomCssProperties = element => {
   CUSTOM_CSS_PROPERTIES.forEach(prop => {
     element.style.removeProperty(PROPERTY_NAMES[prop]);
   });
 };
 
+/**
+ * Sets an inline CSS property
+ * @param {HTMLElement} element - The DOM element which will receive the property
+ * @param {string} property - Property key in the PROPERTY_NAMES object
+ * @param {string} value - Value of the CSS Property
+ * @see {@link module:globals.PROPERTY_NAMES}
+ */
 export const setCssProperty = (element, property, value) => {
   element.style.setProperty(PROPERTY_NAMES[property], value);
 };
 
+/**
+ * Sets the CSS properties customized by the user in the animation function's options
+ * @param {HTMLElement} element - The DOM element to update the CSS Properties
+ * @param {Object.<string, string>} opts - Object containing a custom property key and a CSS value to be updated
+ */
 const updateCssProperties = (element, opts) => {
   removeCustomCssProperties(element);
   removeInlineTransition(element);
@@ -66,28 +123,49 @@ const updateCssProperties = (element, opts) => {
   });
 };
 
+/**
+ * Searches and returns the 'target-selector' attribute
+ *
+ * If the element which triggered the event doesn't have the attribute,
+ * will bubbles up untill the attribute is found.
+ * If no attribute is found, an empty string is returned and so
+ * no element will be selected to be animated
+ * @param {HTMLElement} eventTarget - The DOM element wich triggers the event
+ * @returns The CSS selector for the animation target(s) or an empty string
+ */
 const getTargetSelector = eventTarget => {
   let triggerBtn = eventTarget;
   while (triggerBtn && !triggerBtn.getAttribute('target-selector')) {
     /** bubbles up untill the attribute is found */
-    triggerBtn = triggerBtn.parentElement;
+    triggerBtn = triggerBtn.parentElement ?? document.documentElement;
   }
 
   if (!triggerBtn)
     throw new ReferenceError('target-selector attribute not found');
 
-  return triggerBtn.getAttribute('target-selector');
+  return triggerBtn.getAttribute('target-selector') ?? '';
 };
 
+/** Matches duration or delay CSS properties values */
 const DURATION_REGEX = Object.freeze(new RegExp(/(\d?\.\d+|\d+)(ms|s)?/));
 
+/**
+ * Removes the unit from the duration or delay and returns the value in milliseconds
+ * @param {string} value - duration or delay CSS property value
+ * @returns The duration or delay in milliseconds
+ */
 const getTimeInMs = value => {
   if (value === undefined) return 0;
   if (typeof value === 'number') return value;
-  let match = value.match(DURATION_REGEX);
+  let match = value.match(DURATION_REGEX) ?? [0, 0];
   return match.at(-1) === 's' ? Number(match[1]) * 1000 : Number(match[1]);
 };
 
+/**
+ * Returns an object with the duration and delay time in milliseconds
+ * @param {HTMLElement} element - The DOM element being animated
+ * @returns Both the duration and delay, in milliseconds
+ */
 const getTotalAnimTime = element => {
   const total = {};
   ['duration', 'delay'].forEach(prop => {
@@ -98,27 +176,59 @@ const getTotalAnimTime = element => {
   return total;
 };
 
+/**
+ * Returns true if the animation type is 'visibility'
+ * @param {string} animType - Either 'motion' or 'visibility'
+ * @returns True if animation type is 'visibility'. False otherwise.
+ */
 const isVisibility = animType => animType === 'visibility';
+/**
+ * Returns true if the animation type is 'motion'
+ * @param {string} animType - Either 'motion' or 'visibility'
+ * @returns True if animation type is 'motion'. False otherwise.
+ */
 const isMotion = animType => animType === 'motion';
 
-const removeMotionCssClasses = element => {
-  const className = [...element.classList].find(cl =>
-    cl.match(/js\-anim\-\-rotate/)
-  );
+/**
+ * Removes the current motion animation CSS class from the element
+ * @param {HTMLElement} element - The DOM element being animated
+ */
+const removeMotionCssClass = element => {
+  const className =
+    [...element.classList].find(cl => cl.match(/js\-anim\-\-rotate/)) ?? '';
   element.classList.remove(className);
 };
 
+/**
+ * Sets an attribute to indicate that the element is currently being animated
+ * and so can not perform any other animations
+ * @param {HTMLElement} element - The DOM element being animated
+ */
 const disable = element => {
   element.setAttribute('js-anim--disabled', 'true');
 };
 
+/**
+ * Removes the attribute that indicates that an element is currently being animated
+ * @param {HTMLElement} element
+ */
 const enable = element => {
   element.removeAttribute('js-anim--disabled');
 };
 
+/**
+ * Verifies if an element is already being animated or not
+ * @param {HTMLElement} element - The DOM element to check
+ * @returns True if the element is not currently being animated
+ */
 const isEnabled = element =>
   !(element.getAttribute('js-anim--disabled') === 'true');
 
+/**
+ * Verifies if an element has defined an iteration CSS property
+ * @param {HTMLElement} element
+ * @returns True if the element has an iteration CSS property set, False otherwise
+ */
 const hasIterationProp = element => {
   return (
     element.style
@@ -127,6 +237,20 @@ const hasIterationProp = element => {
   );
 };
 
+/**
+ * Sets the parent element dimensions, if needed.
+ *
+ * Removes the collapsed or hidden class from the element, when necessary
+ * @param {HTMLElement} element - The DOM element being animated
+ * @param {{
+ *  parentState: string,
+ *  element: HTMLElement,
+ *  parentMeasures: Object,
+ *  action: string,
+ *  dimension: string | undefined,
+ *  keepSpace: boolean
+ * }} args - All the necessary arguments
+ */
 const handleVisibilityToggle = (element, args) => {
   setTimeout(() => {
     if (args.dimension) setParentMaxMeasures(args);
@@ -138,6 +262,12 @@ const handleVisibilityToggle = (element, args) => {
   }, 0);
 };
 
+/**
+ * Adds the hidden or collapsed class, when necessary.
+ * Finalize parent element's resize operations, if needed.
+ * @param {HTMLElement} element - The DOM element being animated
+ * @param {Object} opts - All the necessary options
+ */
 const endVisibilityToggle = (element, opts) => {
   if (opts.action === 'hide') {
     opts.keepSpace
@@ -148,6 +278,13 @@ const endVisibilityToggle = (element, opts) => {
     endParentResize(element, opts);
 };
 
+/**
+ * Executes a given callback, checking, when necessary, if the callback was already
+ * executed by another element being animated by the same trigger button
+ * @param {string} btn - The button that triggered the animation
+ * @param {Function} fn - The callback to execute
+ * @param {string} type - Either 'start' or 'complete'
+ */
 const initCallback = (btn, fn, type) => {
   if (!['start', 'complete'].includes(type))
     throw new ReferenceError(
@@ -164,6 +301,15 @@ const initCallback = (btn, fn, type) => {
   }
 };
 
+/**
+ * Handles all the animation process
+ * @param {HTMLElement} element - The DOM element to animate
+ * @param {string} action - 'show', 'hide', or 'move'
+ * @param {number} id - ID of an animation in the *_ANIMS_ID objects
+ * @param {Object.<string, any>} opts - All the options passed by the user
+ * @see {@link module:globals.VISIBILITY_ANIMS_ID}
+ * @see {@link module:globals.MOTION_ANIMS_ID}
+ */
 const animate = (element, action, id, opts = {}) => {
   disable(element);
   const {
@@ -203,7 +349,7 @@ const animate = (element, action, id, opts = {}) => {
       },
       motion: () => {
         currentTransition = getCurrentTransition(element);
-        removeMotionCssClasses(element);
+        removeMotionCssClass(element);
       },
     },
     middle: {
@@ -269,6 +415,12 @@ const animate = (element, action, id, opts = {}) => {
   }, duration + delay);
 };
 
+/**
+ * Checks which animation CSS class is set to determine wich action to perform next
+ * @param {HTMLElement} element - The DOM element being animated
+ * @param {*} animType - Either 'motion' or 'visibility'
+ * @returns 'show' or 'hide' or 'move' or 'moveBack'
+ */
 const getAction = (element, animType) => {
   const classList = [...element.classList];
   return isVisibility(animType)
@@ -284,6 +436,12 @@ const getAction = (element, animType) => {
     : null;
 };
 
+/**
+ * Sets the CSS properties customized by the user,
+ * prior to the begining of the animation
+ * @param {HTMLElement} el - The DOM element being animated
+ * @param {Object} args - The animation's ID and type and all the options passed by the user
+ */
 const preset = (el, args) => {
   const { opts, animationId } = args;
   const { animType } = opts;
@@ -305,8 +463,17 @@ const preset = (el, args) => {
   }
 };
 
+/**
+ * Generates the handler function to be passed to the event listener
+ * @param {HTMLElement} el - The DOM element being animated
+ * @param {number} animationId - The ID of the animation in the *_ANIMS_ID
+ * @param {Object} opts - The options passed by the user
+ * @returns A function to be passed to the addEventListener() as a handler
+ * @see {@link module:globals.VISIBILITY_ANIMS_ID}
+ * @see {@link module:globals.MOTION_ANIMS_ID}
+ */
 const eventHandler = (el, animationId, opts) => {
-  return e => {
+  return (/** @type {Event} */ e) => {
     e.stopPropagation();
 
     const action = getAction(el, opts.animType);
@@ -324,6 +491,13 @@ const eventHandler = (el, animationId, opts) => {
   };
 };
 
+/**
+ * Initiate the event listener with the animation
+ * @param {number} animationId - The ID of the animation in *_ANIMS_ID object
+ * @param {Object} opts - All options passed by the user
+ * @see {@link module:globals.VISIBILITY_ANIMS_ID}
+ * @see {@link module:globals.MOTION_ANIMS_ID}
+ */
 const init = (animationId, opts = {}) => {
   const {
     triggerBtn = `.${CLASS_NAMES.triggerBtn}`,
@@ -345,6 +519,7 @@ const init = (animationId, opts = {}) => {
       .forEach((el, i, queryList) => {
         btn.addEventListener(
           'click',
+          // @ts-ignore
           eventHandler(el, animationId, {
             ...opts,
             totalTargets: queryList.length,

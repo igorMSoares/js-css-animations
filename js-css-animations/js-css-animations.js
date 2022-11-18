@@ -257,7 +257,7 @@ const verifyAnimationName = {
  * An API encapsulating all the functions that can be used by the user,
  * like all the animations functions and auxiliary functions like
  * isRotated(), isVisible() and isHidden()
- * @type {Object.<string, Function|Object.<string, Function>>}
+ * @type {Object.<string, Function|Object>}
  */
 const jsCssAnimations = (function () {
   /**
