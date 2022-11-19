@@ -184,8 +184,10 @@ const animationFunctions = (function () {
 // @ts-ignore
 const eventBoundAnimations = (() => {
   const animations = {};
-  [VISIBILITY_ANIMS_ID, MOTION_ANIMS_ID].forEach(animIds => {
-    const animType = animIds === VISIBILITY_ANIMS_ID ? 'visibility' : 'motion';
+  [
+    { animIds: VISIBILITY_ANIMS_ID, animType: 'visibility' },
+    { animIds: MOTION_ANIMS_ID, animType: 'motion' },
+  ].forEach(({ animIds, animType }) => {
     Object.keys(animIds).forEach(animName => {
       /**
        * Initiate the event listener with the animation to be performed
