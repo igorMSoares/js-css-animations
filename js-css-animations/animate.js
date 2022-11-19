@@ -194,9 +194,10 @@ const isMotion = animType => animType === 'motion';
  * @param {HTMLElement} element - The DOM element being animated
  */
 const removeMotionCssClass = element => {
-  const className =
-    [...element.classList].find(cl => cl.match(/js\-anim\-\-rotate/)) ?? '';
-  element.classList.remove(className);
+  const className = [...element.classList].find(cl =>
+    cl.match(/js\-anim\-\-rotate/)
+  );
+  if (className) element.classList.remove(className);
 };
 
 /**
