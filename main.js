@@ -70,42 +70,40 @@ jsCssAnimations.init.fade({
   keepSpace: true,
 });
 
-document.querySelector('.rotation--btn')?.addEventListener('click', () => {
-  const input = document.getElementById('rotation-angle');
-  const msgArea = document.querySelector('.rotation--input-error');
-  // @ts-ignore
-  const angle = input.value;
-  // @ts-ignore
+const validateInput = input => {
   if (input.validity.patternMismatch) {
-    jsCssAnimations.hide.fade(input, {
-      duration: 200,
-      keepSpace: true,
+    const msgArea = document.querySelector('.rotation--input-error');
+    // @ts-ignore
+    msgArea.innerText = 'Type in a number (e.g.: 270, -22.5)';
+    jsCssAnimations.show.fade(msgArea, {
       complete: () => {
-        // @ts-ignore
-        msgArea.innerText = 'Type in a number (e.g.: 10, -22.5, 270)';
         setTimeout(() => {
-          jsCssAnimations.show.fade('#rotation-angle', {
-            duration: 200,
-            keepSpace: true,
-            complete: () => {
-              // @ts-ignore
-              input.value = '';
-              setTimeout(() => {
-                // @ts-ignore
-                msgArea.innerText = '';
-              }, 2500);
-            },
-          });
+          jsCssAnimations.hide.fade(msgArea, { delay: '2.5s' });
         }, 0);
       },
     });
+    input.value = '';
+    return false;
+  } else {
+    return true;
   }
+};
 
-  jsCssAnimations.rotate('.rotation-area', {
-    angle: `${angle}deg`,
-    duration: '2s',
-    timingFunction: 'ease-in-out',
-  });
+jsCssAnimations.init.rotate({
+  triggerBtn: '#rotation-angle',
+  targetSelector: '.rotation-area',
+  eventType: 'change',
+  // @ts-ignore
+  start: () => {
+    if (validateInput(document.querySelector('#rotation-angle'))) {
+      // @ts-ignore
+      const angle = `${document.getElementById('rotation-angle')?.value}deg`;
+      jsCssAnimations.rotate('.rotation-area', { angle: angle });
+    }
+  },
+  complete: () => {
+    jsCssAnimations.rotate('.rotation-area', { angle: '0deg', delay: '1s' });
+  },
 });
 
 jsCssAnimations.show.fade('#anchor img', {
