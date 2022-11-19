@@ -152,7 +152,7 @@ const animationFunctions = (function () {
           'widthTransition',
           'heightTransition',
           'dimensionsTransition',
-        ].forEach(opt => (args[opt] = [opt]));
+        ].forEach(opt => (args[opt] = opts[opt]));
 
         getTargets(target).forEach((element, i) => {
           opts.animType = animType;
