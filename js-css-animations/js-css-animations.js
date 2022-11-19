@@ -95,6 +95,11 @@ const toggle = (selector, animA, animB, opts = {}) => {
     'heightTransition',
   ].forEach(prop => (args[prop] = opts[prop]));
 
+  /**
+   * The current animation attribute will only be set in the first element that
+   * matches the 'selector' passed, but the animation will apply to all elements
+   * matched by 'selector'
+   */
   const element = selectElement(selector);
   const currentAnim = element.getAttribute('js-css-animation--current');
   const newAnim =
@@ -137,16 +142,17 @@ const animationFunctions = (function () {
 
     for (const [name, id] of Object.entries(animIds)) {
       const handler = (target, opts = {}) => {
-        const {
-          start,
-          complete,
-          keepSpace,
-          overflowHidden,
-          staggerDelay,
-          widthTransition,
-          heightTransition,
-          dimensionsTransition,
-        } = opts;
+        const args = { animType };
+        [
+          'start',
+          'complete',
+          'keepSpace',
+          'overflowHidden',
+          'staggerDelay',
+          'widthTransition',
+          'heightTransition',
+          'dimensionsTransition',
+        ].forEach(opt => (args[opt] = [opt]));
 
         getTargets(target).forEach((element, i) => {
           opts.animType = animType;
@@ -156,18 +162,7 @@ const animationFunctions = (function () {
             animationId: id,
           });
 
-          if (isEnabled(element))
-            animate(element, action, id, {
-              animType,
-              start,
-              complete,
-              widthTransition,
-              heightTransition,
-              dimensionsTransition,
-              keepSpace,
-              overflowHidden,
-              staggerDelay,
-            });
+          if (isEnabled(element)) animate(element, action, id, args);
         });
       };
 
