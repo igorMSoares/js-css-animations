@@ -15,6 +15,9 @@ import {
 
 import { setParentMaxMeasures } from './measurements.js';
 
+/** Matches duration or delay CSS properties values */
+const DURATION_REGEX = Object.freeze(new RegExp(/(\d?\.\d+|\d+)(ms|s)?/));
+
 /**
  * Keeps track of the callbacks being executed, preventing the callbacks to be executed
  * multiple times if multiple elements are being animated by a single trigger.
@@ -146,9 +149,6 @@ const getTargetSelector = eventTarget => {
 
   return triggerBtn.getAttribute('target-selector') ?? '';
 };
-
-/** Matches duration or delay CSS properties values */
-const DURATION_REGEX = Object.freeze(new RegExp(/(\d?\.\d+|\d+)(ms|s)?/));
 
 /**
  * Removes the unit from the duration or delay and returns the value in milliseconds
