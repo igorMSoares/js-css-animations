@@ -134,10 +134,11 @@ const updateCssProperties = (element, opts) => {
  * @returns The CSS selector for the animation target(s) or an empty string
  */
 const getTargetSelector = eventTarget => {
+  /** @type {HTMLElement|null} triggerBtn */
   let triggerBtn = eventTarget;
   while (triggerBtn && !triggerBtn.getAttribute('target-selector')) {
     /** bubbles up untill the attribute is found */
-    triggerBtn = triggerBtn.parentElement ?? document.documentElement;
+    triggerBtn = triggerBtn.parentElement;
   }
 
   if (!triggerBtn)
