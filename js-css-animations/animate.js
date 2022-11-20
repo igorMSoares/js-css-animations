@@ -144,7 +144,7 @@ const updateCssProperties = (element, opts) => {
  * @returns The CSS selector for the animation target(s) or an empty string
  */
 const getTargetSelector = eventTarget => {
-  /** @type {HTMLElement|null} trigger */
+  /** @type {HTMLElement|null} */
   let trigger = eventTarget;
   while (trigger && !trigger.getAttribute('target-selector')) {
     /** bubbles up untill the attribute is found */

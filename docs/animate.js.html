@@ -43,6 +43,9 @@ import {
 
 import { setParentMaxMeasures } from './measurements.js';
 
+/** Matches duration or delay CSS properties values */
+const DURATION_REGEX = Object.freeze(new RegExp(/(\d?\.\d+|\d+)(ms|s)?/));
+
 /**
  * Keeps track of the callbacks being executed, preventing the callbacks to be executed
  * multiple times if multiple elements are being animated by a single trigger.
@@ -140,11 +143,18 @@ const updateCssProperties = (element, opts) => {
   removeInlineTransition(element);
   CUSTOM_CSS_PROPERTIES.forEach(prop => {
     if (typeof opts[prop] === 'string' || typeof opts[prop] === 'number') {
-      if (
-        ['delay', 'duration'].includes(prop) &amp;&amp;
-        typeof opts[prop] === 'number'
-      ) {
-        opts[prop] = `${opts[prop]}ms`;
+      if (typeof opts[prop] === 'number') {
+        const unit = {
+          duration: 'ms',
+          delay: 'ms',
+          angle: 'deg',
+          blur: 'px',
+          iteration: '',
+          initialScale: '',
+          finalScale: '',
+        };
+
+        opts[prop] = `${opts[prop]}` + unit[prop];
       }
       setCssProperty(element, prop, opts[prop]);
     }
@@ -162,20 +172,17 @@ const updateCssProperties = (element, opts) => {
  * @returns The CSS selector for the animation target(s) or an empty string
  */
 const getTargetSelector = eventTarget => {
-  let triggerBtn = eventTarget;
-  while (triggerBtn &amp;&amp; !triggerBtn.getAttribute('target-selector')) {
+  /** @type {HTMLElement|null} */
+  let trigger = eventTarget;
+  while (trigger &amp;&amp; !trigger.getAttribute('target-selector')) {
     /** bubbles up untill the attribute is found */
-    triggerBtn = triggerBtn.parentElement ?? document.documentElement;
+    trigger = trigger.parentElement;
   }
 
-  if (!triggerBtn)
-    throw new ReferenceError('target-selector attribute not found');
+  if (!trigger) throw new ReferenceError('target-selector attribute not found');
 
-  return triggerBtn.getAttribute('target-selector') ?? '';
+  return trigger.getAttribute('target-selector') ?? '';
 };
-
-/** Matches duration or delay CSS properties values */
-const DURATION_REGEX = Object.freeze(new RegExp(/(\d?\.\d+|\d+)(ms|s)?/));
 
 /**
  * Removes the unit from the duration or delay and returns the value in milliseconds
@@ -222,9 +229,10 @@ const isMotion = animType => animType === 'motion';
  * @param {HTMLElement} element - The DOM element being animated
  */
 const removeMotionCssClass = element => {
-  const className =
-    [...element.classList].find(cl => cl.match(/js\-anim\-\-rotate/)) ?? '';
-  element.classList.remove(className);
+  const className = [...element.classList].find(cl =>
+    cl.match(/js\-anim\-\-(rotate|scale)/)
+  );
+  if (className) element.classList.remove(className);
 };
 
 /**
@@ -342,7 +350,7 @@ const animate = (element, action, id, opts = {}) => {
   disable(element);
   const {
     animType,
-    triggerBtn,
+    trigger,
     start,
     complete,
     keepSpace,
@@ -360,7 +368,7 @@ const animate = (element, action, id, opts = {}) => {
   });
   let parentMeasures, dimension, currentTransition;
 
-  if (triggerBtn) TARGETS_STACK.add(element, triggerBtn);
+  if (trigger) TARGETS_STACK.add(element, trigger);
 
   const handleAnimation = {
     begining: {
@@ -414,13 +422,13 @@ const animate = (element, action, id, opts = {}) => {
       },
     },
     conclude: () => {
-      if (triggerBtn &amp;&amp; opts.queryIndex === opts.totalTargets - 1) {
+      if (trigger &amp;&amp; opts.queryIndex === opts.totalTargets - 1) {
         opts.staggerDelay
-          ? CALLBACK_TRACKER.remove(triggerBtn)
-          : setTimeout(() => CALLBACK_TRACKER.remove(triggerBtn), delay);
-        TARGETS_STACK.get(triggerBtn).forEach(el => enable(el));
-        TARGETS_STACK.remove(triggerBtn);
-      } else if (!triggerBtn) {
+          ? CALLBACK_TRACKER.remove(trigger)
+          : setTimeout(() => CALLBACK_TRACKER.remove(trigger), delay);
+        TARGETS_STACK.get(trigger).forEach(el => enable(el));
+        TARGETS_STACK.remove(trigger);
+      } else if (!trigger) {
         enable(element);
       }
     },
@@ -428,7 +436,7 @@ const animate = (element, action, id, opts = {}) => {
 
   handleAnimation.begining[animType]();
   if (typeof start === 'function') {
-    initCallback(triggerBtn, start, 'start');
+    initCallback(trigger, start, 'start');
   }
   element.classList.add(CLASS_NAMES[action][id]);
   element.classList.remove(CLASS_NAMES[OPPOSITE_ACTION[action]][id]);
@@ -437,7 +445,7 @@ const animate = (element, action, id, opts = {}) => {
   setTimeout(() => {
     handleAnimation.end[animType]();
     if (typeof complete === 'function') {
-      initCallback(triggerBtn, complete, 'complete');
+      initCallback(trigger, complete, 'complete');
     }
     handleAnimation.conclude();
   }, duration + delay);
@@ -523,17 +531,14 @@ const eventHandler = (el, animationId, opts) => {
  * Initiate the event listener with the animation
  * @param {number} animationId - The ID of the animation in *_ANIMS_ID object
  * @param {Object} opts - All options passed by the user
+ * @param {string} eventType - The event to attach the animation to
  * @see {@link module:globals.VISIBILITY_ANIMS_ID}
  * @see {@link module:globals.MOTION_ANIMS_ID}
  */
-const init = (animationId, opts = {}) => {
-  const {
-    triggerBtn = `.${CLASS_NAMES.triggerBtn}`,
-    targetSelector,
-    cursor,
-  } = opts;
+const init = (animationId, opts = {}, eventType = 'click') => {
+  const { trigger = `.${CLASS_NAMES.trigger}`, targetSelector, cursor } = opts;
 
-  document.querySelectorAll(triggerBtn).forEach(btn => {
+  document.querySelectorAll(trigger).forEach(btn => {
     btn.classList.add(CLASS_NAMES.btnCursor);
     if (typeof cursor === 'string') {
       setCssProperty(btn, 'cursor', cursor);
@@ -546,7 +551,7 @@ const init = (animationId, opts = {}) => {
       .querySelectorAll(getTargetSelector(btn))
       .forEach((el, i, queryList) => {
         btn.addEventListener(
-          'click',
+          eventType,
           // @ts-ignore
           eventHandler(el, animationId, {
             ...opts,
@@ -575,7 +580,7 @@ export { init, animate, preset, isEnabled };
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Fri Nov 18 2022 01:46:28 GMT-0300 (Horário Padrão de Brasília)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Sun Nov 20 2022 00:55:29 GMT-0300 (Horário Padrão de Brasília)
 </footer>
 
 <script> prettyPrint(); </script>

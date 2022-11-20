@@ -102,9 +102,8 @@ const getTargets = selector => {
  *  dimensionsTransition: boolean|undefined,
  *  widthTransition: boolean|undefined,
  *  heightTransition: boolean|undefined
- * }} opts - All options that can be passed by the user to customize the animation
+ * }|{}} opts - All options that can be passed by the user to customize the animation
  */
-// @ts-ignore
 const toggle = (selector, animA, animB, opts = {}) => {
   const args = {};
   [
@@ -116,13 +115,21 @@ const toggle = (selector, animA, animB, opts = {}) => {
     'angle',
     'iteration',
     'direction',
+    'transfOrigin',
     'keepSpace',
     'overflowHidden',
     'dimensionsTransition',
     'widthTransition',
     'heightTransition',
+    'start',
+    'complete',
   ].forEach(prop => (args[prop] = opts[prop]));
 
+  /**
+   * The current animation attribute will only be set in the first element that
+   * matches the 'selector' passed, but the animation will apply to all elements
+   * matched by 'selector'
+   */
   const element = selectElement(selector);
   const currentAnim = element.getAttribute('js-css-animation--current');
   const newAnim =
@@ -165,16 +172,17 @@ const animationFunctions = (function () {
 
     for (const [name, id] of Object.entries(animIds)) {
       const handler = (target, opts = {}) => {
-        const {
-          start,
-          complete,
-          keepSpace,
-          overflowHidden,
-          staggerDelay,
-          widthTransition,
-          heightTransition,
-          dimensionsTransition,
-        } = opts;
+        const args = { animType };
+        [
+          'start',
+          'complete',
+          'keepSpace',
+          'overflowHidden',
+          'staggerDelay',
+          'widthTransition',
+          'heightTransition',
+          'dimensionsTransition',
+        ].forEach(opt => (args[opt] = opts[opt]));
 
         getTargets(target).forEach((element, i) => {
           opts.animType = animType;
@@ -184,18 +192,7 @@ const animationFunctions = (function () {
             animationId: id,
           });
 
-          if (isEnabled(element))
-            animate(element, action, id, {
-              animType,
-              start,
-              complete,
-              widthTransition,
-              heightTransition,
-              dimensionsTransition,
-              keepSpace,
-              overflowHidden,
-              staggerDelay,
-            });
+          if (isEnabled(element)) animate(element, action, id, args);
         });
       };
 
@@ -217,30 +214,33 @@ const animationFunctions = (function () {
 // @ts-ignore
 const eventBoundAnimations = (() => {
   const animations = {};
-  [VISIBILITY_ANIMS_ID, MOTION_ANIMS_ID].forEach(animIds => {
-    const animType = animIds === VISIBILITY_ANIMS_ID ? 'visibility' : 'motion';
+  [
+    { animIds: VISIBILITY_ANIMS_ID, animType: 'visibility' },
+    { animIds: MOTION_ANIMS_ID, animType: 'motion' },
+  ].forEach(({ animIds, animType }) => {
     Object.keys(animIds).forEach(animName => {
       /**
        * Initiate the event listener with the animation to be performed
        * @param {Object.&lt;string, any>} opts - Contains all options passed by the user to customize the animation
        */
-      animations[animName] = opts =>
-        init(animIds[animName], { animType, ...opts });
+      animations[animName] = opts => {
+        init(animIds[animName], { animType, ...opts }, opts.eventType);
+      };
     });
   });
   return animations;
 })();
 
 /**
- * Verifies if an element is out of its original orientation.
+ * Verifies if an element is out of its original orientation or scale.
  *
  * Note that if the element has CSS property 'transform: rotate(0deg)',
- * checkRotation() will still return False, as the element is not
+ * checkTransform() will still return False, as the element is not
  * out of its original orientation.
  * @param {HTMLElement|string} selector - An element or a valid CSS selector corresponding to the element
  * @returns True if the element was rotated from its original orientation. False if it maintains the original orientation.
  */
-const checkRotation = selector => {
+const checkTransform = selector => {
   const el = selectElement(selector);
   const transform = getComputedStyle(el).transform;
   return transform !== 'none' &amp;&amp; transform !== 'matrix(1, 0, 0, 1, 0, 0)';
@@ -284,7 +284,7 @@ const verifyAnimationName = {
 /**
  * An API encapsulating all the functions that can be used by the user,
  * like all the animations functions and auxiliary functions like
- * isRotated(), isVisible() and isHidden()
+ * isTransformed(), isVisible() and isHidden()
  * @type {Object.&lt;string, Function|Object>}
  */
 const jsCssAnimations = (function () {
@@ -318,7 +318,24 @@ const jsCssAnimations = (function () {
     show: showVisibilityAnim,
     hide: hideVisibilityAnim,
     toggle: toggle,
-    isRotated: checkRotation,
+    blink: (target, opts = {}) => {
+      jsCssAnimations.show.fade(target, {
+        duration: '1s',
+        iteration: 'infinite',
+        direction: 'alternate',
+        ...opts,
+      });
+    },
+    pulsate: (target, opts = {}) => {
+      jsCssAnimations.scale(target, {
+        finalScale: '1.5',
+        duration: '1s',
+        iteration: 'infinite',
+        direction: 'reverse',
+        ...opts,
+      });
+    },
+    isTransformed: checkTransform,
     /**
      * @param {Element|string} selector - Dom element or a valid CSS selector
      * @returns True if the element is visible, False otherwise
@@ -351,7 +368,7 @@ export default jsCssAnimations;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Fri Nov 18 2022 01:46:28 GMT-0300 (Horário Padrão de Brasília)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Sun Nov 20 2022 00:55:29 GMT-0300 (Horário Padrão de Brasília)
 </footer>
 
 <script> prettyPrint(); </script>
