@@ -112,12 +112,14 @@ jsCssAnimations.init.rotate({
   },
 });
 
-jsCssAnimations.pulse('#anchor img', {
-  transfOrigin: 'bottom',
+jsCssAnimations.pulsate('#anchor2 img', {
+  finalScale: 1.2,
 });
 
-jsCssAnimations.rotationLoop('#anchor2 img', {
-  angle: 180,
-  duration: '1s',
-  transfOrigin: 'bottom right',
+jsCssAnimations.init.scale({
+  trigger: '#anchor2 img',
+  targetSelector: '.p2',
+  finalScale: 1.2,
+  duration: '1.5s',
+  initialScale: 1,
 });

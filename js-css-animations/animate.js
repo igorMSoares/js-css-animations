@@ -122,6 +122,8 @@ const updateCssProperties = (element, opts) => {
           angle: 'deg',
           blur: 'px',
           iteration: '',
+          initialScale: '',
+          finalScale: '',
         };
 
         opts[prop] = `${opts[prop]}` + unit[prop];
@@ -200,7 +202,7 @@ const isMotion = animType => animType === 'motion';
  */
 const removeMotionCssClass = element => {
   const className = [...element.classList].find(cl =>
-    cl.match(/js\-anim\-\-rotate/)
+    cl.match(/js\-anim\-\-(rotate|scale)/)
   );
   if (className) element.classList.remove(className);
 };

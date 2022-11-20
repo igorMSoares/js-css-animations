@@ -139,6 +139,24 @@
   }
 }
 
+@keyframes js-anim--scale {
+  from {
+    transform: scale(var(--js-css-animation--initial-scale));
+  }
+  to {
+    transform: scale(var(--js-css-animation--final-scale));
+  }
+}
+
+@keyframes js-anim--scale__back {
+  from {
+    transform: scale(var(--js-css-animation--final-scale));
+  }
+  to {
+    transform: scale(var(--js-css-animation--initial-scale));
+  }
+}
+
 :root {
   --js-css-animation--duration: 800ms;
   --js-css-animation--timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955);
@@ -178,7 +196,9 @@
 .js-anim--slide-right__back,
 .js-anim--fade-in,
 .js-anim--fade-out,
-.js-anim--rotation-loop {
+.js-anim--rotation-loop,
+.js-anim--scale,
+.js-anim--scale__back {
   animation-duration: var(--js-css-animation--duration);
   animation-timing-function: var(--js-css-animation--timing-function);
   animation-delay: var(--js-css-animation--delay);
@@ -254,6 +274,22 @@
   --js-css-animation--direction: alternate;
   --js-css-animation--transf-origin: 'center';
   animation-name: js-anim--rotation-loop;
+}
+
+.js-anim--scale,
+.js-anim--scale__back {
+  --js-css-animation--transf-origin: 'center';
+  --js-css-animation--initial-scale: 1;
+  --js-css-animation--final-scale: 1;
+  transform-origin: var(--js-css-animation--transf-origin);
+}
+
+.js-anim--scale {
+  animation-name: js-anim--scale;
+}
+
+.js-anim--scale__back {
+  animation-name: js-anim--scale__back;
 }
 
 .js-anim--fade-out {

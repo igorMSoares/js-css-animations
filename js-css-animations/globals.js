@@ -41,6 +41,7 @@ export const MOTION_ANIMS_ID = Object.freeze({
   rotateLeftCCW: 7,
   rotate: 8,
   rotationLoop: 9,
+  scale: 10,
 });
 
 /**
@@ -61,6 +62,8 @@ export const PROPERTY_NAMES = Object.freeze({
   iteration: '--js-css-animation--iteration',
   direction: '--js-css-animation--direction',
   transfOrigin: '--js-css-animation--transf-origin',
+  initialScale: '--js-css-animation--initial-scale',
+  finalScale: '--js-css-animation--final-scale',
 });
 
 /**
@@ -119,6 +122,7 @@ export const CLASS_NAMES = Object.freeze({
     'js-anim--rotate-left__ccw',
     'js-anim--rotate',
     'js-anim--rotation-loop',
+    'js-anim--scale',
   ],
   moveBack: [
     'js-anim--rotate-up',
@@ -131,6 +135,7 @@ export const CLASS_NAMES = Object.freeze({
     'js-anim--rotate-up',
     'js-anim--rotate-up',
     'js-anim--rotate-up',
+    'js-anim--scale__back',
   ],
 });
 

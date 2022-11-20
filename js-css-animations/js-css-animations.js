@@ -298,11 +298,12 @@ const jsCssAnimations = (function () {
         ...opts,
       });
     },
-    pulse: (target, opts = {}) => {
-      jsCssAnimations.show.collapse(target, {
+    pulsate: (target, opts = {}) => {
+      jsCssAnimations.scale(target, {
+        finalScale: '1.5',
         duration: '1s',
         iteration: 'infinite',
-        direction: 'alternate',
+        direction: 'reverse',
         ...opts,
       });
     },
