@@ -2,6 +2,7 @@
   "devDependencies": {
     "jsdoc": "~4.0.0",
     "jsdoc-to-markdown": "^7.1.1",
+    "markdown-it-attrs": "^4.1.4",
     "vitepress": "^1.0.0-alpha.29",
     "vue": "^3.2.45",
     "vuepress-jsdoc": "^4.3.1"
