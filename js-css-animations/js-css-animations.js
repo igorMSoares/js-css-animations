@@ -74,9 +74,8 @@ const getTargets = selector => {
  *  dimensionsTransition: boolean|undefined,
  *  widthTransition: boolean|undefined,
  *  heightTransition: boolean|undefined
- * }} opts - All options that can be passed by the user to customize the animation
+ * }|{}} opts - All options that can be passed by the user to customize the animation
  */
-// @ts-ignore
 const toggle = (selector, animA, animB, opts = {}) => {
   const args = {};
   [
@@ -93,6 +92,8 @@ const toggle = (selector, animA, animB, opts = {}) => {
     'dimensionsTransition',
     'widthTransition',
     'heightTransition',
+    'start',
+    'complete',
   ].forEach(prop => (args[prop] = opts[prop]));
 
   /**

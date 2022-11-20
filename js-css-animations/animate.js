@@ -118,11 +118,11 @@ const updateCssProperties = (element, opts) => {
       if (typeof opts[prop] === 'number') {
         const unit = {
           duration: 'ms',
+          delay: 'ms',
           angle: 'deg',
           blur: 'px',
           iteration: '',
         };
-        unit.delay = unit.duration;
 
         opts[prop] = `${opts[prop]}` + unit[prop];
       }
