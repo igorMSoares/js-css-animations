@@ -1,7 +1,10 @@
 {
   "devDependencies": {
     "jsdoc": "~4.0.0",
-    "jsdoc-to-markdown": "^7.1.1"
+    "jsdoc-to-markdown": "^7.1.1",
+    "vitepress": "^1.0.0-alpha.29",
+    "vue": "^3.2.45",
+    "vuepress-jsdoc": "^4.3.1"
   },
   "name": "css-js-effects",
   "description": "Work in progress....",
@@ -30,7 +33,11 @@
     "xmlcreate": "^2.0.4"
   },
   "scripts": {
-    "doc": "jsdoc2md js-css-animations/*.js > doc.md"
+    "doc": "jsdoc2md",
+    "docs": "vuepress-jsdoc --source ./js-css-animations --dist ./docs --folder code --title Js-CSS Animations",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:serve": "vitepress serve docs"
   },
   "repository": {
     "type": "git",
