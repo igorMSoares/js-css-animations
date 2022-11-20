@@ -60,6 +60,7 @@ export const PROPERTY_NAMES = Object.freeze({
   angle: '--js-css-animation--rotation-angle',
   iteration: '--js-css-animation--iteration',
   direction: '--js-css-animation--direction',
+  transfOrigin: '--js-css-animation--transf-origin',
 });
 
 /**
@@ -116,7 +117,7 @@ export const CLASS_NAMES = Object.freeze({
     'js-anim--rotate-down__ccw',
     'js-anim--rotate-left',
     'js-anim--rotate-left__ccw',
-    'js-anim--rotated',
+    'js-anim--rotate',
     'js-anim--rotation-loop',
   ],
   moveBack: [

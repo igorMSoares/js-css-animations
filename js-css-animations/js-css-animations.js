@@ -87,6 +87,7 @@ const toggle = (selector, animA, animB, opts = {}) => {
     'angle',
     'iteration',
     'direction',
+    'transfOrigin',
     'keepSpace',
     'overflowHidden',
     'dimensionsTransition',
@@ -289,6 +290,22 @@ const jsCssAnimations = (function () {
     show: showVisibilityAnim,
     hide: hideVisibilityAnim,
     toggle: toggle,
+    blink: (target, opts = {}) => {
+      jsCssAnimations.show.fade(target, {
+        duration: '1s',
+        iteration: 'infinite',
+        direction: 'alternate',
+        ...opts,
+      });
+    },
+    pulse: (target, opts = {}) => {
+      jsCssAnimations.show.collapse(target, {
+        duration: '1s',
+        iteration: 'infinite',
+        direction: 'alternate',
+        ...opts,
+      });
+    },
     isRotated: checkRotation,
     /**
      * @param {Element|string} selector - Dom element or a valid CSS selector

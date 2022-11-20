@@ -62,6 +62,7 @@ jsCssAnimations.init.collapse({
   targetSelector: '.collapse-expand--p__mult',
   staggerDelay: 400,
   keepSpace: true,
+  transfOrigin: 'center',
 });
 
 jsCssAnimations.init.fade({
@@ -98,16 +99,25 @@ jsCssAnimations.init.rotate({
     if (validateInput(document.querySelector('#rotation-angle'))) {
       // @ts-ignore
       const angle = Number(document.getElementById('rotation-angle')?.value);
-      jsCssAnimations.rotate('.rotation-area', { angle: angle });
+      jsCssAnimations.rotate('.rotation-area', {
+        angle: angle,
+      });
     }
   },
   complete: () => {
-    jsCssAnimations.rotate('.rotation-area', { angle: '0deg', delay: '1s' });
+    jsCssAnimations.rotate('.rotation-area', {
+      angle: '0deg',
+      delay: '1s',
+    });
   },
 });
 
-jsCssAnimations.show.fade('#anchor img', {
-  iteration: 10,
+jsCssAnimations.pulse('#anchor img', {
+  transfOrigin: 'bottom',
+});
+
+jsCssAnimations.rotationLoop('#anchor2 img', {
+  angle: 180,
   duration: '1s',
-  direction: 'alternate',
+  transfOrigin: 'bottom right',
 });
