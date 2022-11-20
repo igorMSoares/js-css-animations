@@ -1,7 +1,7 @@
 import jsCssAnimations from './js-css-animations/js-css-animations.js';
 
 jsCssAnimations.init.slideUp({
-  triggerBtn: '.btn--slide-up',
+  trigger: '.btn--slide-up',
   staggerDelay: 500,
   duration: '1s',
   start: () => {
@@ -10,14 +10,14 @@ jsCssAnimations.init.slideUp({
 });
 
 jsCssAnimations.init.slideRight({
-  triggerBtn: '.btn--slide-right',
+  trigger: '.btn--slide-right',
   start: () => {
     jsCssAnimations.toggle('#anchor2 img', 'rotateRight', 'rotateUp');
   },
 });
 
 jsCssAnimations.init.slideDown({
-  triggerBtn: '.btn--slide-down',
+  trigger: '.btn--slide-down',
   delay: '1.5s',
   start: () => {
     jsCssAnimations.toggle('img', 'rotateDownCCW', 'rotateUp', {
@@ -41,7 +41,7 @@ jsCssAnimations.init.slideDown({
 });
 
 jsCssAnimations.init.slideLeft({
-  triggerBtn: '.btn--slide-left',
+  trigger: '.btn--slide-left',
   staggerDelay: 500,
   start: () => {
     jsCssAnimations.toggle('img', 'slideLeft', 'slideLeft', {
@@ -53,19 +53,19 @@ jsCssAnimations.init.slideLeft({
 });
 
 jsCssAnimations.init.collapse({
-  triggerBtn: '.collapse-expand--btn',
+  trigger: '.collapse-expand--btn',
   targetSelector: '.collapse-expand--p',
 });
 
 jsCssAnimations.init.collapse({
-  triggerBtn: '.collapse-expand--btn__mult',
+  trigger: '.collapse-expand--btn__mult',
   targetSelector: '.collapse-expand--p__mult',
   staggerDelay: 400,
   keepSpace: true,
 });
 
 jsCssAnimations.init.fade({
-  triggerBtn: '.fade--btn',
+  trigger: '.fade--btn',
   blur: '2px',
   keepSpace: true,
 });
@@ -90,7 +90,7 @@ const validateInput = input => {
 };
 
 jsCssAnimations.init.rotate({
-  triggerBtn: '#rotation-angle',
+  trigger: '#rotation-angle',
   targetSelector: '.rotation-area',
   eventType: 'change',
   // @ts-ignore

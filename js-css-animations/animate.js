@@ -137,17 +137,16 @@ const updateCssProperties = (element, opts) => {
  * @returns The CSS selector for the animation target(s) or an empty string
  */
 const getTargetSelector = eventTarget => {
-  /** @type {HTMLElement|null} triggerBtn */
-  let triggerBtn = eventTarget;
-  while (triggerBtn && !triggerBtn.getAttribute('target-selector')) {
+  /** @type {HTMLElement|null} trigger */
+  let trigger = eventTarget;
+  while (trigger && !trigger.getAttribute('target-selector')) {
     /** bubbles up untill the attribute is found */
-    triggerBtn = triggerBtn.parentElement;
+    trigger = trigger.parentElement;
   }
 
-  if (!triggerBtn)
-    throw new ReferenceError('target-selector attribute not found');
+  if (!trigger) throw new ReferenceError('target-selector attribute not found');
 
-  return triggerBtn.getAttribute('target-selector') ?? '';
+  return trigger.getAttribute('target-selector') ?? '';
 };
 
 /**
@@ -316,7 +315,7 @@ const animate = (element, action, id, opts = {}) => {
   disable(element);
   const {
     animType,
-    triggerBtn,
+    trigger,
     start,
     complete,
     keepSpace,
@@ -334,7 +333,7 @@ const animate = (element, action, id, opts = {}) => {
   });
   let parentMeasures, dimension, currentTransition;
 
-  if (triggerBtn) TARGETS_STACK.add(element, triggerBtn);
+  if (trigger) TARGETS_STACK.add(element, trigger);
 
   const handleAnimation = {
     begining: {
@@ -388,13 +387,13 @@ const animate = (element, action, id, opts = {}) => {
       },
     },
     conclude: () => {
-      if (triggerBtn && opts.queryIndex === opts.totalTargets - 1) {
+      if (trigger && opts.queryIndex === opts.totalTargets - 1) {
         opts.staggerDelay
-          ? CALLBACK_TRACKER.remove(triggerBtn)
-          : setTimeout(() => CALLBACK_TRACKER.remove(triggerBtn), delay);
-        TARGETS_STACK.get(triggerBtn).forEach(el => enable(el));
-        TARGETS_STACK.remove(triggerBtn);
-      } else if (!triggerBtn) {
+          ? CALLBACK_TRACKER.remove(trigger)
+          : setTimeout(() => CALLBACK_TRACKER.remove(trigger), delay);
+        TARGETS_STACK.get(trigger).forEach(el => enable(el));
+        TARGETS_STACK.remove(trigger);
+      } else if (!trigger) {
         enable(element);
       }
     },
@@ -402,7 +401,7 @@ const animate = (element, action, id, opts = {}) => {
 
   handleAnimation.begining[animType]();
   if (typeof start === 'function') {
-    initCallback(triggerBtn, start, 'start');
+    initCallback(trigger, start, 'start');
   }
   element.classList.add(CLASS_NAMES[action][id]);
   element.classList.remove(CLASS_NAMES[OPPOSITE_ACTION[action]][id]);
@@ -411,7 +410,7 @@ const animate = (element, action, id, opts = {}) => {
   setTimeout(() => {
     handleAnimation.end[animType]();
     if (typeof complete === 'function') {
-      initCallback(triggerBtn, complete, 'complete');
+      initCallback(trigger, complete, 'complete');
     }
     handleAnimation.conclude();
   }, duration + delay);
@@ -502,13 +501,9 @@ const eventHandler = (el, animationId, opts) => {
  * @see {@link module:globals.MOTION_ANIMS_ID}
  */
 const init = (animationId, opts = {}, eventType = 'click') => {
-  const {
-    triggerBtn = `.${CLASS_NAMES.triggerBtn}`,
-    targetSelector,
-    cursor,
-  } = opts;
+  const { trigger = `.${CLASS_NAMES.trigger}`, targetSelector, cursor } = opts;
 
-  document.querySelectorAll(triggerBtn).forEach(btn => {
+  document.querySelectorAll(trigger).forEach(btn => {
     btn.classList.add(CLASS_NAMES.btnCursor);
     if (typeof cursor === 'string') {
       setCssProperty(btn, 'cursor', cursor);
