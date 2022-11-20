@@ -10,16 +10,17 @@ export default {
   markdown: {
     anchor: {
       getTokensText: tokens => {
-        return tokens
+        const tokensText = tokens
           .filter(t => t.type === 'text' && t.info !== 'entity' && t.content)
           .map(t => t.content)
           .join('')
-          .replace(/\s.*$/, '');
+          .replace(/(?!\s.+\))\s.*$/, '')
+          .replace('(', '-');
+        return tokensText;
       },
       permalink: anchor.permalink.ariaHidden({
         symbol: '§',
       }),
     },
-    // anchor: { permalink: true, permalinkBefore: true, permalinkSymbol: '🔗' },
   },
 };
