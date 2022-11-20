@@ -115,11 +115,16 @@ const updateCssProperties = (element, opts) => {
   removeInlineTransition(element);
   CUSTOM_CSS_PROPERTIES.forEach(prop => {
     if (typeof opts[prop] === 'string' || typeof opts[prop] === 'number') {
-      if (
-        ['delay', 'duration'].includes(prop) &&
-        typeof opts[prop] === 'number'
-      ) {
-        opts[prop] = `${opts[prop]}ms`;
+      if (typeof opts[prop] === 'number') {
+        const unit = {
+          duration: 'ms',
+          angle: 'deg',
+          blur: 'px',
+          iteration: '',
+        };
+        unit.delay = unit.duration;
+
+        opts[prop] = `${opts[prop]}` + unit[prop];
       }
       setCssProperty(element, prop, opts[prop]);
     }

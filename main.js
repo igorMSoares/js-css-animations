@@ -66,7 +66,7 @@ jsCssAnimations.init.collapse({
 
 jsCssAnimations.init.fade({
   trigger: '.fade--btn',
-  blur: '2px',
+  blur: 12,
   keepSpace: true,
 });
 
@@ -97,7 +97,7 @@ jsCssAnimations.init.rotate({
   start: () => {
     if (validateInput(document.querySelector('#rotation-angle'))) {
       // @ts-ignore
-      const angle = `${document.getElementById('rotation-angle')?.value}deg`;
+      const angle = Number(document.getElementById('rotation-angle')?.value);
       jsCssAnimations.rotate('.rotation-area', { angle: angle });
     }
   },
@@ -107,7 +107,7 @@ jsCssAnimations.init.rotate({
 });
 
 jsCssAnimations.show.fade('#anchor img', {
-  iteration: 'infinite',
+  iteration: 10,
   duration: '1s',
   direction: 'alternate',
 });
