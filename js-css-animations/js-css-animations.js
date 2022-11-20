@@ -204,15 +204,15 @@ const eventBoundAnimations = (() => {
 })();
 
 /**
- * Verifies if an element is out of its original orientation.
+ * Verifies if an element is out of its original orientation or scale.
  *
  * Note that if the element has CSS property 'transform: rotate(0deg)',
- * checkRotation() will still return False, as the element is not
+ * checkTransform() will still return False, as the element is not
  * out of its original orientation.
  * @param {HTMLElement|string} selector - An element or a valid CSS selector corresponding to the element
  * @returns True if the element was rotated from its original orientation. False if it maintains the original orientation.
  */
-const checkRotation = selector => {
+const checkTransform = selector => {
   const el = selectElement(selector);
   const transform = getComputedStyle(el).transform;
   return transform !== 'none' && transform !== 'matrix(1, 0, 0, 1, 0, 0)';
@@ -256,7 +256,7 @@ const verifyAnimationName = {
 /**
  * An API encapsulating all the functions that can be used by the user,
  * like all the animations functions and auxiliary functions like
- * isRotated(), isVisible() and isHidden()
+ * isTransformed(), isVisible() and isHidden()
  * @type {Object.<string, Function|Object>}
  */
 const jsCssAnimations = (function () {
@@ -307,7 +307,7 @@ const jsCssAnimations = (function () {
         ...opts,
       });
     },
-    isRotated: checkRotation,
+    isTransformed: checkTransform,
     /**
      * @param {Element|string} selector - Dom element or a valid CSS selector
      * @returns True if the element is visible, False otherwise
