@@ -13,8 +13,8 @@ Handles all the animation process
   - [CALLBACK_TRACKER](#callback-tracker) : <code>Object</code>
   - [TARGETS_STACK](#targets-stack) : <code>Object</code>
 - _Functions_
-  - [removeCustomCssProperties](#removecustomcssproperties)
-  - [setCssProperty](#setcssproperty)
+  - [removeCustomCssProperties(element)](#removecustomcssproperties-element)
+  - [setCssProperty(element, property, value)](#setcssproperty-element-property-value)
   - [updateCssProperties(element, opts)](#updatecssproperties-element-opts)
   - [getTargetSelector(eventTarget)](#gettargetselector-eventtarget) ⇒ <code>string</code>
   - [getTimeInMs(value)](#gettimeinms-value) ⇒ <code>number</code>
@@ -121,7 +121,7 @@ Gets all elements included in the stack for a given trigger button
 | ------- | ------------------- | --------------------------------------------------------- |
 | trigger | <code>string</code> | CSS selector for the element that triggered the animation |
 
-## removeCustomCssProperties
+## removeCustomCssProperties(element)
 
 Removes the CSS properties customized by the user
 
@@ -131,7 +131,7 @@ Removes the CSS properties customized by the user
 | ------- | ------------------------ | ---------------------------------------------- |
 | element | <code>HTMLElement</code> | The DOM element with the custom CSS properties |
 
-## setCssProperty
+## setCssProperty(element, property, value)
 
 Sets an inline CSS property
 
@@ -312,7 +312,7 @@ executed by another element being animated by the same trigger button
 Handles all the animation process
 
 **Kind**: static function of [<code>animate</code>](#animate)  
-**See**
+**See**:
 
 - [globals.VISIBILITY_ANIMS_ID](globals.html#globals-visibility-anims-id)
 - [globals.MOTION_ANIMS_ID](globals.html#globals-motion-anims-id)
@@ -354,7 +354,7 @@ Generates the handler function to be passed to the event listener
 
 **Kind**: inner method of [<code>animate</code>](#animate)
 **Returns**: A function to be passed to the addEventListener() as a handler  
-**See**
+**See**:
 
 - [globals.VISIBILITY_ANIMS_ID](globals.html#globals-visibility-anims-id)
 - [globals.MOTION_ANIMS_ID](globals.html#globals-motion-anims-id)
@@ -370,7 +370,7 @@ Generates the handler function to be passed to the event listener
 Initiate the event listener with the animation
 
 **Kind**: static function of [<code>animate</code>](#animate)
-**See**
+**See**:
 
 - [module:globals.VISIBILITY_ANIMS_ID](module:globals.VISIBILITY_ANIMS_ID)
 - [module:globals.MOTION_ANIMS_ID](module:globals.MOTION_ANIMS_ID)

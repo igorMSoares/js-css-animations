@@ -134,7 +134,7 @@ const toggle = (selector, animA, animB, opts = {}) => {
  * @see {@link module:globals.MOTION_ANIMS_ID}
  * @type {Object}
  */
-const animationFunctions = (function () {
+const animationFunctions = (function() {
   const handlers = {};
   ['show', 'hide', 'move'].forEach(action => {
     const { animIds, animType } =
@@ -255,11 +255,11 @@ const verifyAnimationName = {
 
 /**
  * An API encapsulating all the functions that can be used by the user,
- * like all the animations functions and auxiliary functions like
+ * like all the animations functions and auxiliary functions like:
  * isTransformed(), isVisible() and isHidden()
  * @type {Object.<string, Function|Object>}
  */
-const jsCssAnimations = (function () {
+const jsCssAnimations = (function() {
   /**
    * Encapsulates eventBoundAnimations(), adding animation name validation
    * @see eventBoundAnimations

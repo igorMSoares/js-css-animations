@@ -2,18 +2,22 @@
 title: js-css-animations
 ---
 
-# js-css-animations
+# Modules
 
 ## js-css-animations.js
 
 Builds the animation API that will be exported to the final user
 
-- [js-css-animations](#js-css-animations)
+- _export_
+
+  - [jsCssAnimations](#jscssanimations) : <code>Object.&lt;string, (function()\|object)&gt;</code>
+
+- _inner_
+
   - [animationFunctions](#animationfunctions) : <code>Object</code>
   - [eventBoundAnimations](#eventboundanimations) : <code>Object.&lt;string, function()&gt;</code>
   - [verifyAnimationName](#verifyanimationname) : <code>ProxyHandler</code>
     - [.get(animations, name)](#verifyanimationname-get-animations-name)
-  - [jsCssAnimations](#jscssanimations) : <code>Object.&lt;string, (function()\|object)&gt;</code>
   - [selectElement(selector)](#selectelement-selector) ⇒ <code>HTMLElement</code>
   - [selectAllElements(selector)](#selectallelements-selector) ⇒ <code>NodeList.&lt;Element&gt;</code>
   - [getTargets(selector)](#gettargets-selector) ⇒ <code>NodeList.&lt;Element&gt;</code> \| <code>Array.&lt;HTMLElement&gt;</code>
@@ -24,7 +28,15 @@ Builds the animation API that will be exported to the final user
   - [isVisible(selector)](#isvisible-selector) ⇒ <code>boolean</code>
   - [isHidden(selector)](#ishidden-selector) ⇒ <code>boolean</code>
 
-### animationFunctions : <code>Object</code>
+## jsCssAnimations : <code>Object.&lt;string, (function()\|Object)&gt;</code>
+
+An API encapsulating all the functions that can be used by the user,
+like all the animations functions and auxiliary functions like:
+isTransformed(), isVisible() and isHidden()
+
+**Kind**: inner constant of [<code>js-css-animations</code>](#js-css-animations)
+
+## animationFunctions : <code>Object</code>
 
 An object containing all the animations functions.
 
@@ -33,25 +45,26 @@ animationFunctions.hide and animationFunctions.show
 
 All other keys of animationFunctions are Motion animations functions
 
-**Kind**: inner constant of [<code>js-css-animations</code>](#js-css-animations)  
-**See**
+**Kind**: inner constant of [<code>js-css-animations</code>](#js-css-animations)
 
-- [module:globals.VISIBILITY_ANIMS_ID](module:globals.VISIBILITY_ANIMS_ID)
-- [module:globals.MOTION_ANIMS_ID](module:globals.MOTION_ANIMS_ID)
+**See**:
 
-### eventBoundAnimations : <code>Object.&lt;string, function()&gt;</code>
+- [globals.VISIBILITY_ANIMS_ID](globals.html#globals-visibility-anims-id)
+- [globals.MOTION_ANIMS_ID](globals.html#globals-motion-anims-id)
+
+## eventBoundAnimations : <code>Object.&lt;string, function()&gt;</code>
 
 An object containing animations functions wich are triggered by an event (like 'click')
 
 **Kind**: inner constant of [<code>js-css-animations</code>](#js-css-animations)
 
-### verifyAnimationName : <code>ProxyHandler</code>
+## verifyAnimationName : <code>ProxyHandler</code>
 
 Will throw an ReferenceError if the animation name does not corresponds to any animation function
 
 **Kind**: inner constant of [<code>js-css-animations</code>](#js-css-animations)
 
-#### verifyAnimationName.get(animations, name)
+### verifyAnimationName.get(animations, name)
 
 **Kind**: static method of [<code>verifyAnimationName</code>](#verifyanimationname)
 
@@ -60,15 +73,7 @@ Will throw an ReferenceError if the animation name does not corresponds to any a
 | animations | <code>Object.&lt;string, function()&gt;</code> | Object containing animation functions |
 | name       | <code>string</code>                            | Name of the animation                 |
 
-### jsCssAnimations : <code>Object.&lt;string, (function()\|Object)&gt;</code>
-
-An API encapsulating all the functions that can be used by the user,
-like all the animations functions and auxiliary functions like
-isTransformed(), isVisible() and isHidden()
-
-**Kind**: inner constant of [<code>js-css-animations</code>](#js-css-animations)
-
-### selectElement(selector) ⇒ <code>HTMLElement</code>
+## selectElement(selector) ⇒ <code>HTMLElement</code>
 
 If 'selector' is a string containing a valid CSS selector,
 it will be used to perform a querySelector(),
@@ -81,7 +86,7 @@ If 'selector' is already an HTMLElement it will be returned as it is.
 | -------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | selector | <code>Element</code> \| <code>string</code> | If it's an HTMLElement, 'selector' will be returned as it is. If it's a string, it should be a valid CSS selector |
 
-### selectAllElements(selector) ⇒ <code>NodeList.&lt;Element&gt;</code>
+## selectAllElements(selector) ⇒ <code>NodeList.&lt;Element&gt;</code>
 
 Returns a NodeList with all elements that match 'selector'
 
@@ -92,7 +97,7 @@ Returns a NodeList with all elements that match 'selector'
 | -------- | ------------------- | ------------------------------------------------------- |
 | selector | <code>string</code> | A valid CSS selector to be passed to querySelectorAll() |
 
-### getTargets(selector) ⇒ <code>NodeList.&lt;Element&gt;</code> \| <code>Array.&lt;HTMLElement&gt;</code>
+## getTargets(selector) ⇒ <code>NodeList.&lt;Element&gt;</code> \| <code>Array.&lt;HTMLElement&gt;</code>
 
 Gets the element(s) to be animated. The user can pass either an HTMLElement or a CSS selector as a target to the animation
 
@@ -103,7 +108,7 @@ Gets the element(s) to be animated. The user can pass either an HTMLElement or a
 | -------- | ----------------------------------------------- | ------------------------------------------------------------------------- |
 | selector | <code>HTMLElement</code> \| <code>string</code> | An HTMLElement or a valid CSS selector to be passed to querySelectorAll() |
 
-### toggle(selector, animA, animB, opts)
+## toggle(selector, animA, animB, opts)
 
 Toggles between two animations.
 
@@ -112,7 +117,7 @@ it will toggle between the 'hide' state and the 'show' state,
 although this is only applicable to visibility animations.
 
 **Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations)  
-**See**: [module:globals.VISIBILITY_ANIMS_ID](module:globals.VISIBILITY_ANIMS_ID)
+**See**: [globals.VISIBILITY_ANIMS_ID](globals.html#globals-visibility-anims-id)
 
 | Param    | Type                                            | Description                                                                |
 | -------- | ----------------------------------------------- | -------------------------------------------------------------------------- |
@@ -121,7 +126,7 @@ although this is only applicable to visibility animations.
 | animB    | <code>string</code>                             | The next animation name                                                    |
 | opts     | <code>Object</code> \| <code>Object</code>      | All options that can be passed by the user to customize the animation      |
 
-#### toggle~element
+### toggle~element
 
 The current animation attribute will only be set in the first element that
 matches the 'selector' passed, but the animation will apply to all elements
@@ -129,7 +134,7 @@ matched by 'selector'
 
 **Kind**: inner constant of [<code>toggle</code>](#toggle-selector-anima-animb-opts)
 
-### checkTransform(selector) ⇒ <code>boolean</code>
+## checkTransform(selector) ⇒ <code>boolean</code>
 
 Verifies if an element is out of its original orientation or scale.
 
@@ -144,7 +149,7 @@ out of its original orientation.
 | -------- | ----------------------------------------------- | --------------------------------------------------------------- |
 | selector | <code>HTMLElement</code> \| <code>string</code> | An element or a valid CSS selector corresponding to the element |
 
-### checkVisibility(selector, mode) ⇒ <code>boolean</code>
+## checkVisibility(selector, mode) ⇒ <code>boolean</code>
 
 Verifies if a given element is hidden or visible
 
@@ -156,7 +161,7 @@ Verifies if a given element is hidden or visible
 | selector | <code>Element</code> \| <code>string</code> | An element or a valid CSS selector corresponding to the element |
 | mode     | <code>string</code>                         | Either 'visible' or 'hidden'                                    |
 
-### isVisible(selector) ⇒ <code>boolean</code>
+## isVisible(selector) ⇒ <code>boolean</code>
 
 **Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations)  
 **Returns**: True if the element is visible, False otherwise
@@ -165,7 +170,7 @@ Verifies if a given element is hidden or visible
 | -------- | ------------------------------------------- | ----------------------------------- |
 | selector | <code>Element</code> \| <code>string</code> | Dom element or a valid CSS selector |
 
-### isHidden(selector) ⇒ <code>boolean</code>
+## isHidden(selector) ⇒ <code>boolean</code>
 
 **Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations)  
 **Returns**: True if the element is hidden, False otherwise
