@@ -7,6 +7,7 @@ const md = new MarkdownIt();
 export default {
   title: 'Js-Css Animations',
   description: 'Animate your web apps or site using Javascript',
+  appearance: 'dark',
   markdown: {
     anchor: {
       getTokensText: tokens => {
