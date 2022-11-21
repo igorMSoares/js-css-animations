@@ -1,3 +1,7 @@
+/**
+ * Handles all the animation process
+ * @module animate
+ */
 import {
   MOTION_ANIMS_ID,
   PROPERTY_NAMES,
@@ -22,7 +26,7 @@ const DURATION_REGEX = Object.freeze(new RegExp(/(\d?\.\d+|\d+)(ms|s)?/));
  * Keeps track of the callbacks being executed, preventing the callbacks to be executed
  * multiple times if multiple elements are being animated by a single trigger.
  *
- * When a button triggers an animation, no matter how many elements are being animated,
+ * When an element triggers an animation, no matter how many elements are being animated,
  * the start() and complete() callbacks should each be executed only once.
  * @type {{
  *  executing: Object.<string, Object<string, boolean>>,
@@ -34,17 +38,17 @@ const CALLBACK_TRACKER = Object.freeze({
   executing: {},
   /**
    * Initiates the tracker
-   * @param {string} btn - A CSS selector representing the trigger button element
+   * @param {string} trigger - A CSS selector representing the element which triggered the animation
    */
-  init: function (btn) {
-    CALLBACK_TRACKER.executing[btn] = {};
+  init: function(trigger) {
+    CALLBACK_TRACKER.executing[trigger] = {};
   },
   /**
-   * Removes 'btn' from the tracker
-   * @param {string} btn - A CSS selector representing the trigger button element
+   * Removes 'trigger' from the tracker
+   * @param {string} trigger - A CSS selector representing the element which triggered the animation
    */
-  remove: function (btn) {
-    delete this.executing[btn];
+  remove: function(trigger) {
+    delete this.executing[trigger];
   },
 });
 
@@ -58,28 +62,28 @@ const TARGETS_STACK = {
   /**
    * Adds an element to the stack
    * @param {HTMLElement} elem - Element being animated
-   * @param {string} btn - Button that triggered the animation
+   * @param {string} trigger - CSS selector for the element that triggered the animation
    */
-  add: function (elem, btn) {
-    if (!(btn in this.stack)) this.stack[btn] = [];
-    this.stack[btn].push(elem);
+  add: function(elem, trigger) {
+    if (!(trigger in this.stack)) this.stack[trigger] = [];
+    this.stack[trigger].push(elem);
   },
   /**
    * Removes from the stack all the elements animated by the same trigger button
-   * @param {string} btn - Button that triggered the animation
+   * @param {string} trigger - CSS selector for the element that triggered the animation
    */
-  remove: function (btn) {
-    if (!(btn in this.stack)) return;
-    delete this.stack[btn];
+  remove: function(trigger) {
+    if (!(trigger in this.stack)) return;
+    delete this.stack[trigger];
   },
   /**
    * Gets all elements included in the stack for a given trigger button
-   * @param {string} btn - Button that triggered the animation
+   * @param {string} trigger - CSS selector for the element that triggered the animation
    * @returns An array of elements that have been animated by the same trigger button
    */
-  get: function (btn) {
-    if (!(btn in this.stack)) return;
-    return this.stack[btn];
+  get: function(trigger) {
+    if (!(trigger in this.stack)) return;
+    return this.stack[trigger];
   },
   stack: {},
 };
@@ -289,19 +293,20 @@ const endVisibilityToggle = (element, opts) => {
 /**
  * Executes a given callback, checking, when necessary, if the callback was already
  * executed by another element being animated by the same trigger button
- * @param {string} btn - The button that triggered the animation
+ * @param {string} trigger - The CSS selector of the element that triggered the animation
  * @param {Function} fn - The callback to execute
  * @param {string} type - Either 'start' or 'complete'
  */
-const initCallback = (btn, fn, type) => {
+const initCallback = (trigger, fn, type) => {
   if (!['start', 'complete'].includes(type))
     throw new ReferenceError(
       `Invalid callback type: ${type}. Should be 'start' or 'complete'`
     );
-  if (btn) {
-    if (!(btn in CALLBACK_TRACKER.executing)) CALLBACK_TRACKER.init(btn);
-    if (!CALLBACK_TRACKER.executing[btn][type]) {
-      CALLBACK_TRACKER.executing[btn][type] = true;
+  if (trigger) {
+    if (!(trigger in CALLBACK_TRACKER.executing))
+      CALLBACK_TRACKER.init(trigger);
+    if (!CALLBACK_TRACKER.executing[trigger][type]) {
+      CALLBACK_TRACKER.executing[trigger][type] = true;
       fn();
     }
   } else {
