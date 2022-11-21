@@ -10,17 +10,17 @@ Handle user defined transitions to not conflict with js-css-animations transitio
 
 - [transitions](#transitions)
   - _static_
-    - [.getCurrentTransition](#getcurrenttransition) ⇒ <code>string</code> \| <code>null</code>
-    - [.getClassTransition](#getclasstransition) ⇒ <code>string</code>
-    - [.appendTransition](#appendtransition)
-    - [.setDimensionsTransitions](#setdimensionstransitions)
-    - [.removeInlineTransition](#removeinlinetransition)
-    - [.removeDimensionsTransitions](#removedimensionstransitions)
+    - [getCurrentTransition](#getcurrenttransition) ⇒ <code>string</code> \| <code>null</code>
+    - [getClassTransition](#getclasstransition) ⇒ <code>string</code>
+    - [appendTransition](#appendtransition)
+    - [setDimensionsTransitions](#setdimensionstransitions)
+    - [removeInlineTransition](#removeinlinetransition)
+    - [removeDimensionsTransitions](#removedimensionstransitions)
   - _inner_
-    - [~getAllTransitions(cssProperties)](#getalltransitions-cssproperties) ⇒ <code>string</code>
-      - [~transitions](#getalltransitions-transitions) : <code>Object</code>
-      - [~properties](#getalltransitions-properties) : <code>Array.&lt;string&gt;</code>
-    - [~getTransitionClassName(wTransit, hTransit)](#gettransitionclassname-wtransit-htransit) ⇒ <code>string</code> \| <code>undefined</code>
+    - [getAllTransitions(cssProperties)](#getalltransitions-cssproperties) ⇒ <code>string</code>
+      - [transitions](#getalltransitions-transitions) : <code>Object</code>
+      - [properties](#getalltransitions-properties) : <code>Array.&lt;string&gt;</code>
+    - [getTransitionClassName(wTransit, hTransit)](#gettransitionclassname-wtransit-htransit) ⇒ <code>string</code> \| <code>undefined</code>
 
 ### getCurrentTransition ⇒ <code>string</code> \| <code>null</code>
 
@@ -110,9 +110,9 @@ for 'transition' CSS property
 | ------------- | -------------------------------- | ------------------------- |
 | cssProperties | <code>CSSStyleDeclaration</code> | A collection of CSS rules |
 
-- [~getAllTransitions(cssProperties)](#getalltransitions) ⇒ <code>string</code>
-  - [~transitions](#getalltransitions-transitions) : <code>Object</code>
-  - [~properties](#getalltransitions-properties) : <code>Array.&lt;string&gt;</code>
+- [getAllTransitions(cssProperties)](#getalltransitions) ⇒ <code>string</code>
+  - [transitions](#getalltransitions-transitions) : <code>Object</code>
+  - [properties](#getalltransitions-properties) : <code>Array.&lt;string&gt;</code>
 
 #### getAllTransitions~transitions : <code>Object</code>
 
