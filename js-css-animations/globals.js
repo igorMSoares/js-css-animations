@@ -1,5 +1,5 @@
 /**
- * Global Constants
+ * Global Objects
  * @module globals
  */
 

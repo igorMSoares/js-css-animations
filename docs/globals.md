@@ -6,7 +6,7 @@ title: globals
 
 ## globals.js
 
-Global Constants
+Global Objects
 
 - _export_
   - [VISIBILITY_ANIMS_ID](#visibility-anims-id) : <code>Object.&lt;string, number&gt;</code>
