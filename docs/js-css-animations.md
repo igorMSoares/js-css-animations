@@ -49,8 +49,8 @@ All other keys of animationFunctions are Motion animations functions
 
 **See**:
 
-- [globals.VISIBILITY_ANIMS_ID](globals.html#globals-visibility-anims-id)
-- [globals.MOTION_ANIMS_ID](globals.html#globals-motion-anims-id)
+- [globals.VISIBILITY_ANIMS_ID](globals.html#visibility-anims-id)
+- [globals.MOTION_ANIMS_ID](globals.html#motion-anims-id)
 
 ## eventBoundAnimations : <code>Object.&lt;string, function()&gt;</code>
 
@@ -117,7 +117,7 @@ it will toggle between the 'hide' state and the 'show' state,
 although this is only applicable to visibility animations.
 
 **Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations)  
-**See**: [globals.VISIBILITY_ANIMS_ID](globals.html#globals-visibility-anims-id)
+**See**: [globals.VISIBILITY_ANIMS_ID](globals.html#visibility-anims-id)
 
 | Param    | Type                                            | Description                                                                |
 | -------- | ----------------------------------------------- | -------------------------------------------------------------------------- |

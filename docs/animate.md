@@ -8,11 +8,18 @@ title: animate
 
 Handles all the animation process
 
-- _Constants_
+- _export_
+
+  - [init(animationId, opts, eventType)](#init-animationid-opts-eventtype)
+  - [animate(element, action, id, opts)](#animate-element-action-id-opts)
+  - [preset(el, args)](#preset-el-args)
+  - [isEnabled(element)](#isenabled-element) ⇒ <code>boolean</code>
+
+- _inner_
+
   - [DURATION_REGEX](#duration-regex) : <code>RegExp</code>
   - [CALLBACK_TRACKER](#callback-tracker) : <code>Object</code>
   - [TARGETS_STACK](#targets-stack) : <code>Object</code>
-- _Functions_
   - [removeCustomCssProperties(element)](#removecustomcssproperties-element)
   - [setCssProperty(element, property, value)](#setcssproperty-element-property-value)
   - [updateCssProperties(element, opts)](#updatecssproperties-element-opts)
@@ -24,16 +31,69 @@ Handles all the animation process
   - [removeMotionCssClass(element)](#removemotioncssclass-element)
   - [disable(element)](#disable-element)
   - [enable(element)](#enable-element)
-  - [isEnabled(element)](#isenabled-element) ⇒ <code>boolean</code>
   - [hasIterationProp(element)](#hasiterationprop-element) ⇒ <code>boolean</code>
   - [handleVisibilityToggle(element, args)](#handlevisibilitytoggle-element-args)
   - [endVisibilityToggle(element, opts)](#endvisibilitytoggle-element-opts)
   - [initcallback(trigger, fn, type)](#initcallback-trigger-fn-type)
-  - [animate(element, action, id, opts)](#animate-element-action-id-opts)
   - [getAction(element, animType)](#getaction-element-animtype) ⇒ <code>string</code> \| <code>null</code>
-  - [preset(el, args)](#preset-el-args)
   - [eventHandler(el, animationId, opts)](#eventhandler-el-animationid-opts) ⇒ <code>function</code>
-  - [init(animationId, opts, eventType)](#init-animationid-opts-eventtype)
+
+## init(animationId, opts, eventType)
+
+Initiate the event listener with the animation
+
+**Kind**: static function of [<code>animate</code>](#animate)
+
+**See**:
+
+- [globals.VISIBILITY_ANIMS_ID](globals.html#visibility-anims-id)
+- [globals.MOTION_ANIMS_ID](globals.html#motion-anims-id)
+
+| Param       | Type                | Default                        | Description                                    |
+| ----------- | ------------------- | ------------------------------ | ---------------------------------------------- |
+| animationId | <code>number</code> |                                | The ID of the animation in \*\_ANIMS_ID object |
+| opts        | <code>Object</code> |                                | All options passed by the user                 |
+| eventType   | <code>string</code> | <code>&quot;click&quot;</code> | The event to attach the animation to           |
+
+## animate(element, action, id, opts)
+
+Handles all the animation process
+
+**Kind**: static function of [<code>animate</code>](#animate)  
+**See**:
+
+- [globals.VISIBILITY_ANIMS_ID](globals.html#visibility-anims-id)
+- [globals.MOTION_ANIMS_ID](globals.html#motion-anims-id)
+
+| Param   | Type                                    | Description                                    |
+| ------- | --------------------------------------- | ---------------------------------------------- |
+| element | <code>HTMLElement</code>                | The DOM element to animate                     |
+| action  | <code>string</code>                     | 'show', 'hide', or 'move'                      |
+| id      | <code>number</code>                     | ID of an animation in the \*\_ANIMS_ID objects |
+| opts    | <code>Object.&lt;string, any&gt;</code> | All the options passed by the user             |
+
+## preset(el, args)
+
+Sets the CSS properties customized by the user,
+prior to the begining of the animation
+
+**Kind**: static function of [<code>animate</code>](#animate)
+
+| Param | Type                     | Description                                                        |
+| ----- | ------------------------ | ------------------------------------------------------------------ |
+| el    | <code>HTMLElement</code> | The DOM element being animated                                     |
+| args  | <code>Object</code>      | The animation's ID and type and all the options passed by the user |
+
+## isEnabled(element) ⇒ <code>boolean</code>
+
+Verifies if an element is already being animated or not
+
+**Kind**: static function of [<code>animate</code>](#animate)  
+**Returns**: True if the element is not currently being animated
+
+| Param   | Type                     | Description              |
+| ------- | ------------------------ | ------------------------ |
+| element | <code>HTMLElement</code> | The DOM element to check |
 
 ## DURATION_REGEX : <code>RegExp</code>
 
@@ -137,7 +197,7 @@ Sets an inline CSS property
 
 **Kind**: static function of [<code>animate</code>](#animate)
 
-**See**: [globals.PROPERTY_NAMES](globals.html#globals-property-names)
+**See**: [globals.PROPERTY_NAMES](globals.html#property-names)
 
 | Param    | Type                     | Description                                     |
 | -------- | ------------------------ | ----------------------------------------------- |
@@ -247,17 +307,6 @@ Removes the attribute that indicates that an element is currently being animated
 | ------- | ------------------------ |
 | element | <code>HTMLElement</code> |
 
-## isEnabled(element) ⇒ <code>boolean</code>
-
-Verifies if an element is already being animated or not
-
-**Kind**: static function of [<code>animate</code>](#animate)  
-**Returns**: True if the element is not currently being animated
-
-| Param   | Type                     | Description              |
-| ------- | ------------------------ | ------------------------ |
-| element | <code>HTMLElement</code> | The DOM element to check |
-
 ## hasIterationProp(element) ⇒ <code>boolean</code>
 
 Verifies if an element has defined an iteration CSS property
@@ -307,23 +356,6 @@ executed by another element being animated by the same trigger button
 | fn      | <code>function</code> | The callback to execute                                      |
 | type    | <code>string</code>   | Either 'start' or 'complete'                                 |
 
-## animate(element, action, id, opts)
-
-Handles all the animation process
-
-**Kind**: static function of [<code>animate</code>](#animate)  
-**See**:
-
-- [globals.VISIBILITY_ANIMS_ID](globals.html#globals-visibility-anims-id)
-- [globals.MOTION_ANIMS_ID](globals.html#globals-motion-anims-id)
-
-| Param   | Type                                    | Description                                    |
-| ------- | --------------------------------------- | ---------------------------------------------- |
-| element | <code>HTMLElement</code>                | The DOM element to animate                     |
-| action  | <code>string</code>                     | 'show', 'hide', or 'move'                      |
-| id      | <code>number</code>                     | ID of an animation in the \*\_ANIMS_ID objects |
-| opts    | <code>Object.&lt;string, any&gt;</code> | All the options passed by the user             |
-
 ## getAction(element, animType) ⇒ <code>string</code> \| <code>null</code>
 
 Checks which animation CSS class is set to determine wich action to perform next
@@ -336,18 +368,6 @@ Checks which animation CSS class is set to determine wich action to perform next
 | element  | <code>HTMLElement</code> | The DOM element being animated  |
 | animType | <code>\*</code>          | Either 'motion' or 'visibility' |
 
-## preset(el, args)
-
-Sets the CSS properties customized by the user,
-prior to the begining of the animation
-
-**Kind**: static function of [<code>animate</code>](#animate)
-
-| Param | Type                     | Description                                                        |
-| ----- | ------------------------ | ------------------------------------------------------------------ |
-| el    | <code>HTMLElement</code> | The DOM element being animated                                     |
-| args  | <code>Object</code>      | The animation's ID and type and all the options passed by the user |
-
 ## eventHandler(el, animationId, opts) ⇒ <code>function</code>
 
 Generates the handler function to be passed to the event listener
@@ -356,27 +376,11 @@ Generates the handler function to be passed to the event listener
 **Returns**: A function to be passed to the addEventListener() as a handler  
 **See**:
 
-- [globals.VISIBILITY_ANIMS_ID](globals.html#globals-visibility-anims-id)
-- [globals.MOTION_ANIMS_ID](globals.html#globals-motion-anims-id)
+- [globals.VISIBILITY_ANIMS_ID](globals.html#visibility-anims-id)
+- [globals.MOTION_ANIMS_ID](globals.html#motion-anims-id)
 
 | Param       | Type                     | Description                                 |
 | ----------- | ------------------------ | ------------------------------------------- |
 | el          | <code>HTMLElement</code> | The DOM element being animated              |
 | animationId | <code>number</code>      | The ID of the animation in the \*\_ANIMS_ID |
 | opts        | <code>Object</code>      | The options passed by the user              |
-
-## init(animationId, opts, eventType)
-
-Initiate the event listener with the animation
-
-**Kind**: static function of [<code>animate</code>](#animate)
-**See**:
-
-- [module:globals.VISIBILITY_ANIMS_ID](module:globals.VISIBILITY_ANIMS_ID)
-- [module:globals.MOTION_ANIMS_ID](module:globals.MOTION_ANIMS_ID)
-
-| Param       | Type                | Default                        | Description                                    |
-| ----------- | ------------------- | ------------------------------ | ---------------------------------------------- |
-| animationId | <code>number</code> |                                | The ID of the animation in \*\_ANIMS_ID object |
-| opts        | <code>Object</code> |                                | All options passed by the user                 |
-| eventType   | <code>string</code> | <code>&quot;click&quot;</code> | The event to attach the animation to           |
