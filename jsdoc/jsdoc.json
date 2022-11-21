@@ -4,7 +4,7 @@
       "js-css-animations"
     ],
     "includePattern": ".js$",
-    "excludePattern": "(node_modules/|docs)"
+    "excludePattern": "(node_modules/|docs|doc)"
   },
   "plugins": [
     "plugins/markdown"
@@ -15,7 +15,7 @@
   },
   "opts": {
     "recurse": true,
-    "destination": "./jsdoc/",
-    "template": "./jsdoc-template"
+    "destination": "./jsdoc/doc",
+    "template": "./jsdoc/template"
   }
 }

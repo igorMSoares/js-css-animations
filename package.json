@@ -33,7 +33,7 @@
   },
   "scripts": {
     "doc": "jsdoc2md",
-    "docs": "jsdoc -c jsdoc.json",
+    "docs": "jsdoc -c ./jsdoc/jsdoc.json",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:serve": "vitepress serve docs"
