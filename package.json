@@ -33,7 +33,7 @@
   },
   "scripts": {
     "doc": "jsdoc2md",
-    "docs": "vuepress-jsdoc --source ./js-css-animations --dist ./docs --folder code --title Js-CSS Animations",
+    "docs": "jsdoc -c jsdoc.json",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:serve": "vitepress serve docs"
