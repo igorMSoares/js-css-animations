@@ -1,8 +1,4 @@
-import MarkdownIt from 'markdown-it';
-import markdownItAttrs from 'markdown-it-attrs';
 import anchor from 'markdown-it-anchor';
-
-const md = new MarkdownIt();
 
 export default {
   title: 'Js-Css Animations',
