@@ -13,13 +13,13 @@ parent element's dimensions can be properly transitioned
 - [measurements](#measurements)
   - [measured](#measured)
   - [validateDimension(dimension)](#validatedimension-dimension)
-  - [getMarginNumericValue(margin)](#getmarginnumericvalue-margin)
-  - [getVertMargin(margins, arrLength)](#getvertmargin-margins-arrlength)
-  - [getHorizMargin(margins, arrLength)](#gethorizmargin-margins-arrlength)
-  - [getElementMargins(element, axis)](#getelementmargins-element-axis)
-  - [getElementMeasure(element, dimension)](#getelementmeasure-element-dimension)
-  - [getParentMeasure(element, dimension)](#getparentmeasure-element-dimension)
-  - [getParentMeasures(element)](#getparentmeasures-element)
+  - [getMarginNumericValue(margin)](#getmarginnumericvalue-margin) ⇒ <code>number</code>
+  - [getVertMargin(margins, arrLength)](#getvertmargin-margins-arrlength) ⇒ <code>number</code>
+  - [getHorizMargin(margins, arrLength)](#gethorizmargin-margins-arrlength) ⇒ <code>number</code>
+  - [getElementMargins(element, axis)](#getelementmargins-element-axis) ⇒ <code>number</code>
+  - [getElementMeasure(element, dimension)](#getelementmeasure-element-dimension) ⇒ <code>number</code>
+  - [getParentMeasure(element, dimension)](#getparentmeasure-element-dimension) ⇒ <code>Object</code>
+  - [getParentMeasures(element)](#getparentmeasures-element) ⇒ <code>Object</code>
   - [setDimensionMax(element, dimension, value)](#setdimensionmax-element-dimension-value)
   - [removeDimensionMax(element, dimension)](#removedimensionmax-element-dimension)
   - [setParentMaxMeasures(args)](#setparentmaxmeasures-args)
@@ -41,7 +41,7 @@ Throws a ReferenceError if 'dimension' is neither 'width' nor 'height'
 | --------- | ------------------- | -------------------------- |
 | dimension | <code>string</code> | Either 'width' or 'height' |
 
-### getMarginNumericValue(margin)
+### getMarginNumericValue(margin) ⇒ <code>number</code>
 
 Returns only the numeric part of the margin property
 
@@ -52,7 +52,7 @@ Returns only the numeric part of the margin property
 | ------ | ------------------- | -------------------------------- |
 | margin | <code>string</code> | Margin value along with its unit |
 
-### getVertMargin(margins, arrLength)
+### getVertMargin(margins, arrLength) ⇒ <code>number</code>
 
 Calculates the total margin of an element in the vertical axis
 
@@ -64,7 +64,7 @@ Calculates the total margin of an element in the vertical axis
 | margins   | <code>Array.&lt;string&gt;</code> | Array containing an element's margin values          |
 | arrLength | <code>number</code>               | Number of values declared in the CSS margin property |
 
-### getHorizMargin(margins, arrLength)
+### getHorizMargin(margins, arrLength) ⇒ <code>number</code>
 
 Calculates the total margin of an element in the horizontal axis
 
@@ -76,7 +76,7 @@ Calculates the total margin of an element in the horizontal axis
 | margins   | <code>Array.&lt;string&gt;</code> | Array containing an element's margin values          |
 | arrLength | <code>number</code>               | Number of values declared in the CSS margin property |
 
-### getElementMargins(element, axis)
+### getElementMargins(element, axis) ⇒ <code>number</code>
 
 Element's total margin in a given axis
 
@@ -88,7 +88,7 @@ Element's total margin in a given axis
 | element | <code>HTMLElement</code> | The DOM element to calculate margins from |
 | axis    | <code>string</code>      | 'horizontal' or 'vertical' margins        |
 
-### getElementMeasure(element, dimension)
+### getElementMeasure(element, dimension) ⇒ <code>number</code>
 
 Calculates the total width or height of an element
 
@@ -100,7 +100,7 @@ Calculates the total width or height of an element
 | element   | <code>HTMLElement</code> | The Dom element to measure |
 | dimension | <code>string</code>      | Either 'width' or 'height' |
 
-### getParentMeasure(element, dimension)
+### getParentMeasure(element, dimension) ⇒ <code>Object</code>
 
 Calculates the element's parent dimension before and after 'element' is set to 'display: none'
 
@@ -112,7 +112,7 @@ Calculates the element's parent dimension before and after 'element' is set to '
 | element   | <code>HTMLElement</code> | The DOM element from which the parent will be measured |
 | dimension | <code>string</code>      | Either 'width' or 'height'                             |
 
-### getParentMeasures(element)
+### getParentMeasures(element) ⇒ <code>Object</code>
 
 Calculates the width and height of an element's parent,
 before and after the element is set to 'display: none'

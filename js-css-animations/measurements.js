@@ -66,7 +66,7 @@ const getHorizMargin = (margins, arrLength) => {
  * Element's total margin in a given axis
  * @param {HTMLElement} element - The DOM element to calculate margins from
  * @param {string} axis - 'horizontal' or 'vertical' margins
- * @returns Total margin in a given axis
+ * @returns {number} Total margin in a given axis
  */
 const getElementMargins = (element, axis) => {
   const calcMargins = {
