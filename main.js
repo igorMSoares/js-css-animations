@@ -93,7 +93,7 @@ const validateInput = input => {
 jsCssAnimations.init.rotate({
   trigger: '#rotation-angle',
   targetSelector: '.rotation-area',
-  eventType: 'change',
+  on: 'change',
   // @ts-ignore
   start: () => {
     if (validateInput(document.querySelector('#rotation-angle'))) {
@@ -117,9 +117,7 @@ jsCssAnimations.pulsate('#anchor2 img', {
 });
 
 jsCssAnimations.init.scale({
-  trigger: '#anchor2 img',
   targetSelector: '.p2',
   finalScale: 1.2,
   duration: '1.5s',
-  initialScale: 1,
 });

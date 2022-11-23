@@ -246,7 +246,7 @@ const eventBoundAnimations = (() => {
        * @param {Object.<string, any>} opts - Contains all options passed by the user to customize the animation
        */
       animations[animName] = opts => {
-        init(animIds[animName], { animType, ...opts }, opts.eventType);
+        init(animIds[animName], { animType, ...opts });
       };
     });
   });

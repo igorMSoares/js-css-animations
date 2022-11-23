@@ -39,6 +39,7 @@ const configurations = {
     overflowHidden: true,
     stopPropagation: true,
     preventDefault: true,
+    on: 'click',
   }),
 };
 
@@ -598,12 +599,12 @@ const eventHandler = (el, animationId, opts) => {
  * Initiate the event listener with the animation
  * @param {number} animationId - The ID of the animation in *_ANIMS_ID object
  * @param {Object} opts - All options passed by the user
- * @param {string} eventType - The event to attach the animation to
  * @see {@link module:globals.VISIBILITY_ANIMS_ID}
  * @see {@link module:globals.MOTION_ANIMS_ID}
  */
-const init = (animationId, opts = {}, eventType = 'click') => {
+const init = (animationId, opts = {}) => {
   const {
+    on: eventType = CONFIG.on,
     trigger = CONFIG.trigger,
     targetSelector = CONFIG.targetSelector,
     cursor,
