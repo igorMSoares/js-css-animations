@@ -25,7 +25,8 @@ Handle user defined transitions to not conflict with js-css-animations transitio
 
 Gets user defined transitions of an element, if any
 
-**Kind**: static constant of [<code>transitions</code>](#transitions-js)  
+**Kind**: static constant of [<code>transitions</code>](#transitions-js)
+
 **Returns**: <code>string</code> \| <code>null</code> - All user defined transitions combined into single shorthand
 property or null if there's no transition defined by the user
 
@@ -37,7 +38,8 @@ property or null if there's no transition defined by the user
 
 Gets the transition in a given CSS class
 
-**Kind**: static constant of [<code>transitions</code>](#transitions-js)  
+**Kind**: static constant of [<code>transitions</code>](#transitions-js)
+
 **Returns**: <code>string</code> - A shorthand value for CSS transition property
 
 | Param     | Type                | Description                       |
@@ -77,7 +79,8 @@ If element has an inline css transition appended by appendTransition()
 the inline transition property will be removed to reset the element back
 to its previous state
 
-**Kind**: static constant of [<code>transitions</code>](#transitions-js)  
+**Kind**: static constant of [<code>transitions</code>](#transitions-js)
+
 **See**: [appendTransition](#appendtransition)
 
 | Param   | Type                     | Description                              |
@@ -88,7 +91,8 @@ to its previous state
 
 Removes the CSS class added by setDimensionsTransitions(), if any
 
-**Kind**: static constant of [<code>transitions</code>](#transitions-js)  
+**Kind**: static constant of [<code>transitions</code>](#transitions-js)
+
 **See**: module:transitions.setDimensionsTransitions
 
 | Param    | Type                     | Description                                    |
@@ -102,7 +106,8 @@ Removes the CSS class added by setDimensionsTransitions(), if any
 Parses all CSS properties and combine all transitions into one valid shorthand value
 for 'transition' CSS property
 
-**Kind**: inner method of [<code>transitions</code>](#transitions-js)  
+**Kind**: inner method of [<code>transitions</code>](#transitions-js)
+
 **Returns**: <code>string</code> - All transitions combined into a single shorthand property
 
 | Param         | Type                             | Description               |
@@ -125,7 +130,8 @@ for 'transition' CSS property
 
 Verifies wether there should be widht or height transition, or both, or none
 
-**Kind**: inner method of [<code>transitions</code>](#transitions-js)  
+**Kind**: inner method of [<code>transitions</code>](#transitions-js)
+
 **Returns**: <code>string</code> \| <code>undefined</code> - The name of the class with the respective transition, or undefined if there should be no transitions
 
 | Param    | Type                 | Description                                   |

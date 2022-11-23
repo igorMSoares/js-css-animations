@@ -14,15 +14,20 @@ Handles all the animation process
   - [animate(element, action, id, opts)](#animate-element-action-id-opts)
   - [preset(el, args)](#preset-el-args)
   - [isEnabled(element)](#isenabled-element) ⇒ <code>boolean</code>
-
-- _inner_
-
-  - [DURATION_REGEX](#duration-regex) : <code>RegExp</code>
-  - [CALLBACK_TRACKER](#callback-tracker) : <code>Object</code>
-  - [TARGETS_STACK](#targets-stack) : <code>Object</code>
   - [removeCustomCssProperties(element)](#removecustomcssproperties-element)
   - [setCssProperty(element, property, value)](#setcssproperty-element-property-value)
   - [updateCssProperties(element, opts)](#updatecssproperties-element-opts)
+  - [updateDefaultConfig(opts)](#updatedefaultconfig-opts)
+  - [resetDefaultConfig()](#resetdefaultconfig)
+
+- _inner_
+
+  - [configurations](#configurations) : <code>Object</code>
+  - [configHandler()](#confighandler)
+  - [CONFIG](#config) : <code>Object</code>
+  - [DURATION_REGEX](#duration-regex) : <code>RegExp</code>
+  - [CALLBACK_TRACKER](#callback-tracker) : <code>Object</code>
+  - [TARGETS_STACK](#targets-stack) : <code>Object</code>
   - [getTargetSelector(eventTarget)](#gettargetselector-eventtarget) ⇒ <code>string</code>
   - [getTimeInMs(value)](#gettimeinms-value) ⇒ <code>number</code>
   - [getTotalAnimTime(element)](#gettotalanimtime-element) ⇒ <code>Object</code>
@@ -42,7 +47,7 @@ Handles all the animation process
 
 Initiate the event listener with the animation
 
-**Kind**: static function of [<code>animate</code>](#animate)
+**Kind**: static function of [<code>animate</code>](#animate-js)
 
 **See**:
 
@@ -59,7 +64,8 @@ Initiate the event listener with the animation
 
 Handles all the animation process
 
-**Kind**: static function of [<code>animate</code>](#animate)  
+**Kind**: static function of [<code>animate</code>](#animate-js)
+
 **See**:
 
 - [globals.VISIBILITY_ANIMS_ID](globals.html#visibility-anims-id)
@@ -77,7 +83,7 @@ Handles all the animation process
 Sets the CSS properties customized by the user,
 prior to the begining of the animation
 
-**Kind**: static function of [<code>animate</code>](#animate)
+**Kind**: static function of [<code>animate</code>](#animate-js)
 
 | Param | Type                     | Description                                                        |
 | ----- | ------------------------ | ------------------------------------------------------------------ |
@@ -88,18 +94,51 @@ prior to the begining of the animation
 
 Verifies if an element is already being animated or not
 
-**Kind**: static function of [<code>animate</code>](#animate)  
+**Kind**: static function of [<code>animate</code>](#animate-js)
+
 **Returns**: True if the element is not currently being animated
 
 | Param   | Type                     | Description              |
 | ------- | ------------------------ | ------------------------ |
 | element | <code>HTMLElement</code> | The DOM element to check |
 
+### configurations : <code>Object.&lt;string, any&gt;</code>
+
+Contains the default value for each custom option.
+Those values can be overwritten by the user by calling jsCssAnimations.config()
+and passing new default values for all the animations.
+
+**Kind**: inner constant of [<code>animate</code>](#animate-js)
+
+**See**: [js-css-animations.config()](js-css-animations.html#config-opts)
+
+### configHandler
+
+ProxyHandler passed to the _CONFIG_ object to ensure that
+if an option is not customized by the user, the default value set
+in _configurations.default_ will be returned instead.
+
+**Kind**: inner constant of [<code>animate</code>](#animate-js)
+
+**See**
+
+- [CONFIG](#config)
+- [configurations](#configurations)
+
+### CONFIG : <code>Object.&lt;string, any&gt;</code>
+
+Object that handles configurations, either customized by the user
+or default values defined in _configurations.default_ object
+
+**Kind**: inner constant of [<code>animate</code>](#animate-js)
+
+**See**: [configurations](#configurations)
+
 ## DURATION_REGEX : <code>RegExp</code>
 
 Matches duration or delay CSS properties values
 
-**Kind**: inner constant of [<code>animate</code>](#animate)
+**Kind**: inner constant of [<code>animate</code>](#animate-js)
 
 ## CALLBACK_TRACKER : <code>Object</code>
 
@@ -109,7 +148,7 @@ multiple times if multiple elements are being animated by a single trigger.
 When an element triggers an animation, no matter how many elements are being animated,
 the start() and complete() callbacks should each be executed only once.
 
-**Kind**: inner constant of [<code>animate</code>](#animate)
+**Kind**: inner constant of [<code>animate</code>](#animate-js)
 
 - [CALLBACK_TRACKER](#callback-tracker) : <code>Object</code>
   - [.init(trigger)](#callback-tracker-init-trigger)
@@ -142,18 +181,18 @@ Keeps track of all the targets being animated to ensure that the callback tracke
 will be removed only when all the targets have been animated. Also ensures that
 all targets will be re-enabled only when all targets have already been animated.
 
-**Kind**: inner constant of [<code>animate</code>](#animate)
+**Kind**: inner constant of [<code>animate</code>](#animate-js)
 
-- [TARGETS_STACK](#TARGETS_STACK) : <code>Object</code>
-  - [.add(elem, trigger)](#TARGETS_STACK.add)
-  - [.remove(trigger)](#TARGETS_STACK.remove)
-  - [.get(trigger)](#TARGETS_STACK.get) ⇒ <code>Array.&lt;HTMLElement&gt;</code>
+- [TARGETS_STACK](#targets-stack) : <code>Object</code>
+  - [.add(elem, trigger)](#targets-stack-add-elem-trigger)
+  - [.remove(trigger)](#targets-stack-remove-trigger)
+  - [.get(trigger)](#targets-stack-get-trigger) ⇒ <code>Array.&lt;HTMLElement&gt;</code>
 
 ### TARGETS_STACK.add(elem, trigger)
 
 Adds an element to the stack
 
-**Kind**: static function of [<code>TARGETS_STACK</code>](#TARGETS_STACK)
+**Kind**: static function of [<code>TARGETS_STACK</code>](#targets-stack)
 
 | Param   | Type                     | Description                                               |
 | ------- | ------------------------ | --------------------------------------------------------- |
@@ -164,7 +203,7 @@ Adds an element to the stack
 
 Removes from the stack all the elements animated by the same trigger button
 
-**Kind**: static function of [<code>TARGETS_STACK</code>](#TARGETS_STACK)
+**Kind**: static function of [<code>TARGETS_STACK</code>](#targets-stack)
 
 | Param   | Type                | Description                                               |
 | ------- | ------------------- | --------------------------------------------------------- |
@@ -174,18 +213,41 @@ Removes from the stack all the elements animated by the same trigger button
 
 Gets all elements included in the stack for a given trigger button
 
-**Kind**: static function of [<code>TARGETS_STACK</code>](#TARGETS_STACK)  
+**Kind**: static function of [<code>TARGETS_STACK</code>](#targets-stack)
+
 **Returns**: An array of elements that have been animated by the same trigger button
 
 | Param   | Type                | Description                                               |
 | ------- | ------------------- | --------------------------------------------------------- |
 | trigger | <code>string</code> | CSS selector for the element that triggered the animation |
 
+### updateDefaultConfig(opts)
+
+Customize the default animations configurations by overwriting
+the _CONFIG_ values
+
+**Kind**: inner method of [<code>animate</code>](#animate-js)
+
+**See**: [CONFIG](#config)
+
+| Param | Type                | Description                            |
+| ----- | ------------------- | -------------------------------------- |
+| opts  | <code>Object</code> | All the options customized by the user |
+
+### resetDefaultConfig()
+
+Reset the configurations to its default values
+by removing from _CONFIG_ all options customized by the user
+
+**Kind**: inner method of [<code>animate</code>](#animate-js)
+
+**See**: [CONFIG](#config)
+
 ## removeCustomCssProperties(element)
 
 Removes the CSS properties customized by the user
 
-**Kind**: static function of [<code>animate</code>](#animate)
+**Kind**: static function of [<code>animate</code>](#animate-js)
 
 | Param   | Type                     | Description                                    |
 | ------- | ------------------------ | ---------------------------------------------- |
@@ -195,7 +257,7 @@ Removes the CSS properties customized by the user
 
 Sets an inline CSS property
 
-**Kind**: static function of [<code>animate</code>](#animate)
+**Kind**: static function of [<code>animate</code>](#animate-js)
 
 **See**: [globals.PROPERTY_NAMES](globals.html#property-names)
 
@@ -209,7 +271,7 @@ Sets an inline CSS property
 
 Sets the CSS properties customized by the user in the animation function's options
 
-**Kind**: inner method of [<code>animate</code>](#animate)
+**Kind**: static function of [<code>animate</code>](#animate-js)
 
 | Param   | Type                                       | Description                                                           |
 | ------- | ------------------------------------------ | --------------------------------------------------------------------- |
@@ -225,7 +287,8 @@ will bubbles up untill the attribute is found.
 If no attribute is found, an empty string is returned and so
 no element will be selected to be animated
 
-**Kind**: inner method of [<code>animate</code>](#animate)  
+**Kind**: inner method of [<code>animate</code>](#animate-js)
+
 **Returns**: The CSS selector for the animation target(s) or an empty string
 
 | Param       | Type                     | Description                             |
@@ -236,7 +299,8 @@ no element will be selected to be animated
 
 Removes the unit from the duration or delay and returns the value in milliseconds
 
-**Kind**: inner method of [<code>animate</code>](#animate)  
+**Kind**: inner method of [<code>animate</code>](#animate-js)
+
 **Returns**: The duration or delay in milliseconds
 
 | Param | Type                | Description                          |
@@ -247,7 +311,8 @@ Removes the unit from the duration or delay and returns the value in millisecond
 
 Returns an object with the duration and delay time in milliseconds
 
-**Kind**: inner method of [<code>animate</code>](#animate)  
+**Kind**: inner method of [<code>animate</code>](#animate-js)
+
 **Returns**: Both the duration and delay, in milliseconds
 
 | Param   | Type                     | Description                    |
@@ -258,7 +323,8 @@ Returns an object with the duration and delay time in milliseconds
 
 Returns true if the animation type is 'visibility'
 
-**Kind**: inner method of [<code>animate</code>](#animate)  
+**Kind**: inner method of [<code>animate</code>](#animate-js)
+
 **Returns**: True if animation type is 'visibility'. False otherwise.
 
 | Param    | Type                | Description                     |
@@ -269,7 +335,8 @@ Returns true if the animation type is 'visibility'
 
 Returns true if the animation type is 'motion'
 
-**Kind**: inner method of [<code>animate</code>](#animate)  
+**Kind**: inner method of [<code>animate</code>](#animate-js)
+
 **Returns**: True if animation type is 'motion'. False otherwise.
 
 | Param    | Type                | Description                     |
@@ -280,7 +347,7 @@ Returns true if the animation type is 'motion'
 
 Removes the current motion animation CSS class from the element
 
-**Kind**: inner method of [<code>animate</code>](#animate)
+**Kind**: inner method of [<code>animate</code>](#animate-js)
 
 | Param   | Type                     | Description                    |
 | ------- | ------------------------ | ------------------------------ |
@@ -291,7 +358,7 @@ Removes the current motion animation CSS class from the element
 Sets an attribute to indicate that the element is currently being animated
 and so can not perform any other animations
 
-**Kind**: inner method of [<code>animate</code>](#animate)
+**Kind**: inner method of [<code>animate</code>](#animate-js)
 
 | Param   | Type                     | Description                    |
 | ------- | ------------------------ | ------------------------------ |
@@ -301,7 +368,7 @@ and so can not perform any other animations
 
 Removes the attribute that indicates that an element is currently being animated
 
-**Kind**: inner method of [<code>animate</code>](#animate)
+**Kind**: inner method of [<code>animate</code>](#animate-js)
 
 | Param   | Type                     |
 | ------- | ------------------------ |
@@ -311,7 +378,8 @@ Removes the attribute that indicates that an element is currently being animated
 
 Verifies if an element has defined an iteration CSS property
 
-**Kind**: inner method of [<code>animate</code>](#animate)  
+**Kind**: inner method of [<code>animate</code>](#animate-js)
+
 **Returns**: True if the element has an iteration CSS property set, False otherwise
 
 | Param   | Type                     |
@@ -324,7 +392,7 @@ Sets the parent element dimensions, if needed.
 
 Removes the collapsed or hidden class from the element, when necessary
 
-**Kind**: inner method of [<code>animate</code>](#animate)
+**Kind**: inner method of [<code>animate</code>](#animate-js)
 
 | Param   | Type                     | Description                    |
 | ------- | ------------------------ | ------------------------------ |
@@ -336,7 +404,7 @@ Removes the collapsed or hidden class from the element, when necessary
 Adds the hidden or collapsed class, when necessary.
 Finalize parent element's resize operations, if needed.
 
-**Kind**: inner method of [<code>animate</code>](#animate)
+**Kind**: inner method of [<code>animate</code>](#animate-js)
 
 | Param   | Type                     | Description                    |
 | ------- | ------------------------ | ------------------------------ |
@@ -348,7 +416,7 @@ Finalize parent element's resize operations, if needed.
 Executes a given callback, checking, when necessary, if the callback was already
 executed by another element being animated by the same trigger button
 
-**Kind**: inner method of [<code>animate</code>](#animate)
+**Kind**: inner method of [<code>animate</code>](#animate-js)
 
 | Param   | Type                  | Description                                                  |
 | ------- | --------------------- | ------------------------------------------------------------ |
@@ -360,7 +428,8 @@ executed by another element being animated by the same trigger button
 
 Checks which animation CSS class is set to determine wich action to perform next
 
-**Kind**: inner method of [<code>animate</code>](#animate)  
+**Kind**: inner method of [<code>animate</code>](#animate-js)
+
 **Returns**: 'show' or 'hide' or 'move' or 'moveBack'
 
 | Param    | Type                     | Description                     |
@@ -372,8 +441,10 @@ Checks which animation CSS class is set to determine wich action to perform next
 
 Generates the handler function to be passed to the event listener
 
-**Kind**: inner method of [<code>animate</code>](#animate)
-**Returns**: A function to be passed to the addEventListener() as a handler  
+**Kind**: inner method of [<code>animate</code>](#animate-js)
+
+**Returns**: A function to be passed to the addEventListener() as a handler
+
 **See**:
 
 - [globals.VISIBILITY_ANIMS_ID](globals.html#visibility-anims-id)

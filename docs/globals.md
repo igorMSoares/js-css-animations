@@ -23,7 +23,8 @@ The key is the name of the animation function
 and the value is the index of the CSS class name
 inside CLASS_NAMES.hide and CLASS_NAMES.show
 
-**Kind**: static constant of [<code>globals</code>](#globals-js)  
+**Kind**: static constant of [<code>globals</code>](#globals-js)
+
 **See**: [globals.CLASS_NAMES](#class-names)
 
 ## MOTION_ANIMS_ID : <code>Object.&lt;string, number&gt;</code>
@@ -34,7 +35,8 @@ The key is the name of the animation function
 and the value is the index of the CSS class name
 inside CLASS_NAMES.move and CLASS_NAMES.moveBack
 
-**Kind**: static constant of [<code>globals</code>](#globals-js)  
+**Kind**: static constant of [<code>globals</code>](#globals-js)
+
 **See**: [globals.CLASS_NAMES](#class-names)
 
 ## PROPERTY_NAMES : <code>Object.&lt;string, string&gt;</code>

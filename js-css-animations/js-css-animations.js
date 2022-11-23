@@ -257,7 +257,7 @@ const eventBoundAnimations = (() => {
  * Verifies if an element is out of its original orientation or scale.
  *
  * Note that if the element has CSS property 'transform: rotate(0deg)',
- * checkTransform() will still return False, as the element is not
+ * isTransformed() will still return False, as the element is not
  * out of its original orientation.
  * @param {HTMLElement|string} selector - An element or a valid CSS selector corresponding to the element
  * @returns True if the element was rotated from its original orientation. False if it maintains the original orientation.

@@ -32,7 +32,8 @@ parent element's dimensions can be properly transitioned
 
 Calculates the element's parent dimension before and after 'element' is set to 'display: none'
 
-**Kind**: inner method of [<code>measurements</code>](#measurements-js)  
+**Kind**: inner method of [<code>measurements</code>](#measurements-js)
+
 **Returns**: An object containing the parent element's dimension before and after the child element is set to 'display: none'
 
 | Param     | Type                     | Description                                            |
@@ -84,7 +85,8 @@ Throws a ReferenceError if 'dimension' is neither 'width' nor 'height'
 
 Returns only the numeric part of the margin property
 
-**Kind**: inner method of [<code>measurements</code>](#measurements-js)  
+**Kind**: inner method of [<code>measurements</code>](#measurements-js)
+
 **Returns**: Margin value without unit
 
 | Param  | Type                | Description                      |
@@ -95,7 +97,8 @@ Returns only the numeric part of the margin property
 
 Calculates the total margin of an element in the vertical axis
 
-**Kind**: inner method of [<code>measurements</code>](#measurements-js)  
+**Kind**: inner method of [<code>measurements</code>](#measurements-js)
+
 **Returns**: The sum of top-margin and bottom-margin
 
 | Param     | Type                              | Description                                          |
@@ -107,7 +110,8 @@ Calculates the total margin of an element in the vertical axis
 
 Calculates the total margin of an element in the horizontal axis
 
-**Kind**: inner method of [<code>measurements</code>](#measurements-js)  
+**Kind**: inner method of [<code>measurements</code>](#measurements-js)
+
 **Returns**: The sum of left-margin and right-margin
 
 | Param     | Type                              | Description                                          |
@@ -119,7 +123,8 @@ Calculates the total margin of an element in the horizontal axis
 
 Element's total margin in a given axis
 
-**Kind**: inner method of [<code>measurements</code>](#measurements-js)  
+**Kind**: inner method of [<code>measurements</code>](#measurements-js)
+
 **Returns**: Total margin in a given axis
 
 | Param   | Type                     | Description                               |
@@ -131,7 +136,8 @@ Element's total margin in a given axis
 
 Calculates the total width or height of an element
 
-**Kind**: inner method of [<code>measurements</code>](#measurements-js)  
+**Kind**: inner method of [<code>measurements</code>](#measurements-js)
+
 **Returns**: The total dimension of an element, including its margins
 
 | Param     | Type                     | Description                |
@@ -144,7 +150,8 @@ Calculates the total width or height of an element
 Calculates the width and height of an element's parent,
 before and after the element is set to 'display: none'
 
-**Kind**: inner method of [<code>measurements</code>](#measurements-js)  
+**Kind**: inner method of [<code>measurements</code>](#measurements-js)
+
 **Returns**: An object with the width and height of the parent element
 
 | Param   | Type                     | Description                                           |
@@ -165,8 +172,8 @@ Sets the element's 'max-width' or 'max-height' CSS property
 
 ## DimensionsMeasurements : <code>typedef</code>
 
-**Kind**: inner typedef of [<code>measurements</code>](#measurements-js)  
-**Properties**
+$1
+$2
 
 | Name   | Type                | Description                                                               |
 | ------ | ------------------- | ------------------------------------------------------------------------- |

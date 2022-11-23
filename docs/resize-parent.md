@@ -26,7 +26,8 @@ when child element is being animated
 
 Handles parent element width/height transitions during child element's animation
 
-**Kind**: inner method of [<code>resize-parent</code>](#resize-parent-js)  
+**Kind**: inner method of [<code>resize-parent</code>](#resize-parent-js)
+
 **Returns**: An object with the dimension(s) to transition and the parent element's measurements before and after the child element's animation is performed
 
 | Param | Type                | Description                                                                       |
@@ -48,7 +49,8 @@ Removes all CSS properties and classes added to the parent element to handle the
 
 Gets the default value of a CSS property defined in js-css-animations.css
 
-**Kind**: inner method of [<code>resize-parent</code>](#resize-parent-js)  
+**Kind**: inner method of [<code>resize-parent</code>](#resize-parent-js)
+
 **Returns**: The default js-css-animation property value
 
 | Param    | Type                | Description                                             |
@@ -71,7 +73,8 @@ the same custom properties of the child element's animations
 
 Returns a string with the dimension to transition, or 'all' for both dimensions, or undefined if neither width nor height should be transitioned
 
-**Kind**: inner method of [<code>resize-parent</code>](#resize-parent-js)  
+**Kind**: inner method of [<code>resize-parent</code>](#resize-parent-js)
+
 **Returns**: undefined if both parameters are false, 'all' if both are true and 'width' or 'height' if only wTransit or hTransit is true, respectively
 
 | Param    | Type                 | Description                                               |

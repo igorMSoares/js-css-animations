@@ -14,6 +14,8 @@ Builds the animation API that will be exported to the final user
 
 - _inner_
 
+  - [config(opts)](#config-opts)
+  - [reset()](#reset)
   - [animationFunctions](#animationfunctions) : <code>Object</code>
   - [eventBoundAnimations](#eventboundanimations) : <code>Object.&lt;string, function()&gt;</code>
   - [verifyAnimationName](#verifyanimationname) : <code>ProxyHandler</code>
@@ -23,7 +25,7 @@ Builds the animation API that will be exported to the final user
   - [getTargets(selector)](#gettargets-selector) ⇒ <code>NodeList.&lt;Element&gt;</code> \| <code>Array.&lt;HTMLElement&gt;</code>
   - [toggle(selector, animA, animB, opts)](#toggle-selector-anima-animb-opts)
     - [element](#toggle-element)
-  - [checkTransform(selector)](#checktransform-selector) ⇒ <code>boolean</code>
+  - [isTransformed(selector)](#istransformed-selector) ⇒ <code>boolean</code>
   - [checkVisibility(selector, mode)](#checkvisibility-selector-mode) ⇒ <code>boolean</code>
   - [isVisible(selector)](#isvisible-selector) ⇒ <code>boolean</code>
   - [isHidden(selector)](#ishidden-selector) ⇒ <code>boolean</code>
@@ -34,7 +36,29 @@ An API encapsulating all the functions that can be used by the user,
 like all the animations functions and auxiliary functions like:
 isTransformed(), isVisible() and isHidden()
 
-**Kind**: inner constant of [<code>js-css-animations</code>](#js-css-animations)
+**Kind**: inner constant of [<code>js-css-animations</code>](#js-css-animations-js)
+
+### config(opts)
+
+Default values used by all animations are set by the user by
+overriding default animations properties and options
+
+**Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations-js)  
+**See**
+
+- [globals.PROPERTY_NAMES](globals.html#property_names)
+- [animate.configurations](animate.html#configurations)
+
+| Param | Type                | Description                                  |
+| ----- | ------------------- | -------------------------------------------- |
+| opts  | <code>Object</code> | All custom animation properties and options. |
+
+### reset()
+
+Resets default animations values by
+removing default values customized by the user
+
+**Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations-js)
 
 ## animationFunctions : <code>Object</code>
 
@@ -45,7 +69,7 @@ animationFunctions.hide and animationFunctions.show
 
 All other keys of animationFunctions are Motion animations functions
 
-**Kind**: inner constant of [<code>js-css-animations</code>](#js-css-animations)
+**Kind**: inner constant of [<code>js-css-animations</code>](#js-css-animations-js)
 
 **See**:
 
@@ -56,13 +80,13 @@ All other keys of animationFunctions are Motion animations functions
 
 An object containing animations functions wich are triggered by an event (like 'click')
 
-**Kind**: inner constant of [<code>js-css-animations</code>](#js-css-animations)
+**Kind**: inner constant of [<code>js-css-animations</code>](#js-css-animations-js)
 
 ## verifyAnimationName : <code>ProxyHandler</code>
 
 Will throw an ReferenceError if the animation name does not corresponds to any animation function
 
-**Kind**: inner constant of [<code>js-css-animations</code>](#js-css-animations)
+**Kind**: inner constant of [<code>js-css-animations</code>](#js-css-animations-js)
 
 ### verifyAnimationName.get(animations, name)
 
@@ -79,7 +103,8 @@ If 'selector' is a string containing a valid CSS selector,
 it will be used to perform a querySelector(),
 If 'selector' is already an HTMLElement it will be returned as it is.
 
-**Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations)  
+**Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations-js)
+
 **Returns**: An HTMLElement
 
 | Param    | Type                                        | Description                                                                                                       |
@@ -90,7 +115,8 @@ If 'selector' is already an HTMLElement it will be returned as it is.
 
 Returns a NodeList with all elements that match 'selector'
 
-**Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations)  
+**Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations-js)
+
 **Returns**: A NodeList containing all elements matched by the 'selector'
 
 | Param    | Type                | Description                                             |
@@ -101,7 +127,8 @@ Returns a NodeList with all elements that match 'selector'
 
 Gets the element(s) to be animated. The user can pass either an HTMLElement or a CSS selector as a target to the animation
 
-**Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations)  
+**Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations-js)
+
 **Returns**: An array containing a single HTMLElement or a NodeList with all the elements matching the CSS selector in 'selector'
 
 | Param    | Type                                            | Description                                                               |
@@ -116,7 +143,8 @@ If 'animA' and 'animB' have the same name,
 it will toggle between the 'hide' state and the 'show' state,
 although this is only applicable to visibility animations.
 
-**Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations)  
+**Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations-js)
+
 **See**: [globals.VISIBILITY_ANIMS_ID](globals.html#visibility-anims-id)
 
 | Param    | Type                                            | Description                                                                |
@@ -134,15 +162,16 @@ matched by 'selector'
 
 **Kind**: inner constant of [<code>toggle</code>](#toggle-selector-anima-animb-opts)
 
-## checkTransform(selector) ⇒ <code>boolean</code>
+## isTransformed(selector) ⇒ <code>boolean</code>
 
 Verifies if an element is out of its original orientation or scale.
 
 Note that if the element has CSS property 'transform: rotate(0deg)',
-checkTransform() will still return False, as the element is not
+isTransformed() will still return False, as the element is not
 out of its original orientation.
 
-**Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations)  
+**Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations-js)
+
 **Returns**: True if the element was rotated from its original orientation. False if it maintains the original orientation.
 
 | Param    | Type                                            | Description                                                     |
@@ -153,7 +182,8 @@ out of its original orientation.
 
 Verifies if a given element is hidden or visible
 
-**Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations)  
+**Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations-js)
+
 **Returns**: <code>boolean</code> - True or False depending if the element is visible or hidden, according to the 'mode' passed
 
 | Param    | Type                                        | Description                                                     |
@@ -163,7 +193,8 @@ Verifies if a given element is hidden or visible
 
 ## isVisible(selector) ⇒ <code>boolean</code>
 
-**Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations)  
+**Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations-js)
+
 **Returns**: True if the element is visible, False otherwise
 
 | Param    | Type                                        | Description                         |
@@ -172,7 +203,8 @@ Verifies if a given element is hidden or visible
 
 ## isHidden(selector) ⇒ <code>boolean</code>
 
-**Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations)  
+**Kind**: inner method of [<code>js-css-animations</code>](#js-css-animations-js)
+
 **Returns**: True if the element is hidden, False otherwise
 
 | Param    | Type                                        | Description                         |
