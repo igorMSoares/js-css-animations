@@ -37,6 +37,8 @@ const configurations = {
     widthTransition: undefined,
     heightTransition: undefined,
     overflowHidden: true,
+    stopPropagation: true,
+    preventDefault: true,
   }),
 };
 
@@ -45,7 +47,7 @@ const configurations = {
  * if an option is not customized by the user, the default value set
  * in 'configurations.default' will be returned instead.
  * @see {@link CONFIG}
- * @see {@link module:animate~configurations}
+ * @see {@link configurations}
  */
 const configHandler = {
   /**
@@ -71,7 +73,7 @@ const configHandler = {
  * Object that handles configurations, either customized by the user
  * or default values defined in 'configurations.default' object
  * @type {Object.<string,any>}
- * @see {@link module:animate~configurations}
+ * @see {@link configurations}
  */
 const CONFIG = new Proxy(configurations, configHandler);
 
@@ -570,7 +572,10 @@ const preset = (el, args) => {
  */
 const eventHandler = (el, animationId, opts) => {
   return (/** @type {Event} */ e) => {
-    const { stopPropagation = true, preventDefault = true } = opts;
+    const {
+      stopPropagation = CONFIG.stopPropagation,
+      preventDefault = CONFIG.preventDefault,
+    } = opts;
     if (stopPropagation) e.stopPropagation();
     if (preventDefault) e.preventDefault();
 
