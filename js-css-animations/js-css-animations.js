@@ -2,7 +2,17 @@
  * Builds the animation API that will be exported to the final user
  * @module js-css-animations
  */
-import { init, animate, preset, isEnabled } from './animate.js';
+import {
+  init,
+  animate,
+  preset,
+  isEnabled,
+  updateCssProperties,
+  setCssProperty,
+  updateDefaultConfig,
+  resetDefaultConfig,
+} from './animate.js';
+
 import { VISIBILITY_ANIMS_ID, MOTION_ANIMS_ID } from './globals.js';
 
 /**
@@ -49,6 +59,29 @@ const getTargets = selector => {
   return selector instanceof HTMLElement
     ? [selector]
     : selectAllElements(selector);
+};
+
+/**
+ * Default values used by all animations are set by the user by
+ * overriding default animations properties and options
+ * @param {Object} opts - All custom animation properties and options.
+ * @see {@link module:globals.PROPERTY_NAMES}
+ * @see {@link module:animate.configurations.default}
+ */
+const config = opts => {
+  updateDefaultConfig(opts);
+  updateCssProperties(document.documentElement, opts);
+  if (opts.cursor)
+    setCssProperty(document.documentElement, 'cursor', opts.cursor);
+};
+
+/**
+ * Resets default animations values by
+ * removing default values customized by the user
+ */
+const reset = () => {
+  config({});
+  resetDefaultConfig();
 };
 
 /**
@@ -134,7 +167,7 @@ const toggle = (selector, animA, animB, opts = {}) => {
  * @see {@link module:globals.MOTION_ANIMS_ID}
  * @type {Object}
  */
-const animationFunctions = (function() {
+const animationFunctions = (function () {
   const handlers = {};
   ['show', 'hide', 'move'].forEach(action => {
     const { animIds, animType } =
@@ -176,6 +209,23 @@ const animationFunctions = (function() {
       }
     }
   });
+  const blink = (target, opts = {}) => {
+    jsCssAnimations.show.fade(target, {
+      iteration: 'infinite',
+      direction: 'alternate',
+      ...opts,
+    });
+  };
+  const pulsate = (target, opts = {}) => {
+    jsCssAnimations.scale(target, {
+      finalScale: '1.2',
+      iteration: 'infinite',
+      direction: 'alternate',
+      ...opts,
+    });
+  };
+  handlers.blink = blink;
+  handlers.pulsate = pulsate;
   return handlers;
 })();
 
@@ -212,7 +262,7 @@ const eventBoundAnimations = (() => {
  * @param {HTMLElement|string} selector - An element or a valid CSS selector corresponding to the element
  * @returns True if the element was rotated from its original orientation. False if it maintains the original orientation.
  */
-const checkTransform = selector => {
+const isTransformed = selector => {
   const el = selectElement(selector);
   const transform = getComputedStyle(el).transform;
   return transform !== 'none' && transform !== 'matrix(1, 0, 0, 1, 0, 0)';
@@ -259,7 +309,7 @@ const verifyAnimationName = {
  * isTransformed(), isVisible() and isHidden()
  * @type {Object.<string, Function|Object>}
  */
-const jsCssAnimations = (function() {
+const jsCssAnimations = (function () {
   /**
    * Encapsulates eventBoundAnimations(), adding animation name validation
    * @see eventBoundAnimations
@@ -285,29 +335,14 @@ const jsCssAnimations = (function() {
     verifyAnimationName
   );
   const animationsHandler = Object.freeze({
+    config,
+    reset,
     init: eventAnimations,
     ...animationFunctions,
     show: showVisibilityAnim,
     hide: hideVisibilityAnim,
-    toggle: toggle,
-    blink: (target, opts = {}) => {
-      jsCssAnimations.show.fade(target, {
-        duration: '1s',
-        iteration: 'infinite',
-        direction: 'alternate',
-        ...opts,
-      });
-    },
-    pulsate: (target, opts = {}) => {
-      jsCssAnimations.scale(target, {
-        finalScale: '1.5',
-        duration: '1s',
-        iteration: 'infinite',
-        direction: 'reverse',
-        ...opts,
-      });
-    },
-    isTransformed: checkTransform,
+    toggle,
+    isTransformed,
     /**
      * @param {Element|string} selector - Dom element or a valid CSS selector
      * @returns True if the element is visible, False otherwise

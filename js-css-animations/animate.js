@@ -19,6 +19,62 @@ import {
 
 import { setParentMaxMeasures } from './measurements.js';
 
+/**
+ * Contains the default value for each custom option.
+ * Those values can be overwritten by the user by calling jsCssAnimations.config()
+ * and passing new default values for all the animations.
+ * @type {Object.<string,any>}
+ */
+const configurations = {
+  default: Object.freeze({
+    trigger: `.${CLASS_NAMES.trigger}`,
+    targetSelector: undefined,
+    staggerDelay: undefined,
+    start: undefined,
+    complete: undefined,
+    keepSpace: false,
+    dimensionsTransition: true,
+    widthTransition: undefined,
+    heightTransition: undefined,
+    overflowHidden: true,
+  }),
+};
+
+/**
+ * ProxyHandler passed to the 'CONFIG' object to ensure that
+ * if an option is not customized by the user, the default value set
+ * in 'configurations.default' will be returned instead.
+ * @see {@link CONFIG}
+ * @see {@link configurations}
+ */
+const configHandler = {
+  /**
+   * @param {Object.<string, Function>} configurations - Contains the configuration options
+   * @param {string} option - Key name of the configuration option
+   */
+  get(configurations, option) {
+    if (!(option in configurations)) return configurations.default[option];
+    else return configurations[option];
+  },
+  /**
+   * @param {Object.<string, Function>} configurations - Contains the configuration options
+   * @param {string} option - Key name of the configuration option
+   * @param {any} value - Configuration option value
+   */
+  set(configurations, option, value) {
+    configurations[option] = value;
+    return true;
+  },
+};
+
+/**
+ * Object that handles configurations, either customized by the user
+ * or default values defined in 'configurations.default' object
+ * @type {Object.<string,any>}
+ * @see {@link configurations}
+ */
+const CONFIG = new Proxy(configurations, configHandler);
+
 /** Matches duration or delay CSS properties values */
 const DURATION_REGEX = Object.freeze(new RegExp(/(\d?\.\d+|\d+)(ms|s)?/));
 
@@ -40,14 +96,14 @@ const CALLBACK_TRACKER = Object.freeze({
    * Initiates the tracker
    * @param {string} trigger - A CSS selector representing the element which triggered the animation
    */
-  init: function(trigger) {
+  init: function (trigger) {
     CALLBACK_TRACKER.executing[trigger] = {};
   },
   /**
    * Removes 'trigger' from the tracker
    * @param {string} trigger - A CSS selector representing the element which triggered the animation
    */
-  remove: function(trigger) {
+  remove: function (trigger) {
     delete this.executing[trigger];
   },
 });
@@ -64,7 +120,7 @@ const TARGETS_STACK = {
    * @param {HTMLElement} elem - Element being animated
    * @param {string} trigger - CSS selector for the element that triggered the animation
    */
-  add: function(elem, trigger) {
+  add: function (elem, trigger) {
     if (!(trigger in this.stack)) this.stack[trigger] = [];
     this.stack[trigger].push(elem);
   },
@@ -72,7 +128,7 @@ const TARGETS_STACK = {
    * Removes from the stack all the elements animated by the same trigger button
    * @param {string} trigger - CSS selector for the element that triggered the animation
    */
-  remove: function(trigger) {
+  remove: function (trigger) {
     if (!(trigger in this.stack)) return;
     delete this.stack[trigger];
   },
@@ -81,7 +137,7 @@ const TARGETS_STACK = {
    * @param {string} trigger - CSS selector for the element that triggered the animation
    * @returns An array of elements that have been animated by the same trigger button
    */
-  get: function(trigger) {
+  get: function (trigger) {
     if (!(trigger in this.stack)) return;
     return this.stack[trigger];
   },
@@ -96,6 +152,31 @@ export const removeCustomCssProperties = element => {
   CUSTOM_CSS_PROPERTIES.forEach(prop => {
     element.style.removeProperty(PROPERTY_NAMES[prop]);
   });
+};
+
+/**
+ * Customize the default animations configurations by overwriting
+ * the 'CONFIG' values
+ * @param {Object} opts - All the options customized by the user
+ * @see {@link CONFIG}
+ */
+const updateDefaultConfig = opts => {
+  for (let option in CONFIG.default) {
+    if (opts[option] !== undefined) {
+      CONFIG[option] = opts[option];
+    }
+  }
+};
+
+/**
+ * Reset the configurations to its default values
+ * by removing from 'CONFIG' all options customized by the user
+ * @see {@link CONFIG}
+ */
+const resetDefaultConfig = () => {
+  for (let option in CONFIG.default) {
+    delete CONFIG[option];
+  }
 };
 
 /**
@@ -116,7 +197,7 @@ export const setCssProperty = (element, property, value) => {
  */
 const updateCssProperties = (element, opts) => {
   removeCustomCssProperties(element);
-  removeInlineTransition(element);
+  if (element !== document.documentElement) removeInlineTransition(element);
   CUSTOM_CSS_PROPERTIES.forEach(prop => {
     if (typeof opts[prop] === 'string' || typeof opts[prop] === 'number') {
       if (typeof opts[prop] === 'number') {
@@ -328,13 +409,15 @@ const animate = (element, action, id, opts = {}) => {
   const {
     animType,
     trigger,
-    start,
-    complete,
-    keepSpace,
-    dimensionsTransition = keepSpace || isMotion(animType) ? false : true,
-    widthTransition = dimensionsTransition,
-    heightTransition = dimensionsTransition,
-    overflowHidden = true,
+    start = CONFIG.start,
+    complete = CONFIG.complete,
+    keepSpace = CONFIG.keepSpace,
+    dimensionsTransition = keepSpace || isMotion(animType)
+      ? false
+      : CONFIG.dimensionsTransition,
+    widthTransition = CONFIG.widthTransition ?? dimensionsTransition,
+    heightTransition = CONFIG.heightTransition ?? dimensionsTransition,
+    overflowHidden = CONFIG.overflowHidden,
   } = opts;
   const { duration, delay } = getTotalAnimTime(element);
   const OPPOSITE_ACTION = Object.freeze({
@@ -487,7 +570,9 @@ const preset = (el, args) => {
  */
 const eventHandler = (el, animationId, opts) => {
   return (/** @type {Event} */ e) => {
-    e.stopPropagation();
+    const { stopPropagation = true, preventDefault = true } = opts;
+    if (stopPropagation) e.stopPropagation();
+    if (preventDefault) e.preventDefault();
 
     const action = getAction(el, opts.animType);
     if (!action)
@@ -513,7 +598,11 @@ const eventHandler = (el, animationId, opts) => {
  * @see {@link module:globals.MOTION_ANIMS_ID}
  */
 const init = (animationId, opts = {}, eventType = 'click') => {
-  const { trigger = `.${CLASS_NAMES.trigger}`, targetSelector, cursor } = opts;
+  const {
+    trigger = CONFIG.trigger,
+    targetSelector = CONFIG.targetSelector,
+    cursor,
+  } = opts;
 
   document.querySelectorAll(trigger).forEach(btn => {
     btn.classList.add(CLASS_NAMES.btnCursor);
@@ -540,4 +629,12 @@ const init = (animationId, opts = {}, eventType = 'click') => {
   });
 };
 
-export { init, animate, preset, isEnabled };
+export {
+  init,
+  animate,
+  preset,
+  isEnabled,
+  updateCssProperties,
+  updateDefaultConfig,
+  resetDefaultConfig,
+};

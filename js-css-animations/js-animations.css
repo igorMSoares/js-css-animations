@@ -158,6 +158,7 @@
 }
 
 :root {
+  --js-css-animation--cursor: pointer;
   --js-css-animation--duration: 800ms;
   --js-css-animation--timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955);
   --js-css-animation--delay: 0ms;
@@ -165,6 +166,9 @@
   --js-css-animation--blur: 0.5px;
   --js-css-animation--direction: normal;
   --js-css-animation--iteration: 1;
+  --js-css-animation--transf-origin: 'center';
+  --js-css-animation--initial-scale: 1;
+  --js-css-animation--final-scale: 1;
 }
 
 .js-anim--dimensions-transitions {
@@ -216,7 +220,6 @@
 .js-anim--rotate-left,
 .js-anim--rotate-left__ccw,
 .js-anim--rotate {
-  --js-css-animation--transf-origin: 'center';
   transform: rotate(var(--js-css-animation--rotation-angle));
   transform-origin: var(--js-css-animation--transf-origin);
   transition-property: transform;
@@ -272,15 +275,11 @@
   --js-css-animation--rotation-angle: 0deg;
   --js-css-animation--iteration: infinite;
   --js-css-animation--direction: alternate;
-  --js-css-animation--transf-origin: 'center';
   animation-name: js-anim--rotation-loop;
 }
 
 .js-anim--scale,
 .js-anim--scale__back {
-  --js-css-animation--transf-origin: 'center';
-  --js-css-animation--initial-scale: 1;
-  --js-css-animation--final-scale: 1;
   transform-origin: var(--js-css-animation--transf-origin);
 }
 
@@ -354,7 +353,6 @@
 }
 
 .js-anim--btn-cursor {
-  --js-css-animation--cursor: pointer;
   cursor: var(--js-css-animation--cursor);
 }
 
