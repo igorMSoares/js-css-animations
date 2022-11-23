@@ -66,7 +66,7 @@ const getTargets = selector => {
  * overriding default animations properties and options
  * @param {Object} opts - All custom animation properties and options.
  * @see {@link module:globals.PROPERTY_NAMES}
- * @see {@link module:animate.configurations.default}
+ * @see {@link module:animate~configurations}
  */
 const config = opts => {
   updateDefaultConfig(opts);

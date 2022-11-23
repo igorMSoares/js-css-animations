@@ -45,7 +45,7 @@ const configurations = {
  * if an option is not customized by the user, the default value set
  * in 'configurations.default' will be returned instead.
  * @see {@link CONFIG}
- * @see {@link configurations}
+ * @see {@link module:animate~configurations}
  */
 const configHandler = {
   /**
@@ -71,7 +71,7 @@ const configHandler = {
  * Object that handles configurations, either customized by the user
  * or default values defined in 'configurations.default' object
  * @type {Object.<string,any>}
- * @see {@link configurations}
+ * @see {@link module:animate~configurations}
  */
 const CONFIG = new Proxy(configurations, configHandler);
 
