@@ -32,8 +32,8 @@
     "xmlcreate": "^2.0.4"
   },
   "scripts": {
-    "doc": "jsdoc2md",
-    "docs": "jsdoc -c ./jsdoc/jsdoc.json",
+    "doc2md": "jsdoc2md",
+    "jsdoc:gen": "jsdoc -c ./jsdoc/jsdoc.json",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:serve": "vitepress serve docs"
