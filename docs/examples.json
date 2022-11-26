@@ -1,0 +1,70 @@
+{
+  "slide": {
+    "btnList": [
+      {
+        "text": "Slide Up",
+        "class": "slide-up--btn",
+        "targetSelector": ".example__slide"
+      },
+      {
+        "text": "Slide Down",
+        "class": "slide-down--btn",
+        "targetSelector": ".example__slide"
+      },
+      {
+        "text": "Slide Left",
+        "class": "slide-left--btn",
+        "targetSelector": ".example__slide"
+      },
+      {
+        "text": "Slide Right",
+        "class": "slide-right--btn",
+        "targetSelector": ".example__slide"
+      }
+    ],
+    "contentList": [
+      {
+        "title": "Slide Animations",
+        "class": "example__slide",
+        "text": "Mussum Ipsum, cacilds vidis litro abertis. Per aumento de cachacis, eu reclamis. Todo mundo vê os porris que eu tomo, mas ninguém vê os tombis que eu levo! Suco de cevadiss deixa as pessoas mais interessantis. Admodum accumsan disputationi eu sit. Vide electram sadipscing et per. Mé faiz elementum girarzis, nisi eros vermeio. Si u mundo tá muito paradis? Toma um mé que o mundo vai girarzis! Nec orci ornare consequat. Praesent lacinia ultrices consectetur. Sed non ipsum felis. Vehicula non. Ut sed ex eros. Vivamus sit amet nibh non tellus tristique interdum."
+      }
+    ]
+  },
+  "fade": {
+    "btnList": [
+      {
+        "text": "Fade In/Out",
+        "class": "fade--btn",
+        "targetSelector": ".example__fade"
+      }
+    ],
+    "contentList": [
+      {
+        "title": "Fade Animations",
+        "class": "example__fade",
+        "text": "Cat ipsum dolor sit amet, kitten ragdoll but birman. Siamese. Abyssinian munchkin. Donskoy maine coon or lion. Devonshire rex cornish rex munchkin puma. Cornish rex malkin devonshire rex. Savannah scottish fold yet persian for tom so savannah burmese russian blue. Norwegian forest cheetah devonshire rex or manx thai lion. Manx lion and tiger mouser. Tom american shorthair. American bobtail malkin for american bobtail. Cornish rex persian norwegian forest. Ocelot persian, so himalayan yet jaguar. Devonshire rex egyptian mau. Lion. Persian tomcat"
+      }
+    ]
+  },
+  "collapse": {
+    "btnList": [
+      {
+        "text": "Collapse/Expand",
+        "class": "collapse--btn",
+        "targetSelector": ".example__collapse"
+      }
+    ],
+    "contentList": [
+      {
+        "title": "Collapse/Expand Animations",
+        "class": "example__collapse",
+        "text": "Mussum Ipsum, cacilds vidis litro abertis. Posuere libero varius. Nullam a nisl ut ante blandit hendrerit. Aenean sit amet nisi. Atirei o pau no gatis, per gatis num morreus. Copo furadis é disculpa de bebadis, arcu quam euismod magna. Si num tem leite então bota uma pinga aí cumpadi! Diuretics paradis num copo é motivis de denguis. Todo mundo vê os porris que eu tomo, mas ninguém vê os tombis que eu levo! Mais vale um bebadis conhecidiss, que um alcoolatra anonimis. Casamentiss faiz malandris se pirulitá."
+      },
+      {
+        "title": "Collapse/Expand Animations",
+        "class": "example__collapse",
+        "text": "A ordem dos tratores não altera o pão duris. Nullam volutpat risus nec leo commodo, ut interdum diam laoreet. Sed non consequat odio. Per aumento de cachacis, eu reclamis. Nec orci ornare consequat. Praesent lacinia ultrices consectetur. Sed non ipsum felis."
+      }
+    ]
+  }
+}
