@@ -619,6 +619,7 @@ const init = (animationId, opts = {}) => {
       btn.setAttribute('target-selector', targetSelector);
     }
 
+    if (!opts.trigger) opts.trigger = trigger;
     document
       .querySelectorAll(getTargetSelector(btn))
       .forEach((el, i, queryList) => {
