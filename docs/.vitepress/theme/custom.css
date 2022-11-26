@@ -1,0 +1,8 @@
+.vp-doc div[class*='language-'] {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.VPDocFooter {
+  display: none;
+}

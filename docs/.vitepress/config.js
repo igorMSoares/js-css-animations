@@ -20,4 +20,27 @@ export default {
       }),
     },
   },
+  themeConfig: {
+    sidebar: [
+      {
+        text: 'Examples',
+        items: [
+          { text: 'Slide', link: '/examples/#slide-animations' },
+          { text: 'Fade', link: '/examples/#fade-in-out' },
+          { text: 'Collapse', link: '/examples/#collapse-expand' },
+        ],
+      },
+      {
+        text: 'Documentation',
+        items: [
+          { text: 'js-css-animations.js', link: '/js-css-animations' },
+          { text: 'animate.js', link: '/animate' },
+          { text: 'resize-parent.js', link: '/resize-parent' },
+          { text: 'measurements.js', link: '/measurements' },
+          { text: 'transitions.js', link: '/transitions' },
+          { text: 'globals.js', link: '/globals' },
+        ],
+      },
+    ],
+  },
 };

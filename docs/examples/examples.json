@@ -1,0 +1,85 @@
+{
+  "slide": {
+    "btnList": [
+      {
+        "text": "Slide Up",
+        "class": "slide-up--btn",
+        "targetSelector": ".example__slide"
+      },
+      {
+        "text": "Slide Down",
+        "class": "slide-down--btn",
+        "targetSelector": ".example__slide"
+      },
+      {
+        "text": "Slide Left",
+        "class": "slide-left--btn",
+        "targetSelector": ".example__slide"
+      },
+      {
+        "text": "Slide Right",
+        "class": "slide-right--btn",
+        "targetSelector": ".example__slide"
+      }
+    ],
+    "contentList": [
+      {
+        "title": "jsCssAnimations.init",
+        "class": "example__slide",
+        "text": "If you want an animation to be triggered by a DOM Event, use the 'init' property followed by the desired animation function. The animation function receives an Object that should contain the CSS selector for the element(s) that will trigger the animation and a 'targetSelector' to specify the element(s) to be animated."
+      },
+      {
+        "title": "",
+        "class": "example__slide",
+        "text": "You can specify any valid CSS selector, meaning that you can have multiple elements being animated by multiple triggers, but all attached to the same event. By default, the 'click' event will trigger the animation, but you can choose any other DOM event by specifying the 'on' option in the animation function's argument."
+      }
+    ]
+  },
+  "fade": {
+    "btnList": [
+      {
+        "text": "Fade In/Out",
+        "class": "js-anim--trigger",
+        "targetSelector": ".example__fade"
+      }
+    ],
+    "contentList": [
+      {
+        "title": "Trigger and Target Selectors",
+        "class": "example__fade",
+        "text": "The 'trigger' option can be omitted from the animation function if the 'js-anim--trigger' class is added to the trigger element. But if you have different triggers for different animations, you should specify the 'trigger' option to each animation function."
+      },
+      {
+        "title": "",
+        "class": "example__fade",
+        "text": "The 'target-selector' HTML attribute can also be passed directly to the trigger element, instead of being passed as an option to the javascript animation function."
+      },
+      {
+        "title": "Maintain Space",
+        "class": "example__fade",
+        "text": "Passing 'maintainSpace: true' to the animation function, will just hide the element being animated, maintaining the area it occupies in the layout."
+      }
+    ]
+  },
+  "collapse": {
+    "btnList": [
+      {
+        "text": "Collapse/Expand",
+        "class": "collapse--btn",
+        "targetSelector": ".example__collapse"
+      }
+    ],
+    "contentList": [
+      {
+        "title": "Staggered Animation",
+        "class": "example__collapse",
+        "text": "If you have more than one element being target of an animation, you can easily have a staggered animation by specifying a 'staggerDelay' option."
+      },
+      {
+        "title": "",
+        "class": "example__collapse",
+        "text": "The 'staggerDelay', 'delay' and 'duration' options can either be specified as a number, representing the total time in milliseconds, or as a string. If passed as a string, it should contain the time unit: 's' for second, or 'ms' for milliseconds, exactly as you would use in the CSS 'animation-delay' property, for example."
+      }
+    ]
+  }
+}

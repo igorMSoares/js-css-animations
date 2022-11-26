@@ -1,12 +1,14 @@
 <template>
-  <div class="container">
+  <article class="container">
     <slot />
-  </div>
+  </article>
 </template>
 
 <style scoped>
   .container {
-    width: 80%;
-    margin: 0 auto 3rem auto;
+    border: 1px solid var(--vp-c-brand);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 1.5rem auto 3rem auto;
   }
 </style>
