@@ -4,6 +4,7 @@ aside: false
 ---
 
 <script setup>
+  import { onMounted } from 'vue';
   import Example from '../.vitepress/components/Example.vue'
   import examples from './examples.json'
 
@@ -52,12 +53,16 @@ aside: false
       }
     })
   }
-</script>
 
-<script>
-export default {
-}
+    function changeDuration(animName, duration) {
+      jsCssAnimations.init[animName]({
+        duration: duration
+      })
+    }
 
+    function clickButton() {
+      document.querySelector(`.${examples.fade.btnList[0].class}`).dispatchEvent(new Event('click'))
+    }
 </script>
 
 # Examples
@@ -91,10 +96,11 @@ jsCssAnimations.init.slideRight({
 </Example>
 
 <Example
-  :animation-fn="fadeAnimation"
-  :title="'Fade In / Out'"
-  :btn-list="examples.fade.btnList"
-  :content-list="examples.fade.contentList">
+:animation-fn="fadeAnimation"
+:title="'Fade In / Out'"
+:btn-list="examples.fade.btnList"
+:content-list="examples.fade.contentList"
+@change-duration="(duration) => {changeDuration('fade', duration); clickButton()}">
 
 ```html{1}
 <button class="js-anim--trigger" target-selector=".fade__example">

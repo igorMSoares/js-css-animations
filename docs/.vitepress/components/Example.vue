@@ -2,6 +2,9 @@
   import Container from './Container.vue';
   import Button from './Button.vue';
   import Content from './Content.vue';
+  import AnimationForm from './AnimationForm.vue';
+
+  defineEmits(['changeDuration']);
 </script>
 
 <script>
@@ -33,6 +36,10 @@
       <Button v-for="btn in btnList" v-bind="btn" />
     </div>
 
+    <a href="#">Customize the animation</a>
+    <AnimationForm
+      @changeDuration="duration => $emit('changeDuration', duration)"
+    />
     <Content
       v-for="content in contentList"
       :title="content.title"
