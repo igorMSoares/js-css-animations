@@ -1,13 +1,17 @@
 <script setup>
   defineProps({
     targetSelector: String,
-    text: String,
+    text: Array,
   });
 </script>
 
 <template>
-  <button :target-selector="targetSelector">
-    {{ text }}
+  <button
+    :target-selector="targetSelector"
+    type="button"
+    title="Click to animate"
+  >
+    {{ text?.at(0) }}
   </button>
 </template>
 

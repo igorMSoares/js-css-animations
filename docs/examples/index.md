@@ -25,9 +25,21 @@ aside: false
     });
   }
 
+  function toggleBtnTitle(btnList, idx) {
+    const btnSelector = btnList[idx].class;
+    const btn = document.querySelector(`.${btnSelector}`)
+    const btnText = btnList[idx].text;
+
+    btn.innerText = btn.innerText === btnText[0] ? btnText[1] : btnText[0];
+
+  }
+
   function fadeAnimation() {
     jsCssAnimations.init.fade({
       keepSpace: true,
+      complete: () => {
+        toggleBtnTitle(examples.fade.btnList, 0);
+      }
     })
   }
 
@@ -35,6 +47,9 @@ aside: false
     jsCssAnimations.init.collapse({
       trigger: `.${examples.collapse.btnList[0].class}`,
       staggerDelay: 600,
+      complete: () => {
+        toggleBtnTitle(examples.collapse.btnList, 0);
+      }
     })
   }
 </script>

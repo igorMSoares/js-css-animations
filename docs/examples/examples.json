@@ -2,22 +2,30 @@
   "slide": {
     "btnList": [
       {
-        "text": "Slide Up",
+        "text": [
+          "Slide Up"
+        ],
         "class": "slide-up--btn",
         "targetSelector": ".example__slide"
       },
       {
-        "text": "Slide Down",
+        "text": [
+          "Slide Down"
+        ],
         "class": "slide-down--btn",
         "targetSelector": ".example__slide"
       },
       {
-        "text": "Slide Left",
+        "text": [
+          "Slide Left"
+        ],
         "class": "slide-left--btn",
         "targetSelector": ".example__slide"
       },
       {
-        "text": "Slide Right",
+        "text": [
+          "Slide Right"
+        ],
         "class": "slide-right--btn",
         "targetSelector": ".example__slide"
       }
@@ -38,7 +46,10 @@
   "fade": {
     "btnList": [
       {
-        "text": "Fade In/Out",
+        "text": [
+          "Fade Out",
+          "Fade In"
+        ],
         "class": "js-anim--trigger",
         "targetSelector": ".example__fade"
       }
@@ -64,7 +75,10 @@
   "collapse": {
     "btnList": [
       {
-        "text": "Collapse/Expand",
+        "text": [
+          "Collapse",
+          "Expand"
+        ],
         "class": "collapse--btn",
         "targetSelector": ".example__collapse"
       }
