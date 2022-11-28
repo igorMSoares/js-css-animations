@@ -4,6 +4,7 @@
  */
 import {
   init,
+  end,
   animate,
   preset,
   isEnabled,
@@ -337,6 +338,7 @@ const jsCssAnimations = (function () {
   const animationsHandler = Object.freeze({
     config,
     reset,
+    end,
     init: eventAnimations,
     ...animationFunctions,
     show: showVisibilityAnim,

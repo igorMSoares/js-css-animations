@@ -148,6 +148,12 @@ const TARGETS_STACK = {
 };
 
 /**
+ * Keeps track of the EventListener associated to a trigger selector
+ * @type {{[x: String]: EventListener}}
+ */
+const LISTENERS = {};
+
+/**
  * Removes the CSS properties customized by the user
  * @param {HTMLElement} element - The DOM element with the custom CSS properties
  */
@@ -567,7 +573,7 @@ const preset = (el, args) => {
  * @param {HTMLElement} el - The DOM element being animated
  * @param {number} animationId - The ID of the animation in the *_ANIMS_ID
  * @param {Object} opts - The options passed by the user
- * @returns A function to be passed to the addEventListener() as a handler
+ * @returns {EventListener} A function to be passed to the addEventListener() as a handler
  * @see {@link module:globals.VISIBILITY_ANIMS_ID}
  * @see {@link module:globals.MOTION_ANIMS_ID}
  */
@@ -623,21 +629,43 @@ const init = (animationId, opts = {}) => {
     document
       .querySelectorAll(getTargetSelector(btn))
       .forEach((el, i, queryList) => {
-        btn.addEventListener(
-          eventType,
-          // @ts-ignore
-          eventHandler(el, animationId, {
-            ...opts,
-            totalTargets: queryList.length,
-            queryIndex: i,
-          })
-        );
+        // @ts-ignore
+        const listener = eventHandler(el, animationId, {
+          ...opts,
+          totalTargets: queryList.length,
+          queryIndex: i,
+        });
+
+        LISTENERS[getTargetSelector(btn)] = listener;
+
+        btn.addEventListener(eventType, listener);
       });
   });
 };
 
+/**
+ * Removes the event listener of all elements represented by the `triggerSelector`
+ * @param {String|null} triggerSelector - A valid CSS selector for the trigger Element. If ommited, '.${CLASS_NAMES.trigger}' will be used instead.
+ * @param {String} eventType - The event name. If ommited, 'click' is the default value.
+ */
+const end = (triggerSelector = null, eventType = 'click') => {
+  const triggersList =
+    typeof triggerSelector === 'string'
+      ? document.querySelectorAll(triggerSelector)
+      : document.querySelectorAll(`.${CLASS_NAMES.trigger}`);
+
+  triggersList.forEach(trigger =>
+    trigger.removeEventListener(
+      eventType,
+      // @ts-ignore
+      LISTENERS[getTargetSelector(trigger)]
+    )
+  );
+};
+
 export {
   init,
+  end,
   animate,
   preset,
   isEnabled,

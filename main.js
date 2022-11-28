@@ -121,3 +121,7 @@ jsCssAnimations.init.scale({
   finalScale: 1.2,
   duration: '1.5s',
 });
+
+document.querySelector('#anchor img')?.addEventListener('click', () => {
+  jsCssAnimations.end('.btn--slide-up');
+});
