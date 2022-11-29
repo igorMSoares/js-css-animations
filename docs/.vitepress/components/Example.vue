@@ -15,6 +15,7 @@
       btnList: Array,
       contentList: Array,
       animOpts: Object,
+      fieldsList: Array,
     },
     mounted() {
       this.animationFn();
@@ -36,6 +37,7 @@
     <a href="#">Customize the animation</a>
     <AnimationForm
       :initial="animOpts"
+      :fields-list="$props.fieldsList"
       @resetAnimation="opts => $emit('resetAnimation', opts)"
     />
     <div class="buttons">
