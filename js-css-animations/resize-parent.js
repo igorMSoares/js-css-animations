@@ -127,4 +127,9 @@ const endParentResize = (element, opts) => {
   removeOverflowHidden(parentElement);
 };
 
-export { initParentResize, endParentResize };
+export {
+  initParentResize,
+  endParentResize,
+  setOverflowHidden,
+  removeOverflowHidden,
+};

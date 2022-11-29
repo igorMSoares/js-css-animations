@@ -9,7 +9,12 @@ import {
   CUSTOM_CSS_PROPERTIES,
 } from './globals.js';
 
-import { initParentResize, endParentResize } from './resize-parent.js';
+import {
+  initParentResize,
+  endParentResize,
+  setOverflowHidden,
+  removeOverflowHidden,
+} from './resize-parent.js';
 
 import {
   removeInlineTransition,
@@ -332,10 +337,12 @@ const isEnabled = element =>
  * @returns True if the element has an iteration CSS property set, False otherwise
  */
 const hasIterationProp = element => {
+  const iterationProperty = element.style.getPropertyValue(
+    PROPERTY_NAMES.iteration
+  );
   return (
-    element.style
-      .getPropertyValue(PROPERTY_NAMES.iteration)
-      .match(/^(infinite|\d+)$/) !== null
+    iterationProperty != '1' &&
+    iterationProperty.match(/^(infinite|\d+)$/) !== null
   );
 };
 
@@ -375,6 +382,8 @@ const endVisibilityToggle = (element, opts) => {
   }
   if (opts.heightTransition || opts.widthTransition)
     endParentResize(element, opts);
+  else if (opts.overflowHidden && element.parentElement)
+    removeOverflowHidden(element.parentElement);
 };
 
 /**
@@ -447,7 +456,8 @@ const animate = (element, action, id, opts = {}) => {
             heightTransition,
             overflowHidden,
           }));
-        }
+        } else if (overflowHidden && element.parentElement)
+          setOverflowHidden(element.parentElement);
       },
       motion: () => {
         currentTransition = getCurrentTransition(element);
@@ -478,6 +488,7 @@ const animate = (element, action, id, opts = {}) => {
           keepSpace,
           widthTransition,
           heightTransition,
+          overflowHidden,
         });
         if (!hasIterationProp(element))
           element.classList.remove(CLASS_NAMES[action][id]);
