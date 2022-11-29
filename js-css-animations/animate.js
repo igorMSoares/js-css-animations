@@ -148,8 +148,8 @@ const TARGETS_STACK = {
 };
 
 /**
- * Keeps track of the EventListener associated to a trigger selector
- * @type {{[x: String]: EventListener}}
+ * Keeps track of the EventListeners associated to a trigger selector
+ * @type {{[x: String]: EventListener[]}}
  */
 const LISTENERS = {};
 
@@ -349,17 +349,14 @@ const hasIterationProp = element => {
  *  element: HTMLElement,
  *  parentMeasures: Object,
  *  action: string,
- *  dimension: string | undefined,
- *  keepSpace: boolean
+ *  dimension: string | undefined
  * }} args - All the necessary arguments
  */
 const handleVisibilityToggle = (element, args) => {
   setTimeout(() => {
     if (args.dimension) setParentMaxMeasures(args);
     if (args.action === 'show') {
-      args.keepSpace
-        ? element.classList.remove(CLASS_NAMES.hidden)
-        : element.classList.remove(CLASS_NAMES.collapsed);
+      element.classList.remove(CLASS_NAMES.hidden, CLASS_NAMES.collapsed);
     }
   }, 0);
 };
@@ -465,7 +462,6 @@ const animate = (element, action, id, opts = {}) => {
           parentMeasures,
           action,
           dimension,
-          keepSpace,
         });
       },
       motion: () => {
@@ -626,6 +622,7 @@ const init = (animationId, opts = {}) => {
     }
 
     if (!opts.trigger) opts.trigger = trigger;
+    LISTENERS[trigger] = [];
     document
       .querySelectorAll(getTargetSelector(btn))
       .forEach((el, i, queryList) => {
@@ -636,8 +633,7 @@ const init = (animationId, opts = {}) => {
           queryIndex: i,
         });
 
-        LISTENERS[getTargetSelector(btn)] = listener;
-
+        LISTENERS[trigger].push(listener);
         btn.addEventListener(eventType, listener);
       });
   });
@@ -649,18 +645,19 @@ const init = (animationId, opts = {}) => {
  * @param {String} eventType - The event name. If ommited, 'click' is the default value.
  */
 const end = (triggerSelector = null, eventType = 'click') => {
-  const triggersList =
+  const triggerList =
     typeof triggerSelector === 'string'
       ? document.querySelectorAll(triggerSelector)
       : document.querySelectorAll(`.${CLASS_NAMES.trigger}`);
 
-  triggersList.forEach(trigger =>
-    trigger.removeEventListener(
-      eventType,
-      // @ts-ignore
-      LISTENERS[getTargetSelector(trigger)]
-    )
-  );
+  triggerList.forEach(trigger => {
+    LISTENERS[triggerSelector ?? `.${CLASS_NAMES.trigger}`].forEach(
+      listener => {
+        trigger.removeEventListener(eventType, listener);
+      }
+    );
+  });
+  delete LISTENERS[triggerSelector ?? `.${CLASS_NAMES.trigger}`];
 };
 
 export {
