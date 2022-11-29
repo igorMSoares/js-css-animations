@@ -105,7 +105,7 @@ aside: false
 :content-list="examples.slide.contentList"
 :anim-opts="{}"
 @reset-animation="(opts) => {resetAnimation('slide', opts);}"
-:fields-list="['duration', 'delay', 'staggerDelay', 'maintainSpace', 'easing', 'dimensionsTransition']">
+:fields-list="['duration', 'delay', 'staggerDelay', 'maintainSpace', 'easing', 'dimensionsTransition', 'overflowHidden', 'iteration']">
 
 ```js{4}
 jsCssAnimations.init.slideUp({
@@ -135,7 +135,7 @@ jsCssAnimations.init.slideRight({
 :btn-list="examples.fade.btnList"
 :content-list="examples.fade.contentList"
 :anim-opts="fadeOpts"
-:fields-list="['duration', 'delay', 'staggerDelay', 'maintainSpace', 'easing', 'dimensionsTransition']"
+:fields-list="['duration', 'delay', 'staggerDelay', 'maintainSpace', 'easing', 'blur', 'dimensionsTransition', 'iteration', 'direction']"
 @reset-animation="(opts) => {resetAnimation('fade', opts);}">
 
 ```html{1}

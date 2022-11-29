@@ -45,6 +45,8 @@
       type: 'checkbox',
     },
     { label: 'overflowHidden', type: 'checkbox' },
+    { label: 'iteration' },
+    { label: 'direction' },
   ];
   const rowsList = [
     firstRow.filter(field => fieldsList?.indexOf(field.label) !== -1),
