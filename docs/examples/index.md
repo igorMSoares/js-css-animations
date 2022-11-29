@@ -35,13 +35,14 @@ aside: false
 
   }
 
-  function fadeAnimation() {
-    jsCssAnimations.init.fade({
-      keepSpace: true,
+  const fadeOpts = {
+      keepSpace: false,
       complete: () => {
         toggleBtnTitle(examples.fade.btnList, 0);
       }
-    })
+    }
+  function fadeAnimation() {
+    jsCssAnimations.init.fade(fadeOpts)
   }
 
   function collapseAnimation() {
@@ -54,15 +55,38 @@ aside: false
     })
   }
 
-    function changeDuration(animName, duration) {
-      jsCssAnimations.init[animName]({
-        duration: duration
-      })
+  function resetAnimation(animName, opts) {
+    const triggerSelector = `.${examples[animName].btnList[0].class}`;
+    jsCssAnimations.end(triggerSelector);
+
+    const default_value = {
+      duration: '800ms',
+      delay: '0ms',
+      staggerDelay: '0ms',
+      timingFunction: 'cubic-bezier(0.455, 0.03, 0.515, 0.955)',
     }
 
-    function clickButton() {
-      document.querySelector(`.${examples.fade.btnList[0].class}`).dispatchEvent(new Event('click'))
-    }
+    const easingRegEx = /^(ease(-in|-out|-in-out)?|linear|cubic-bezier\((0|1|0.\d+), -?[\d\.]+, (0|1|0.\d+), -?[\d\.]+\)|step\((100|[0-9][0-9]|[0-9]),\s?(jump-start|jump-end|jump-none|jump-both|start|end)\)|step\(step-(start|end)\))$/;
+
+    if (opts.maintainSpace) opts.dimensionsTransition = false;
+    if (!opts.easing || !opts.easing.match(easingRegEx))
+      opts.easing = default_value.timingFunction;
+    ['duration', 'delay', 'staggerDelay'].forEach(prop => {
+      if (opts[prop].match(/^\d+$/)) opts[prop] = `${opts[prop]}ms`;
+      else if (!opts[prop].match(/^(\d+ms|\d+s)$/)) {
+        opts[prop] = default_value[prop];
+      }
+    });
+
+    jsCssAnimations.init[animName]({
+      trigger: triggerSelector,
+      ...opts,
+      timingFunction: opts.easing,
+      keepSpace: opts.maintainSpace
+    });
+    document.querySelector(triggerSelector).click();
+  }
+
 </script>
 
 # Examples
@@ -100,7 +124,8 @@ jsCssAnimations.init.slideRight({
 :title="'Fade In / Out'"
 :btn-list="examples.fade.btnList"
 :content-list="examples.fade.contentList"
-@change-duration="(duration) => {changeDuration('fade', duration); clickButton()}">
+:anim-opts="fadeOpts"
+@reset-animation="(opts) => {resetAnimation('fade', opts);}">
 
 ```html{1}
 <button class="js-anim--trigger" target-selector=".fade__example">

@@ -4,7 +4,7 @@
   import Content from './Content.vue';
   import AnimationForm from './AnimationForm.vue';
 
-  defineEmits(['changeDuration']);
+  defineEmits(['resetAnimation']);
 </script>
 
 <script>
@@ -14,6 +14,7 @@
       title: String,
       btnList: Array,
       contentList: Array,
+      animOpts: Object,
     },
     mounted() {
       this.animationFn();
@@ -32,14 +33,15 @@
 <template>
   <Container>
     <h3 :id="titleId()" class="title">{{ title }}</h3>
+    <a href="#">Customize the animation</a>
+    <AnimationForm
+      :initial="animOpts"
+      @resetAnimation="opts => $emit('resetAnimation', opts)"
+    />
     <div class="buttons">
       <Button v-for="btn in btnList" v-bind="btn" />
     </div>
 
-    <a href="#">Customize the animation</a>
-    <AnimationForm
-      @changeDuration="duration => $emit('changeDuration', duration)"
-    />
     <Content
       v-for="content in contentList"
       :title="content.title"
@@ -63,5 +65,6 @@
 
   .title {
     margin-top: 0;
+    margin-bottom: 1.5rem;
   }
 </style>
