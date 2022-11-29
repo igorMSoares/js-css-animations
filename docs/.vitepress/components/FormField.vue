@@ -105,7 +105,9 @@
   }
 
   input:focus,
-  select:focus {
+  select:focus,
+  input:hover,
+  select:hover {
     border: 1px solid var(--vp-c-green-lighter);
   }
 

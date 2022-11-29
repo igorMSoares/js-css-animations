@@ -83,7 +83,7 @@
 </script>
 
 <template>
-  <Container class="form--container">
+  <Container class="form--container js-anim--collapsed">
     <div class="column">
       <div class="row">
         <FormField

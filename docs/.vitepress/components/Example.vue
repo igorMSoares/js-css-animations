@@ -3,6 +3,7 @@
   import Button from './Button.vue';
   import Content from './Content.vue';
   import AnimationForm from './AnimationForm.vue';
+  import jsCssAnimations from '../../../js-css-animations/js-css-animations';
 
   defineEmits(['resetAnimation']);
 </script>
@@ -11,6 +12,7 @@
   export default {
     props: {
       animationFn: Function,
+      animationName: String,
       title: String,
       btnList: Array,
       contentList: Array,
@@ -19,6 +21,10 @@
     },
     mounted() {
       this.animationFn();
+      jsCssAnimations.init.fade({
+        trigger: `.customize--anchor__${this.animationName}`,
+        targetSelector: `.customize--form__${this.animationName}`,
+      });
     },
     methods: {
       titleId() {
@@ -34,12 +40,20 @@
 <template>
   <Container>
     <h3 :id="titleId()" class="title">{{ title }}</h3>
-    <a href="#">Customize the animation</a>
-    <AnimationForm
-      :initial="animOpts"
-      :fields-list="$props.fieldsList"
-      @resetAnimation="opts => $emit('resetAnimation', opts)"
-    />
+    <a
+      href="#"
+      class="customize--anchor"
+      :class="`customize--anchor__${animationName}`"
+      >Customize this animation</a
+    >
+    <div>
+      <AnimationForm
+        :class="`customize--form__${animationName}`"
+        :initial="animOpts"
+        :fields-list="$props.fieldsList"
+        @resetAnimation="opts => $emit('resetAnimation', opts)"
+      />
+    </div>
     <div class="buttons">
       <Button v-for="btn in btnList" v-bind="btn" />
     </div>
@@ -67,6 +81,11 @@
 
   .title {
     margin-top: 0;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .customize--anchor {
+    display: flex;
+    justify-content: right;
   }
 </style>

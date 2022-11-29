@@ -10,5 +10,6 @@
     border-radius: 0.5rem;
     padding: 1rem;
     margin: 1.5rem auto 3rem auto;
+    min-width: 350px;
   }
 </style>

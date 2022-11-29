@@ -119,6 +119,7 @@ aside: false
 
 <Example
 :animation-fn="slideAnimations"
+:animation-name="'slide'"
 :title="'Slide Animations'"
 :btn-list="examples.slide.btnList"
 :content-list="examples.slide.contentList"
@@ -150,6 +151,7 @@ jsCssAnimations.init.slideRight({
 
 <Example
 :animation-fn="fadeAnimation"
+:animation-name="'fade'"
 :title="'Fade In / Out'"
 :btn-list="examples.fade.btnList"
 :content-list="examples.fade.contentList"
@@ -176,6 +178,7 @@ jsCssAnimations.init.fade({
 
 <Example
 :animation-fn="collapseAnimation"
+:animation-name="'collapse'"
 :title="'Collapse/Expand'"
 :btn-list="examples.collapse.btnList"
 :content-list="examples.collapse.contentList"
