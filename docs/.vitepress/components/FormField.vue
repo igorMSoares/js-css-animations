@@ -5,13 +5,19 @@
 
   const props = defineProps({
     form: Function,
-    initial: Object,
     className: Function,
     label: String,
     type: String,
     eventName: String,
+    tagName: String,
+    selectOptions: Array,
   });
-  const { label = '', type = 'text', initial } = props;
+  const {
+    label = '',
+    type = 'text',
+    tagName = 'input',
+    selectOptions = [],
+  } = props;
   const form = typeof props.form === 'function' ? props.form() : ref({});
 
   function toKebabCase(label) {
@@ -32,6 +38,7 @@
   >
     {{ label }}:
     <input
+      v-if="tagName === 'input'"
       v-model="form[label]"
       @change="$emit('changeField', form)"
       :type="type"
@@ -39,18 +46,31 @@
       :name="toKebabCase(label)"
       :disabled="label === 'dimensionsTransition' ? form.maintainSpace : false"
     />
+    <select
+      v-if="tagName === 'select'"
+      v-model="form[label]"
+      @change="$emit('changeField', form)"
+      :id="toKebabCase(label)"
+      :name="toKebabCase(label)"
+    >
+      <option
+        v-for="option in selectOptions"
+        :selected="option.selected ?? false"
+      >
+        {{ option.text }}
+      </option>
+    </select>
   </label>
 </template>
 
 <style scoped>
   input {
-    border: 1px solid var(--vp-badge-info-border);
     margin: 0;
-    width: 3rem;
+    width: 4rem;
   }
 
   #easing {
-    width: 15rem;
+    width: 15.5rem;
   }
 
   #transf-origin {
@@ -58,14 +78,38 @@
   }
 
   input[type='checkbox'] {
+    inset-inline: 2px solid var(--vp-c-green-darker);
     width: 1.5rem;
   }
 
   input[type='checkbox']:disabled {
-    border-color: var(--docsearch-muted-color);
+    border-color: var(--docsearch-hit-color);
   }
 
   .disabled {
     color: var(--vp-c-divider);
+  }
+
+  select,
+  input {
+    appearance: listbox;
+    -webkit-appearance: listbox;
+    text-align: center;
+    border: 1px solid var(--vp-c-gray-dark-1);
+    border-radius: 4px;
+    padding: 0.2em 0.6em;
+    margin-top: 10px;
+    background-color: var(--vp-c-bg);
+    transition: background-color 0.5s;
+    touch-action: manipulation;
+  }
+
+  input:focus,
+  select:focus {
+    border: 1px solid var(--vp-c-green-lighter);
+  }
+
+  select option {
+    text-align: left;
   }
 </style>

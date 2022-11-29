@@ -3,28 +3,32 @@
     "btnList": [
       {
         "text": [
-          "Slide Up"
+          "Slide Up",
+          "Slide from Top"
         ],
         "class": "slide-up--btn",
         "targetSelector": ".example__slide"
       },
       {
         "text": [
-          "Slide Down"
+          "Slide Down",
+          "Slide from Bottom"
         ],
         "class": "slide-down--btn",
         "targetSelector": ".example__slide"
       },
       {
         "text": [
-          "Slide Left"
+          "Slide Left",
+          "Slide from Left"
         ],
         "class": "slide-left--btn",
         "targetSelector": ".example__slide"
       },
       {
         "text": [
-          "Slide Right"
+          "Slide Right",
+          "Slide from Right"
         ],
         "class": "slide-right--btn",
         "targetSelector": ".example__slide"

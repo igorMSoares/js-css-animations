@@ -11,28 +11,45 @@ aside: false
   import jsCssAnimations from '../../js-css-animations/js-css-animations.js';
   import '../../js-css-animations/js-animations.css';
 
-  function slideAnimations() {
-    jsCssAnimations.init.slideUp({
-      trigger: `.${ examples.slide.btnList[0].class }`,
-    });
-    jsCssAnimations.init.slideDown({
-      trigger: `.${ examples.slide.btnList[1].class }`,
-    });
-    jsCssAnimations.init.slideLeft({
-      trigger: `.${ examples.slide.btnList[2].class }`,
-    });
-    jsCssAnimations.init.slideRight({
-      trigger: `.${ examples.slide.btnList[3].class }`,
-    });
-  }
-
   function toggleBtnTitle(btnList, idx) {
     const btnSelector = btnList[idx].class;
     const btn = document.querySelector(`.${btnSelector}`)
     const btnText = btnList[idx].text;
 
     btn.innerText = btn.innerText === btnText[0] ? btnText[1] : btnText[0];
+  }
 
+  function slideAnimations() {
+    const toggleSlideBtns = () => {
+        toggleBtnTitle(examples.slide.btnList, 0);
+        toggleBtnTitle(examples.slide.btnList, 1);
+        toggleBtnTitle(examples.slide.btnList, 2);
+        toggleBtnTitle(examples.slide.btnList, 3);
+    }
+    jsCssAnimations.init.slideUp({
+      trigger: `.${ examples.slide.btnList[0].class }`,
+      complete: () => {
+        toggleSlideBtns();
+      },
+    });
+    jsCssAnimations.init.slideDown({
+      trigger: `.${ examples.slide.btnList[1].class }`,
+      complete: () => {
+        toggleSlideBtns();
+      },
+    });
+    jsCssAnimations.init.slideLeft({
+      trigger: `.${ examples.slide.btnList[2].class }`,
+      complete: () => {
+        toggleSlideBtns();
+      },
+    });
+    jsCssAnimations.init.slideRight({
+      trigger: `.${ examples.slide.btnList[3].class }`,
+      complete: () => {
+        toggleSlideBtns();
+      },
+    });
   }
 
   const fadeOpts = {
@@ -62,22 +79,24 @@ aside: false
         const triggerSelector = `.${btn.class}`;
         jsCssAnimations.end(triggerSelector);
 
-        const default_value = {
+        const defaultValue = {
           duration: '800ms',
           delay: '0ms',
           staggerDelay: '0ms',
           timingFunction: 'cubic-bezier(0.455, 0.03, 0.515, 0.955)',
+          blur: '0.5px'
         }
 
         const easingRegEx = /^(ease(-in|-out|-in-out)?|linear|cubic-bezier\((0|1|0.\d+), -?[\d\.]+, (0|1|0.\d+), -?[\d\.]+\)|step\((100|[0-9][0-9]|[0-9]),\s?(jump-start|jump-end|jump-none|jump-both|start|end)\)|step\(step-(start|end)\))$/;
 
         if (opts.maintainSpace) opts.dimensionsTransition = false;
+        if (!opts.blur.match(/^(\d+|\d+\.\d+)(px|rem|em)$/)) opts.blur = defaultValue.blur;
         if (!opts.easing || !opts.easing.match(easingRegEx))
-          opts.easing = default_value.timingFunction;
+          opts.easing = defaultValue.timingFunction;
         ['duration', 'delay', 'staggerDelay'].forEach(prop => {
           if (opts[prop].match(/^\d+$/)) opts[prop] = `${opts[prop]}ms`;
           else if (!opts[prop].match(/^(\d+ms|\d+s)$/)) {
-            opts[prop] = default_value[prop];
+            opts[prop] = defaultValue[prop];
           }
         });
 
@@ -105,7 +124,7 @@ aside: false
 :content-list="examples.slide.contentList"
 :anim-opts="{}"
 @reset-animation="(opts) => {resetAnimation('slide', opts);}"
-:fields-list="['duration', 'delay', 'staggerDelay', 'maintainSpace', 'easing', 'dimensionsTransition', 'overflowHidden', 'iteration']">
+:fields-list="['duration', 'delay', 'staggerDelay', 'maintainSpace', 'easing', 'dimensionsTransition', 'overflowHidden']">
 
 ```js{4}
 jsCssAnimations.init.slideUp({

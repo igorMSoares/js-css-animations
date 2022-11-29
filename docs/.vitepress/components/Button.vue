@@ -18,18 +18,15 @@
 <style scoped>
   button {
     font-weight: 500;
-    border: 2px solid var(--vp-c-divider);
+    border: 2px solid var(--vp-c-gray-dark-1);
     padding: 0.25em 1em;
     border-radius: 0.5rem;
     background-color: var(--vp-c-bg-soft);
   }
 
-  button:hover {
-    border-color: var(--vp-c-brand);
-  }
-
   button:active,
-  button:focus {
+  button:focus,
+  button:hover {
     border-color: var(--vp-c-brand);
     color: var(--vp-c-brand);
   }

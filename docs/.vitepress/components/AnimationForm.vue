@@ -30,28 +30,54 @@
   });
   const formRefFn = () => form;
 
-  const firstRow = [
+  const allFields = [
     { label: 'duration' },
     { label: 'delay' },
     { label: 'staggerDelay' },
     { label: 'blur' },
-    { label: 'maintainSpace', type: 'checkbox' },
-    { label: 'transfOrigin' },
-  ];
-  const secondRow = [
     { label: 'easing' },
+    { label: 'maintainSpace', type: 'checkbox' },
     {
       label: 'dimensionsTransition',
       type: 'checkbox',
     },
+    {
+      label: 'transfOrigin',
+      tagName: 'select',
+      selectOptions: [
+        { text: 'center', selected: true },
+        { text: 'top' },
+        { text: 'bottom', selected: true },
+      ],
+    },
     { label: 'overflowHidden', type: 'checkbox' },
-    { label: 'iteration' },
-    { label: 'direction' },
+    {
+      label: 'iteration',
+      tagName: 'select',
+      selectOptions: [
+        { text: '1', selected: true },
+        { text: '2' },
+        { text: '3' },
+        { text: '4' },
+        { text: '5' },
+        { text: 'infinite' },
+      ],
+    },
+    {
+      label: 'direction',
+      tagName: 'select',
+      selectOptions: [
+        { text: 'normal', selected: true },
+        { text: 'reverse' },
+        { text: 'alternate' },
+        { text: 'alternate-reverse' },
+      ],
+    },
   ];
-  const rowsList = [
-    firstRow.filter(field => fieldsList?.indexOf(field.label) !== -1),
-    secondRow.filter(field => fieldsList?.indexOf(field.label) !== -1),
-  ];
+
+  const customFields = allFields.filter(
+    field => fieldsList?.indexOf(field.label) !== -1
+  );
 
   defineEmits(['resetAnimation']);
 </script>
@@ -59,12 +85,14 @@
 <template>
   <Container class="form--container">
     <div class="column">
-      <div v-for="row in rowsList" class="row">
+      <div class="row">
         <FormField
-          v-for="field in row"
+          v-for="field in customFields"
           :form="formRefFn"
           :label="field.label"
           :type="field.type"
+          :tag-name="field.tagName"
+          :select-options="field.selectOptions ?? []"
           @change-field="opts => $emit('resetAnimation', opts)"
         />
       </div>
@@ -72,7 +100,7 @@
   </Container>
 </template>
 
-<style>
+<style scoped>
   .column {
     display: flex;
     flex-direction: column;
@@ -81,6 +109,7 @@
 
   .row {
     display: flex;
+    justify-content: center;
     align-items: flex-end;
     flex-wrap: wrap;
     gap: 1rem;
