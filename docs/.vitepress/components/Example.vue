@@ -3,7 +3,6 @@
   import Button from './Button.vue';
   import Content from './Content.vue';
   import AnimationForm from './AnimationForm.vue';
-  import jsCssAnimations from '../../../js-css-animations/js-css-animations';
 
   defineEmits(['resetAnimation']);
 </script>
@@ -11,6 +10,7 @@
 <script>
   export default {
     props: {
+      animationApi: Function,
       animationFn: Function,
       animationName: String,
       title: String,
@@ -20,6 +20,7 @@
       fieldsList: Array,
     },
     mounted() {
+      const jsCssAnimations = this.animationApi();
       this.animationFn();
       jsCssAnimations.init.fade({
         trigger: `.customize--anchor__${this.animationName}`,

@@ -110,7 +110,10 @@ aside: false
         });
         document.querySelector(triggerSelector).click();
       })
+  }
 
+  function animationApi() {
+    return jsCssAnimations;
   }
 
 </script>
@@ -118,6 +121,7 @@ aside: false
 # Examples
 
 <Example
+:animation-api="animationApi"
 :animation-fn="slideAnimations"
 :animation-name="'slide'"
 :title="'Slide Animations'"
@@ -150,6 +154,7 @@ jsCssAnimations.init.slideRight({
 </Example>
 
 <Example
+:animation-api="animationApi"
 :animation-fn="fadeAnimation"
 :animation-name="'fade'"
 :title="'Fade In / Out'"
@@ -177,6 +182,7 @@ jsCssAnimations.init.fade({
 </Example>
 
 <Example
+:animation-api="animationApi"
 :animation-fn="collapseAnimation"
 :animation-name="'collapse'"
 :title="'Collapse/Expand'"
