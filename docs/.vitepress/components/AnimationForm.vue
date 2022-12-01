@@ -79,6 +79,17 @@
     field => fieldsList?.indexOf(field.label) !== -1
   );
 
+  function setClassName(field) {
+    return field.label === 'dimensionsTransition'
+      ? form => (form.maintainSpace ? 'disabled' : '')
+      : undefined;
+  }
+
+  function setDisabled(field) {
+    return field.label === 'dimensionsTransition'
+      ? form => form.maintainSpace ?? false
+      : undefined;
+  }
   defineEmits(['resetAnimation']);
 </script>
 
@@ -93,6 +104,8 @@
           :type="field.type"
           :tag-name="field.tagName"
           :select-options="field.selectOptions ?? []"
+          :class-name="setClassName(field)"
+          :disabled="setDisabled(field)"
           @change-field="opts => $emit('resetAnimation', opts)"
         />
       </div>

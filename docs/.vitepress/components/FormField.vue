@@ -11,12 +11,15 @@
     eventName: String,
     tagName: String,
     selectOptions: Array,
+    disabled: Function,
   });
   const {
     label = '',
     type = 'text',
     tagName = 'input',
     selectOptions = [],
+    className = () => '',
+    disabled = () => false,
   } = props;
   const form = typeof props.form === 'function' ? props.form() : ref({});
 
@@ -26,16 +29,7 @@
 </script>
 
 <template>
-  <label
-    :for="toKebabCase(label)"
-    :class="
-      label === 'dimensionsTransition'
-        ? form.maintainSpace
-          ? 'disabled'
-          : ''
-        : ''
-    "
-  >
+  <label :for="toKebabCase(label)" :class="className(form)">
     {{ label }}:
     <input
       v-if="tagName === 'input'"
@@ -44,7 +38,7 @@
       :type="type"
       :id="toKebabCase(label)"
       :name="toKebabCase(label)"
-      :disabled="label === 'dimensionsTransition' ? form.maintainSpace : false"
+      :disabled="disabled(form)"
     />
     <select
       v-if="tagName === 'select'"
