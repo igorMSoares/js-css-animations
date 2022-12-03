@@ -3,6 +3,7 @@
   import Button from './Button.vue';
   import Content from './Content.vue';
   import AnimationForm from './AnimationForm.vue';
+  import CodeSnippet from './CodeSnippet.vue';
 
   defineEmits(['resetAnimation']);
 </script>
@@ -18,6 +19,7 @@
       contentList: Array,
       animOpts: Object,
       fieldsList: Array,
+      codeSnippet: Array,
     },
     mounted() {
       const jsCssAnimations = this.animationApi();
@@ -67,6 +69,15 @@
     />
 
     <section>
+      <CodeSnippet
+        v-if="codeSnippet"
+        v-for="(snippet, i) in codeSnippet"
+        :snippet-id="`code-snippet__${animationName}-${i}`"
+        :code="snippet.code"
+        :highlight="snippet.highlight"
+        :langs="snippet.langs"
+        :lang="snippet.lang"
+      />
       <slot />
     </section>
   </Container>

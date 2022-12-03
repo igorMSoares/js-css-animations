@@ -116,11 +116,6 @@ aside: false
   function animationApi() {
     return jsCssAnimations;
   }
-
-  const snippet = `
-    jsCssAnimations.init.slideDown({maintainSpace: true});
-  `
-
 </script>
 
 # Examples
@@ -134,12 +129,9 @@ aside: false
 :content-list="examples.slide.contentList"
 :anim-opts="{}"
 @reset-animation="(opts) => {resetAnimation('slide', opts);}"
-:fields-list="['duration', 'delay', 'staggerDelay', 'maintainSpace', 'easing', 'dimensionsTransition', 'overflowHidden']">
-
-<CodeSnippet :code="snippet" />
-
-<!-- ```js{4}
-jsCssAnimations.init.slideUp({
+:fields-list="['duration', 'delay', 'staggerDelay', 'maintainSpace', 'easing', 'dimensionsTransition', 'overflowHidden']"
+:code-snippet="[{
+code: `jsCssAnimations.init.slideUp({
   trigger: '.slide-up--btn',
   targetSelector: '.example__slide',
   on: 'click', // This is the default value, so it can be ommited
@@ -155,10 +147,10 @@ jsCssAnimations.init.slideLeft({
 jsCssAnimations.init.slideRight({
   trigger: '.slide-right--btn',
   targetSelector: '.example__slide',
-});
-``` -->
-
-</Example>
+});`,
+highlight: [4]
+}]"
+/>
 
 <Example
 :animation-api="animationApi"
@@ -169,21 +161,21 @@ jsCssAnimations.init.slideRight({
 :content-list="examples.fade.contentList"
 :anim-opts="fadeOpts"
 :fields-list="['duration', 'delay', 'staggerDelay', 'maintainSpace', 'easing', 'blur', 'dimensionsTransition', 'iteration', 'direction']"
-@reset-animation="(opts) => {resetAnimation('fade', opts);}">
-
-```html{1}
-<button class="js-anim--trigger" target-selector=".fade__example">
-  Fade In/Out
-</button>
-<div class="fade__example"><p>...</p></div>
-```
-
-```js{4}
-// When 'trigger' option is omitted, .init will look for
+@reset-animation="(opts) => {resetAnimation('fade', opts);}"
+:code-snippet="[{
+code: `// When 'trigger' option is omitted, .init will look for
 // any element(s) that have the 'js-anim--trigger' class
 jsCssAnimations.init.fade({
   maintainSpace: true,
-});
+});`,
+highlight: [4],
+}]">
+
+```html{1}
+<button class="js-anim--trigger" target-selector=".fade__example">
+  Fade Out
+</button>
+<div class="fade__example"><p>...</p></div>
 ```
 
 </Example>
@@ -197,17 +189,16 @@ jsCssAnimations.init.fade({
 :content-list="examples.collapse.contentList"
 :anim-opts="collapseOpts"
 :fields-list="['duration', 'delay', 'staggerDelay', 'maintainSpace', 'easing', 'dimensionsTransition', 'transfOrigin']"
-@reset-animation="(opts) => {resetAnimation('collapse', opts);}">
-
-```js{4}
-jsCssAnimations.init.collapse({
+@reset-animation="(opts) => {resetAnimation('collapse', opts);}"
+:code-snippet="[{
+code: `jsCssAnimations.init.collapse({
   trigger: '.collapse--btn',
   targetSelector: '.example__collapse',
   staggerDelay: 500, // '0.5s' or '500ms' would also work
 });
-```
-
-</Example>
+`,
+highlight: [4]
+}]"/>
 
 <style>
 </style>
