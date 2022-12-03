@@ -6,6 +6,7 @@ aside: false
 <script setup>
   import { onMounted } from 'vue';
   import Example from '../.vitepress/components/Example.vue'
+  import CodeSnippet from '../.vitepress/components/CodeSnippet.vue'
   import examples from './examples.json'
 
   import jsCssAnimations from '../../js-css-animations/js-css-animations.js';
@@ -116,6 +117,10 @@ aside: false
     return jsCssAnimations;
   }
 
+  const snippet = `
+    jsCssAnimations.init.slideDown({maintainSpace: true});
+  `
+
 </script>
 
 # Examples
@@ -131,7 +136,9 @@ aside: false
 @reset-animation="(opts) => {resetAnimation('slide', opts);}"
 :fields-list="['duration', 'delay', 'staggerDelay', 'maintainSpace', 'easing', 'dimensionsTransition', 'overflowHidden']">
 
-```js{4}
+<CodeSnippet :code="snippet" />
+
+<!-- ```js{4}
 jsCssAnimations.init.slideUp({
   trigger: '.slide-up--btn',
   targetSelector: '.example__slide',
@@ -149,7 +156,7 @@ jsCssAnimations.init.slideRight({
   trigger: '.slide-right--btn',
   targetSelector: '.example__slide',
 });
-```
+``` -->
 
 </Example>
 
