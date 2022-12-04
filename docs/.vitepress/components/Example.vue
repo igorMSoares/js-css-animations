@@ -4,40 +4,41 @@
   import Content from './Content.vue';
   import AnimationForm from './AnimationForm.vue';
   import CodeSnippet from './CodeSnippet.vue';
+  import { onMounted } from 'vue';
+
+  const props = defineProps({
+    animationApi: Function,
+    animationFn: Function,
+    animationName: String,
+    title: String,
+    btnList: Array,
+    contentList: Array,
+    animOpts: Object,
+    fieldsList: Array,
+    codeSnippet: Array,
+  });
+
+  onMounted(() => {
+    const jsCssAnimations = props.animationApi();
+    props.animationFn();
+    jsCssAnimations.init.fade({
+      trigger: `.customize--anchor__${props.animationName}`,
+      targetSelector: `.customize--form__${props.animationName}`,
+    });
+  });
+
+  function titleId() {
+    return props.title
+      .toLowerCase()
+      .replaceAll(/[\W_]/g, '-')
+      .replace('---', '-');
+  }
+
+  function updateSnippet({ opts, fieldLabel, fieldId }) {
+    console.log(`${fieldLabel}: ${opts[fieldLabel]}`);
+  }
 
   defineEmits(['resetAnimation']);
-</script>
-
-<script>
-  export default {
-    props: {
-      animationApi: Function,
-      animationFn: Function,
-      animationName: String,
-      title: String,
-      btnList: Array,
-      contentList: Array,
-      animOpts: Object,
-      fieldsList: Array,
-      codeSnippet: Array,
-    },
-    mounted() {
-      const jsCssAnimations = this.animationApi();
-      this.animationFn();
-      jsCssAnimations.init.fade({
-        trigger: `.customize--anchor__${this.animationName}`,
-        targetSelector: `.customize--form__${this.animationName}`,
-      });
-    },
-    methods: {
-      titleId() {
-        return this.title
-          .toLowerCase()
-          .replaceAll(/[\W_]/g, '-')
-          .replace('---', '-');
-      },
-    },
-  };
 </script>
 
 <template>
@@ -72,6 +73,7 @@
       <CodeSnippet
         v-if="codeSnippet"
         v-for="(snippet, i) in codeSnippet"
+        :key="`${animationName}-${i}`"
         :snippet-id="`code-snippet__${animationName}-${i}`"
         :code="snippet.code"
         :highlight="snippet.highlight"
