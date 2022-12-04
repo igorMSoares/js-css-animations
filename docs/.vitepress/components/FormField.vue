@@ -34,7 +34,12 @@
     <input
       v-if="tagName === 'input'"
       v-model="form[label]"
-      @change="$emit('changeField', form)"
+      @change="
+        $emit('changeField', {
+          opts: form,
+          fieldLabel: this.label,
+        })
+      "
       :type="type"
       :id="toKebabCase(label)"
       :name="toKebabCase(label)"
@@ -43,7 +48,12 @@
     <select
       v-if="tagName === 'select'"
       v-model="form[label]"
-      @change="$emit('changeField', form)"
+      @change="
+        $emit('changeField', {
+          opts: form,
+          fieldLabel: this.label,
+        })
+      "
       :id="toKebabCase(label)"
       :name="toKebabCase(label)"
     >

@@ -65,7 +65,7 @@ aside: false
 
   const collapseOpts = {
       trigger: `.${examples.collapse.btnList[0].class}`,
-      staggerDelay: '600ms',
+      staggerDelay: '500ms',
       complete: () => {
         toggleBtnTitle(examples.collapse.btnList, 0);
       }
@@ -74,7 +74,7 @@ aside: false
     jsCssAnimations.init.collapse(collapseOpts)
   }
 
-  function resetAnimation(animName, opts) {
+  function resetAnimation(animName, {opts}) {
       const btnList = examples[animName].btnList;
       btnList.forEach(btn => {
         const triggerSelector = `.${btn.class}`;
@@ -96,13 +96,15 @@ aside: false
           opts.easing = defaultValue.timingFunction;
         ['duration', 'delay', 'staggerDelay'].forEach(prop => {
           if (opts[prop].match(/^\d+$/)) opts[prop] = `${opts[prop]}ms`;
-          else if (!opts[prop].match(/^(\d+ms|\d+s)$/)) {
+          else if (!opts[prop].match(/^(\d+|\d+\.\d+)(ms|s)$/)) {
             opts[prop] = defaultValue[prop];
           }
         });
 
-        const animation = animName === 'slide' ? 
-        (triggerSelector.replace('--btn','').replace(/-(\w)/,(l) => l.toUpperCase()).replaceAll(/[-\.]/g,'')) : animName;
+        const animation = animName === 'slide'
+          ? (triggerSelector.replace('--btn','')
+            .replace(/-(\w)/,(l) => l.toUpperCase()).replaceAll(/[-\.]/g,''))
+          : animName;
         jsCssAnimations.init[animation]({
           trigger: triggerSelector,
           ...opts,

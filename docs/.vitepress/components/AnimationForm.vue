@@ -9,24 +9,43 @@
   });
   const { initial, fieldsList } = props;
 
+  const defaultValue = {
+    duration: '800ms',
+    delay: '0ms',
+    staggerDelay: '0ms',
+    blur: '0.5px',
+    angle: '0deg',
+    iteration: '1',
+    direction: 'normal',
+    transfOrigin: 'center',
+    initialScale: '1',
+    finalScale: '1',
+    easing: 'cubic-bezier(0.455, 0.03, 0.515, 0.955)',
+    maintainSpace: false,
+    dimensionsTransition: true,
+    overflowHidden: true,
+    complete: undefined,
+    start: undefined,
+  };
+
   const form = ref({
-    duration: initial?.duration ?? '800ms',
-    delay: initial?.delay ?? '0ms',
-    staggerDelay: initial?.staggerDelay ?? '0ms',
-    blur: initial?.blur ?? '0.5px',
-    angle: initial?.angle ?? '0deg',
-    iteration: initial?.iteration ?? '1',
-    direction: initial?.direction ?? 'normal',
-    transfOrigin: initial?.transfOrigin ?? 'center',
-    initialScale: initial?.initialScale ?? '1',
-    finalScale: initial?.finalScale ?? '1',
-    easing:
-      initial?.timingFunction ?? 'cubic-bezier(0.455, 0.03, 0.515, 0.955)',
-    maintainSpace: initial?.keepSpace ?? false,
-    dimensionsTransition: initial?.dimensionsTransition ?? true,
-    overflowHidden: initial?.overflowHidden ?? true,
-    complete: initial?.complete ?? undefined,
-    start: initial?.start ?? undefined,
+    duration: initial?.duration ?? defaultValue.duration,
+    delay: initial?.delay ?? defaultValue.delay,
+    staggerDelay: initial?.staggerDelay ?? defaultValue.staggerDelay,
+    blur: initial?.blur ?? defaultValue.blur,
+    angle: initial?.angle ?? defaultValue.angle,
+    iteration: initial?.iteration ?? defaultValue.iteration,
+    direction: initial?.direction ?? defaultValue.direction,
+    transfOrigin: initial?.transfOrigin ?? defaultValue.transfOrigin,
+    initialScale: initial?.initialScale ?? defaultValue.initialScale,
+    finalScale: initial?.finalScale ?? defaultValue.finalScale,
+    easing: initial?.timingFunction ?? defaultValue.easing,
+    maintainSpace: initial?.keepSpace ?? defaultValue.maintainSpace,
+    dimensionsTransition:
+      initial?.dimensionsTransition ?? defaultValue.dimensionsTransition,
+    overflowHidden: initial?.overflowHidden ?? defaultValue.overflowHidden,
+    start: initial?.start ?? defaultValue.start,
+    complete: initial?.complete ?? defaultValue.complete,
   });
   const formRefFn = () => form;
 
@@ -106,7 +125,9 @@
           :select-options="field.selectOptions ?? []"
           :class-name="setClassName(field)"
           :disabled="setDisabled(field)"
-          @change-field="opts => $emit('resetAnimation', opts)"
+          @change-field="
+            opts => $emit('resetAnimation', { ...opts, defaultValue })
+          "
         />
       </div>
     </div>
