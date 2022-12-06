@@ -1,4 +1,5 @@
 <script setup>
+  /// <reference lib="es2021" />
   import Container from './Container.vue';
   import Button from './Button.vue';
   import Content from './Content.vue';
@@ -6,19 +7,32 @@
   import CodeSnippet from './CodeSnippet.vue';
   import { onMounted, ref } from 'vue';
 
-  const props = defineProps({
-    animationApi: Function,
-    animationFn: Function,
-    animationName: String,
-    title: String,
-    btnList: Array,
-    contentList: Array,
-    animOpts: Object,
-    fieldsList: Array,
-    codeSnippet: Array,
-  });
+  /**
+   * @type {{
+   *  animationApi?: Function,
+   *  animationFn?: Function,
+   *  animationName?: String,
+   *  title?: String,
+   *  btnList?: Array.<{text: string[], class: string, targetSelector: string}>,
+   *  contentList?: Object[],
+   *  animOpts?: Object,
+   *  fieldsList?: string[],
+   *  codeSnippet?: Object
+   * }}
+   */
+  const props = defineProps([
+    'animationApi',
+    'animationFn',
+    'animationName',
+    'title',
+    'btnList',
+    'contentList',
+    'animOpts',
+    'fieldsList',
+    'codeSnippet',
+  ]);
 
-  const codeSnippetRef = ref(props.codeSnippet?.at(0));
+  const codeSnippetRef = ref(props.codeSnippet);
   const codeSnippetKey = ref(`${props.animationName}-0`);
 
   onMounted(() => {
@@ -43,6 +57,8 @@
       const keyId = +(codeSnippetKey.value.match(/(\d+)$/g)?.at(0) ?? '0') + 1;
       codeSnippetKey.value = codeSnippetKey.value.replace(/\d+$/, `${keyId}`);
     };
+    /** @type {Object} */
+    const codeSnippetRefVal = codeSnippetRef.value;
 
     if (opts[fieldLabel] !== '') {
       const newValue =
@@ -62,7 +78,7 @@
 
         let newSnippet = '';
         let match = false;
-        for (const str of codeSnippetRef.value.code.split(/\n/)) {
+        for (const str of codeSnippetRefVal.code.split(/\n/)) {
           if (str.match(fieldLabel)) {
             newSnippet += newField;
             match = true;
@@ -73,10 +89,10 @@
             newSnippet += `${str}\n`;
           }
         }
-        codeSnippetRef.value.code = newSnippet;
+        codeSnippetRefVal.code = newSnippet;
         reloadSnippet();
       } else {
-        codeSnippetRef.value.code = codeSnippetRef.value.code.replaceAll(
+        codeSnippetRefVal.code = codeSnippetRefVal.code.replaceAll(
           new RegExp(`\n.+${fieldLabel}:.+\n`, 'g'),
           '\n'
         );
@@ -91,7 +107,7 @@
             defaultValue,
           });
         } else if (
-          codeSnippetRef.value.code.match('dimensionsTransition: false')
+          codeSnippetRefVal.code.match('dimensionsTransition: false')
         ) {
           updateSnippet({
             opts: { dimensionsTransition: true },
@@ -100,7 +116,7 @@
           });
         }
       }
-    } else if (codeSnippetRef.value.code.match(fieldLabel)) {
+    } else if (codeSnippetRefVal.code.match(fieldLabel)) {
       updateSnippet({
         opts: { [fieldLabel]: defaultValue[fieldLabel] },
         fieldLabel,
@@ -148,13 +164,12 @@
     <section>
       <CodeSnippet
         v-if="codeSnippet"
-        v-for="(snippet, i) in codeSnippet"
         :key="codeSnippetKey"
-        :snippet-id="`code-snippet__${animationName}-${i}`"
-        :code="codeSnippetRef.code"
-        :highlight="snippet.highlight"
-        :langs="snippet.langs"
-        :lang="snippet.lang"
+        :snippet-id="`code-snippet__${animationName}-0`"
+        :code="codeSnippetRef?.code"
+        :highlight="codeSnippet.highlight"
+        :langs="codeSnippet.langs"
+        :lang="codeSnippet.lang"
       />
       <slot />
     </section>

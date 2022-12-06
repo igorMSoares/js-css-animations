@@ -132,7 +132,7 @@ aside: false
 :anim-opts="{}"
 @reset-animation="(opts) => {resetAnimation('slide', opts);}"
 :fields-list="['duration', 'delay', 'staggerDelay', 'maintainSpace', 'easing', 'dimensionsTransition', 'overflowHidden']"
-:code-snippet="[{
+:code-snippet="{
 code: `jsCssAnimations.init.slideUp({
   trigger: '.slide-up--btn',
   targetSelector: '.example__slide',
@@ -151,7 +151,7 @@ jsCssAnimations.init.slideRight({
   targetSelector: '.example__slide',
 });`,
 highlight: [4]
-}]"
+}"
 />
 
 <Example
@@ -164,14 +164,14 @@ highlight: [4]
 :anim-opts="fadeOpts"
 :fields-list="['duration', 'delay', 'staggerDelay', 'maintainSpace', 'easing', 'blur', 'dimensionsTransition', 'iteration', 'direction']"
 @reset-animation="(opts) => {resetAnimation('fade', opts);}"
-:code-snippet="[{
+:code-snippet="{
 code: `// When 'trigger' option is omitted, .init will look for
 // any element(s) that have the 'js-anim--trigger' class
 jsCssAnimations.init.fade({
   maintainSpace: true,
 });`,
 highlight: [4],
-}]">
+}">
 
 ```html{1}
 <button class="js-anim--trigger" target-selector=".fade__example">
@@ -192,7 +192,7 @@ highlight: [4],
 :anim-opts="collapseOpts"
 :fields-list="['duration', 'delay', 'staggerDelay', 'maintainSpace', 'easing', 'dimensionsTransition', 'transfOrigin']"
 @reset-animation="(opts) => {resetAnimation('collapse', opts);}"
-:code-snippet="[{
+:code-snippet="{
 code: `jsCssAnimations.init.collapse({
   trigger: '.collapse--btn',
   targetSelector: '.example__collapse',
@@ -200,7 +200,7 @@ code: `jsCssAnimations.init.collapse({
 });
 `,
 highlight: [4]
-}]"/>
+}"/>
 
 <style>
 </style>
