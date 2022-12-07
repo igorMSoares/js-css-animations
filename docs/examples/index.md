@@ -20,58 +20,63 @@ aside: false
     btn.innerText = btn.innerText === btnText[0] ? btnText[1] : btnText[0];
   }
 
-  function slideAnimations() {
-    const toggleSlideBtns = () => {
-        toggleBtnTitle(examples.slide.btnList, 0);
-        toggleBtnTitle(examples.slide.btnList, 1);
-        toggleBtnTitle(examples.slide.btnList, 2);
-        toggleBtnTitle(examples.slide.btnList, 3);
+  function toggleBtnHandler(animationName) {
+    const btnList = examples[animationName].btnList;
+    const btnCount = btnList.length;
+    for (let i = 0; i < btnCount; i++) {
+      toggleBtnTitle(btnList, i);
     }
+  }
+
+  function slideAnimations() {
+    const complete = () => {
+        toggleBtnHandler('slide');
+      };
+
     jsCssAnimations.init.slideUp({
       trigger: `.${ examples.slide.btnList[0].class }`,
-      complete: () => {
-        toggleSlideBtns();
-      },
+      complete,
     });
+
     jsCssAnimations.init.slideDown({
       trigger: `.${ examples.slide.btnList[1].class }`,
-      complete: () => {
-        toggleSlideBtns();
-      },
+      complete,
     });
+
     jsCssAnimations.init.slideLeft({
       trigger: `.${ examples.slide.btnList[2].class }`,
-      complete: () => {
-        toggleSlideBtns();
-      },
+      complete,
     });
+
     jsCssAnimations.init.slideRight({
       trigger: `.${ examples.slide.btnList[3].class }`,
-      complete: () => {
-        toggleSlideBtns();
-      },
+      complete,
     });
   }
 
   const fadeOpts = {
       keepSpace: true,
-      complete: () => {
-        toggleBtnTitle(examples.fade.btnList, 0);
-      }
     }
   function fadeAnimation() {
-    jsCssAnimations.init.fade(fadeOpts)
+    jsCssAnimations.init.fade({
+      ...fadeOpts,
+      complete: () => {
+        toggleBtnHandler('fade');
+      }
+    })
   }
 
   const collapseOpts = {
-      trigger: `.${examples.collapse.btnList[0].class}`,
       staggerDelay: '500ms',
-      complete: () => {
-        toggleBtnTitle(examples.collapse.btnList, 0);
-      }
   }
   function collapseAnimation() {
-    jsCssAnimations.init.collapse(collapseOpts)
+    jsCssAnimations.init.collapse({
+      ...collapseOpts,
+      trigger: `.${examples.collapse.btnList[0].class}`,
+      complete: () => {
+        toggleBtnHandler('collapse');
+      }
+    })
   }
 
   const validateAnimationFormField = {
@@ -119,7 +124,8 @@ aside: false
           trigger: triggerSelector,
           ...opts,
           timingFunction: opts.easing,
-          keepSpace: opts.maintainSpace
+          keepSpace: opts.maintainSpace,
+          complete: () => toggleBtnHandler(animName)
         });
         document.querySelector(triggerSelector).click();
       })
