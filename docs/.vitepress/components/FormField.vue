@@ -24,7 +24,7 @@
   const form = typeof props.form === 'function' ? props.form() : ref({});
 
   function toKebabCase(label) {
-    return label.replaceAll(/([A-Z])/g, '-$1').toLowerCase();
+    return label.replace(/([A-Z])/g, '-$1').toLowerCase();
   }
 </script>
 
