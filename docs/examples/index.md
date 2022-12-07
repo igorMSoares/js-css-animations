@@ -55,7 +55,7 @@ aside: false
   }
 
   const fadeOpts = {
-      keepSpace: true,
+      maintainSpace: true,
     }
   function fadeAnimation() {
     jsCssAnimations.init.fade({
@@ -101,14 +101,14 @@ aside: false
           duration: '800ms',
           delay: '0ms',
           staggerDelay: '0ms',
-          timingFunction: 'cubic-bezier(0.455, 0.03, 0.515, 0.955)',
+          easing: 'cubic-bezier(0.455, 0.03, 0.515, 0.955)',
           blur: '0.5px'
         }
 
         if (opts.maintainSpace) opts.dimensionsTransition = false;
         if (!validateAnimationFormField.blur(opts.blur)) opts.blur = defaultValue.blur;
         if (!validateAnimationFormField.easing(opts.easing))
-          opts.easing = defaultValue.timingFunction;
+          opts.easing = defaultValue.easing;
         ['duration', 'delay', 'staggerDelay'].forEach(prop => {
           if (opts[prop].match(/^(\d+|\d+\.\d+)$/)) opts[prop] = `${opts[prop]}ms`;
           else if (!validateAnimationFormField[prop](opts[prop])) {
@@ -123,8 +123,6 @@ aside: false
         jsCssAnimations.init[animation]({
           trigger: triggerSelector,
           ...opts,
-          timingFunction: opts.easing,
-          keepSpace: opts.maintainSpace,
           complete: () => toggleBtnHandler(animName)
         });
         document.querySelector(triggerSelector).click();

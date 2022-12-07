@@ -37,7 +37,7 @@ const configurations = {
     staggerDelay: undefined,
     start: undefined,
     complete: undefined,
-    keepSpace: false,
+    maintainSpace: false,
     dimensionsTransition: true,
     widthTransition: undefined,
     heightTransition: undefined,
@@ -376,7 +376,7 @@ const handleVisibilityToggle = (element, args) => {
  */
 const endVisibilityToggle = (element, opts) => {
   if (opts.action === 'hide') {
-    opts.keepSpace
+    opts.maintainSpace
       ? element.classList.add(CLASS_NAMES.hidden)
       : element.classList.add(CLASS_NAMES.collapsed);
   }
@@ -426,8 +426,8 @@ const animate = (element, action, id, opts = {}) => {
     trigger,
     start = CONFIG.start,
     complete = CONFIG.complete,
-    keepSpace = CONFIG.keepSpace,
-    dimensionsTransition = keepSpace || isMotion(animType)
+    maintainSpace = CONFIG.maintainSpace,
+    dimensionsTransition = maintainSpace || isMotion(animType)
       ? false
       : CONFIG.dimensionsTransition,
     widthTransition = CONFIG.widthTransition ?? dimensionsTransition,
@@ -485,7 +485,7 @@ const animate = (element, action, id, opts = {}) => {
       visibility: () => {
         endVisibilityToggle(element, {
           action,
-          keepSpace,
+          maintainSpace,
           widthTransition,
           heightTransition,
           overflowHidden,

@@ -39,10 +39,10 @@
     transfOrigin: initial?.transfOrigin ?? defaultValue.transfOrigin,
     initialScale: initial?.initialScale ?? defaultValue.initialScale,
     finalScale: initial?.finalScale ?? defaultValue.finalScale,
-    easing: initial?.timingFunction ?? defaultValue.easing,
-    maintainSpace: initial?.keepSpace ?? defaultValue.maintainSpace,
+    easing: initial?.easing ?? defaultValue.easing,
+    maintainSpace: initial?.maintainSpace ?? defaultValue.maintainSpace,
     dimensionsTransition:
-      initial?.dimensionsTransition ?? initial?.keepSpace
+      initial?.dimensionsTransition ?? initial?.maintainSpace
         ? false
         : defaultValue.dimensionsTransition,
     overflowHidden: initial?.overflowHidden ?? defaultValue.overflowHidden,
