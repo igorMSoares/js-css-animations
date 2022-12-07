@@ -74,6 +74,18 @@ aside: false
     jsCssAnimations.init.collapse(collapseOpts)
   }
 
+  const validateAnimationFormField = {
+    timePropertyValidation: val => val.match(/^(\d+|\d+\.\d+)(ms|s)?$/),
+    blur: val => val.match(/^(\d+|\d+\.\d+)(px|rem|em)$/),
+    easing: val => {
+      const easingRegEx = /^(ease(-in|-out|-in-out)?|linear|cubic-bezier\((0|1|0.\d+), -?[\d\.]+, (0|1|0.\d+), -?[\d\.]+\)|step\((100|[0-9][0-9]|[0-9]),\s?(jump-start|jump-end|jump-none|jump-both|start|end)\)|step\(step-(start|end)\))$/;
+      return val && val.match(easingRegEx)
+    },
+    duration: val => validateAnimationFormField.timePropertyValidation(val),
+    delay: val => validateAnimationFormField.timePropertyValidation(val),
+    staggerDelay: val => validateAnimationFormField.timePropertyValidation(val),
+  }
+
   function resetAnimation(animName, {opts}) {
       const btnList = examples[animName].btnList;
       btnList.forEach(btn => {
@@ -88,22 +100,20 @@ aside: false
           blur: '0.5px'
         }
 
-        const easingRegEx = /^(ease(-in|-out|-in-out)?|linear|cubic-bezier\((0|1|0.\d+), -?[\d\.]+, (0|1|0.\d+), -?[\d\.]+\)|step\((100|[0-9][0-9]|[0-9]),\s?(jump-start|jump-end|jump-none|jump-both|start|end)\)|step\(step-(start|end)\))$/;
-
         if (opts.maintainSpace) opts.dimensionsTransition = false;
-        if (!opts.blur.match(/^(\d+|\d+\.\d+)(px|rem|em)$/)) opts.blur = defaultValue.blur;
-        if (!opts.easing || !opts.easing.match(easingRegEx))
+        if (!validateAnimationFormField.blur(opts.blur)) opts.blur = defaultValue.blur;
+        if (!validateAnimationFormField.easing(opts.easing))
           opts.easing = defaultValue.timingFunction;
         ['duration', 'delay', 'staggerDelay'].forEach(prop => {
-          if (opts[prop].match(/^\d+$/)) opts[prop] = `${opts[prop]}ms`;
-          else if (!opts[prop].match(/^(\d+|\d+\.\d+)(ms|s)$/)) {
+          if (opts[prop].match(/^(\d+|\d+\.\d+)$/)) opts[prop] = `${opts[prop]}ms`;
+          else if (!validateAnimationFormField[prop](opts[prop])) {
             opts[prop] = defaultValue[prop];
           }
         });
 
         const animation = animName === 'slide'
           ? (triggerSelector.replace('--btn','')
-            .replace(/-(\w)/,(l) => l.toUpperCase()).replaceAll(/[-\.]/g,''))
+            .replace(/-(\w)/,(l) => l.toUpperCase()).replace(/[-\.]/g,''))
           : animName;
         jsCssAnimations.init[animation]({
           trigger: triggerSelector,
@@ -132,6 +142,7 @@ aside: false
 :anim-opts="{}"
 @reset-animation="(opts) => {resetAnimation('slide', opts);}"
 :fields-list="['duration', 'delay', 'staggerDelay', 'maintainSpace', 'easing', 'dimensionsTransition', 'overflowHidden']"
+:animation-form-validation="validateAnimationFormField"
 :code-snippet="{
 code: `jsCssAnimations.init.slideUp({
   trigger: '.slide-up--btn',
@@ -164,6 +175,7 @@ highlight: [4]
 :anim-opts="fadeOpts"
 :fields-list="['duration', 'delay', 'staggerDelay', 'maintainSpace', 'easing', 'blur', 'dimensionsTransition', 'iteration', 'direction']"
 @reset-animation="(opts) => {resetAnimation('fade', opts);}"
+:animation-form-validation="validateAnimationFormField"
 :code-snippet="{
 code: `// When 'trigger' option is omitted, .init will look for
 // any element(s) that have the 'js-anim--trigger' class
@@ -192,6 +204,7 @@ highlight: [4],
 :anim-opts="collapseOpts"
 :fields-list="['duration', 'delay', 'staggerDelay', 'maintainSpace', 'easing', 'dimensionsTransition', 'transfOrigin']"
 @reset-animation="(opts) => {resetAnimation('collapse', opts);}"
+:animation-form-validation="validateAnimationFormField"
 :code-snippet="{
 code: `jsCssAnimations.init.collapse({
   trigger: '.collapse--btn',

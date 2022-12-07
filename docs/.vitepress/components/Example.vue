@@ -1,5 +1,4 @@
 <script setup>
-  /// <reference lib="es2021" />
   import Container from './Container.vue';
   import Button from './Button.vue';
   import Content from './Content.vue';
@@ -17,7 +16,8 @@
    *  contentList?: Object[],
    *  animOpts?: Object,
    *  fieldsList?: string[],
-   *  codeSnippet?: Object
+   *  codeSnippet?: Object,
+   *  animationFormValidation?: Object,
    * }}
    */
   const props = defineProps([
@@ -30,6 +30,7 @@
     'animOpts',
     'fieldsList',
     'codeSnippet',
+    'animationFormValidation',
   ]);
 
   const codeSnippetRef = ref(props.codeSnippet);
@@ -48,7 +49,7 @@
   function titleId() {
     return props.title
       ?.toLowerCase()
-      .replaceAll(/[\W_]/g, '-')
+      .replace(/[\W_]/g, '-')
       .replace('---', '-');
   }
 
@@ -59,13 +60,23 @@
     };
     /** @type {Object} */
     const codeSnippetRefVal = codeSnippetRef.value;
+    const proxyHandler = {
+      get: function (target, name) {
+        return target.hasOwnProperty(name) ? target[name] : _ => true;
+      },
+    };
+    const validateField = new Proxy(
+      props.animationFormValidation,
+      proxyHandler
+    );
 
     if (opts[fieldLabel] !== '') {
-      const newValue =
-        ['duration', 'delay', 'staggerDelay'].includes(fieldLabel) &&
-        opts[fieldLabel].match(/^(\d+|\d+\.\d+)$/)
+      const newValue = validateField[fieldLabel](opts[fieldLabel])
+        ? ['duration', 'delay', 'staggerDelay'].includes(fieldLabel) &&
+          opts[fieldLabel].match(/^(\d+|\d+\.\d+)$/)
           ? `${opts[fieldLabel]}ms`
-          : opts[fieldLabel];
+          : opts[fieldLabel]
+        : defaultValue[fieldLabel];
 
       if (defaultValue[fieldLabel] !== newValue) {
         const newField =
@@ -89,15 +100,15 @@
             newSnippet += `${str}\n`;
           }
         }
-        codeSnippetRefVal.code = newSnippet;
-        reloadSnippet();
+        codeSnippetRefVal.code = newSnippet.trimEnd();
       } else {
-        codeSnippetRefVal.code = codeSnippetRefVal.code.replaceAll(
+        codeSnippetRefVal.code = codeSnippetRefVal.code.replace(
           new RegExp(`\n.+${fieldLabel}:.+\n`, 'g'),
           '\n'
         );
-        reloadSnippet();
       }
+      if (codeSnippetRefVal.highlight) codeSnippetRefVal.highlight = [];
+      reloadSnippet();
 
       if (fieldLabel === 'maintainSpace') {
         if (opts[fieldLabel] === false) {
