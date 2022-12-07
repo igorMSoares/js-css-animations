@@ -304,6 +304,9 @@ const removeMotionCssClass = element => {
     cl.match(/js\-anim\-\-(rotate|scale)/)
   );
   if (className) element.classList.remove(className);
+  if (className === CLASS_NAMES.move[MOTION_ANIMS_ID.rotate]) {
+    element.style.removeProperty(PROPERTY_NAMES.angle);
+  }
 };
 
 /**
