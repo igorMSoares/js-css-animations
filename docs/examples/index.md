@@ -116,6 +116,7 @@ aside: false
     duration: val => validateAnimationFormField.timePropertyValidation(val),
     delay: val => validateAnimationFormField.timePropertyValidation(val),
     staggerDelay: val => validateAnimationFormField.timePropertyValidation(val),
+    angle: val => val.match(/^\-?(\d+|\d+\.\d+)(deg)?$/),
   }
 
   function resetAnimation(animName, {opts}) {
@@ -133,16 +134,21 @@ aside: false
           angle: '0deg'
         }
 
+        const numberRegEx = opts.angle ? /^\-?(\d+|\d+\.\d+)$/ : /^(\d+|\d+\.\d+)$/;
         if (opts.maintainSpace) opts.dimensionsTransition = false;
         if (!validateAnimationFormField.blur(opts.blur)) opts.blur = defaultValue.blur;
         if (!validateAnimationFormField.easing(opts.easing))
           opts.easing = defaultValue.easing;
         ['duration', 'delay', 'staggerDelay'].forEach(prop => {
-          if (opts[prop].match(/^(\d+|\d+\.\d+)$/)) opts[prop] = `${opts[prop]}ms`;
+          if (opts[prop].match(numberRegEx)) opts[prop] = `${opts[prop]}ms`;
           else if (!validateAnimationFormField[prop](opts[prop])) {
             opts[prop] = defaultValue[prop];
           }
         });
+        if (opts.angle) {
+          if (!validateAnimationFormField.angle(opts.angle)) opts.angle = defaultValue.angle
+          else if (opts.angle.match(numberRegEx)) opts.angle = Number(opts.angle); 
+        }
 
         const animation = [ 'slide', 'rotations'].includes(animName)
           ? (triggerSelector.replace('--btn','')
@@ -318,7 +324,7 @@ _Notice that when toggling back up from any rotation, the element will rotate in
 :title="'Custom Rotation'"
 :btn-list="examples.rotate.btnList"
 :content-list="examples.rotate.contentList"
-:anim-opts="{}"
+:anim-opts="customRotateOpts"
 :fields-list="['duration', 'delay', 'angle', 'easing', 'transfOrigin']"
 @reset-animation="(opts) => {resetAnimation('rotate', opts)}"
 :animation-form-validation="validateAnimationFormField"
@@ -326,7 +332,7 @@ _Notice that when toggling back up from any rotation, the element will rotate in
 code: `jsCssAnimations.init.rotate({
   trigger: '.rotate--btn',
   targetSelector: '.example__rotate',
-  angle: 155
+  angle: 155,
 });
 `
 }">
@@ -355,6 +361,8 @@ code: `jsCssAnimations.init.rotate({
   margin: 1rem auto;
   padding-top: 0.25em;
   border-radius: 50%;
+  position: relative;
+  z-index: -1;
 }
 
 .rotation-area--text {

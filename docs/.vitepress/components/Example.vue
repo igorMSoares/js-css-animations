@@ -82,7 +82,7 @@
         const newField =
           `  ${fieldLabel}: ` +
           (typeof opts[fieldLabel] === 'boolean' ||
-          opts[fieldLabel].match(/^(\d+|\d+\.\d+)$/)
+          opts[fieldLabel].match(/^\-?(\d+|\d+\.\d+)$/)
             ? opts[fieldLabel]
             : `'${opts[fieldLabel]}'`) +
           ',\n';
