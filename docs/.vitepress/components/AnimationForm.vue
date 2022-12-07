@@ -42,7 +42,9 @@
     easing: initial?.timingFunction ?? defaultValue.easing,
     maintainSpace: initial?.keepSpace ?? defaultValue.maintainSpace,
     dimensionsTransition:
-      initial?.dimensionsTransition ?? defaultValue.dimensionsTransition,
+      initial?.dimensionsTransition ?? initial?.keepSpace
+        ? false
+        : defaultValue.dimensionsTransition,
     overflowHidden: initial?.overflowHidden ?? defaultValue.overflowHidden,
     start: initial?.start ?? defaultValue.start,
     complete: initial?.complete ?? defaultValue.complete,
