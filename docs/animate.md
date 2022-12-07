@@ -11,6 +11,7 @@ Handles all the animation process
 - _export_
 
   - [init(animationId, opts, eventType)](#init-animationid-opts-eventtype)
+  - [end(triggerSelector, eventType)](#end-triggerselector-eventtype)
   - [animate(element, action, id, opts)](#animate-element-action-id-opts)
   - [preset(el, args)](#preset-el-args)
   - [isEnabled(element)](#isenabled-element) ⇒ <code>boolean</code>
@@ -59,6 +60,17 @@ Initiate the event listener with the animation
 | animationId | <code>number</code> |                                | The ID of the animation in \*\_ANIMS_ID object |
 | opts        | <code>Object</code> |                                | All options passed by the user                 |
 | eventType   | <code>string</code> | <code>&quot;click&quot;</code> | The event to attach the animation to           |
+
+## end(triggerSelector, eventType)
+
+Removes the event listener of all elements represented by the triggerSelector
+
+**Kind**: static function of [<code>animate</code>](#animate-js)
+
+| Param           | Type                | Default                        | Description                                                                                         |
+| --------------- | ------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------- |
+| triggerSelector | <code>string</code> | <code>null</code>              | A valid CSS selector for the trigger Element. If ommited, CLASS_NAMES.trigger will be used instead. |
+| eventType       | <code>string</code> | <code>&quot;click&quot;</code> | The event name. If ommited, 'click' is the default value.                                           |
 
 ## animate(element, action, id, opts)
 
