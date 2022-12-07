@@ -56,6 +56,7 @@
     { label: 'delay' },
     { label: 'staggerDelay' },
     { label: 'blur' },
+    { label: 'angle' },
     { label: 'easing' },
     { label: 'maintainSpace', type: 'checkbox' },
     {

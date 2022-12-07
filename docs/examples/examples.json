@@ -99,5 +99,62 @@
         "text": "The 'staggerDelay', 'delay' and 'duration' options can either be specified as a number, representing the total time in milliseconds, or as a string. If passed as a string, it should contain the time unit: 's' for second, or 'ms' for milliseconds, exactly as you would use in the CSS 'animation-delay' property, for example."
       }
     ]
+  },
+  "rotations": {
+    "btnList": [
+      {
+        "text": [
+          "Rotate Right CCW",
+          "Rotate Up"
+        ],
+        "class": "rotateRightCCW--btn",
+        "targetSelector": ".example__rotate"
+      },
+      {
+        "text": [
+          "Rotate Left CCW",
+          "Rotate Up"
+        ],
+        "class": "rotateLeftCCW--btn",
+        "targetSelector": ".example__rotate"
+      },
+      {
+        "text": [
+          "Rotate Down",
+          "Rotate Up"
+        ],
+        "class": "rotateDown--btn",
+        "targetSelector": ".example__rotate"
+      },
+      {
+        "text": [
+          "Rotate Left",
+          "Rotate Up"
+        ],
+        "class": "rotateLeft--btn",
+        "targetSelector": ".example__rotate"
+      },
+      {
+        "text": [
+          "Rotate Right",
+          "Rotate Up"
+        ],
+        "class": "rotateRight--btn",
+        "targetSelector": ".example__rotate"
+      }
+    ],
+    "contentList": []
+  },
+  "rotate": {
+    "btnList": [
+      {
+        "text": [
+          "Rotate",
+          "Rotate Up"
+        ],
+        "class": "rotate--btn"
+      }
+    ],
+    "contentList": []
   }
 }

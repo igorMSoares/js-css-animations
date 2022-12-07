@@ -173,6 +173,7 @@
     />
 
     <section>
+      <slot />
       <CodeSnippet
         v-if="codeSnippet"
         :key="codeSnippetKey"
@@ -182,7 +183,6 @@
         :langs="codeSnippet.langs"
         :lang="codeSnippet.lang"
       />
-      <slot />
     </section>
   </Container>
 </template>
