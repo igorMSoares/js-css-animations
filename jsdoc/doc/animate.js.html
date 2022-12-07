@@ -1,29 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
+<head>
+    <meta charset="utf-8">
     <title>JSDoc: Source: animate.js</title>
 
-    <script src="scripts/prettify/prettify.js"></script>
-    <script src="scripts/prettify/lang-css.js"></script>
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <link
-      type="text/css"
-      rel="stylesheet"
-      href="styles/prettify-tomorrow.css"
-    />
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css" />
-  </head>
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
 
-  <body>
-    <div id="main">
-      <h1 class="page-title">Source: animate.js</h1>
+<body>
 
-      <section>
+<div id="main">
+
+    <h1 class="page-title">Source: animate.js</h1>
+
+    
+
+
+
+    
+    <section>
         <article>
-          <pre class="prettyprint source linenums"><code>/**
+            <pre class="prettyprint source linenums"><code>/**
  * Handles all the animation process
  * @module animate
  */
@@ -34,7 +37,12 @@ import {
   CUSTOM_CSS_PROPERTIES,
 } from './globals.js';
 
-import { initParentResize, endParentResize } from './resize-parent.js';
+import {
+  initParentResize,
+  endParentResize,
+  setOverflowHidden,
+  removeOverflowHidden,
+} from './resize-parent.js';
 
 import {
   removeInlineTransition,
@@ -171,6 +179,12 @@ const TARGETS_STACK = {
   },
   stack: {},
 };
+
+/**
+ * Keeps track of the EventListeners associated to a trigger selector
+ * @type {{[x: String]: EventListener[]}}
+ */
+const LISTENERS = {};
 
 /**
  * Removes the CSS properties customized by the user
@@ -351,10 +365,12 @@ const isEnabled = element =>
  * @returns True if the element has an iteration CSS property set, False otherwise
  */
 const hasIterationProp = element => {
+  const iterationProperty = element.style.getPropertyValue(
+    PROPERTY_NAMES.iteration
+  );
   return (
-    element.style
-      .getPropertyValue(PROPERTY_NAMES.iteration)
-      .match(/^(infinite|\d+)$/) !== null
+    iterationProperty != '1' &amp;&amp;
+    iterationProperty.match(/^(infinite|\d+)$/) !== null
   );
 };
 
@@ -368,17 +384,14 @@ const hasIterationProp = element => {
  *  element: HTMLElement,
  *  parentMeasures: Object,
  *  action: string,
- *  dimension: string | undefined,
- *  maintainSpace: boolean
+ *  dimension: string | undefined
  * }} args - All the necessary arguments
  */
 const handleVisibilityToggle = (element, args) => {
   setTimeout(() => {
     if (args.dimension) setParentMaxMeasures(args);
     if (args.action === 'show') {
-      args.maintainSpace
-        ? element.classList.remove(CLASS_NAMES.hidden)
-        : element.classList.remove(CLASS_NAMES.collapsed);
+      element.classList.remove(CLASS_NAMES.hidden, CLASS_NAMES.collapsed);
     }
   }, 0);
 };
@@ -397,6 +410,8 @@ const endVisibilityToggle = (element, opts) => {
   }
   if (opts.heightTransition || opts.widthTransition)
     endParentResize(element, opts);
+  else if (opts.overflowHidden &amp;&amp; element.parentElement)
+    removeOverflowHidden(element.parentElement);
 };
 
 /**
@@ -469,7 +484,8 @@ const animate = (element, action, id, opts = {}) => {
             heightTransition,
             overflowHidden,
           }));
-        }
+        } else if (overflowHidden &amp;&amp; element.parentElement)
+          setOverflowHidden(element.parentElement);
       },
       motion: () => {
         currentTransition = getCurrentTransition(element);
@@ -484,7 +500,6 @@ const animate = (element, action, id, opts = {}) => {
           parentMeasures,
           action,
           dimension,
-          maintainSpace,
         });
       },
       motion: () => {
@@ -501,6 +516,7 @@ const animate = (element, action, id, opts = {}) => {
           maintainSpace,
           widthTransition,
           heightTransition,
+          overflowHidden,
         });
         if (!hasIterationProp(element))
           element.classList.remove(CLASS_NAMES[action][id]);
@@ -592,7 +608,7 @@ const preset = (el, args) => {
  * @param {HTMLElement} el - The DOM element being animated
  * @param {number} animationId - The ID of the animation in the *_ANIMS_ID
  * @param {Object} opts - The options passed by the user
- * @returns A function to be passed to the addEventListener() as a handler
+ * @returns {EventListener} A function to be passed to the addEventListener() as a handler
  * @see {@link module:globals.VISIBILITY_ANIMS_ID}
  * @see {@link module:globals.MOTION_ANIMS_ID}
  */
@@ -644,24 +660,48 @@ const init = (animationId, opts = {}) => {
       btn.setAttribute('target-selector', targetSelector);
     }
 
+    if (!opts.trigger) opts.trigger = trigger;
+    LISTENERS[trigger] = [];
     document
       .querySelectorAll(getTargetSelector(btn))
       .forEach((el, i, queryList) => {
-        btn.addEventListener(
-          eventType,
-          // @ts-ignore
-          eventHandler(el, animationId, {
-            ...opts,
-            totalTargets: queryList.length,
-            queryIndex: i,
-          })
-        );
+        // @ts-ignore
+        const listener = eventHandler(el, animationId, {
+          ...opts,
+          totalTargets: queryList.length,
+          queryIndex: i,
+        });
+
+        LISTENERS[trigger].push(listener);
+        btn.addEventListener(eventType, listener);
       });
   });
 };
 
+/**
+ * Removes the event listener of all elements represented by the `triggerSelector`
+ * @param {String|null} triggerSelector - A valid CSS selector for the trigger Element. If ommited, '.${CLASS_NAMES.trigger}' will be used instead.
+ * @param {String} eventType - The event name. If ommited, 'click' is the default value.
+ */
+const end = (triggerSelector = null, eventType = 'click') => {
+  const triggerList =
+    typeof triggerSelector === 'string'
+      ? document.querySelectorAll(triggerSelector)
+      : document.querySelectorAll(`.${CLASS_NAMES.trigger}`);
+
+  triggerList.forEach(trigger => {
+    LISTENERS[triggerSelector ?? `.${CLASS_NAMES.trigger}`].forEach(
+      listener => {
+        trigger.removeEventListener(eventType, listener);
+      }
+    );
+  });
+  delete LISTENERS[triggerSelector ?? `.${CLASS_NAMES.trigger}`];
+};
+
 export {
   init,
+  end,
   animate,
   preset,
   isEnabled,
@@ -671,39 +711,24 @@ export {
 };
 </code></pre>
         </article>
-      </section>
+    </section>
 
-      <footer>
-        Documentation generated by
-        <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Wed Nov 23
-        2022 20:32:22 GMT-0300 (Horário Padrão de Brasília)
-      </footer>
-    </div>
 
-    <nav>
-      <h2><a href="index.html">JS-CSS Animations</a></h2>
-      <h3>Modules</h3>
-      <ul>
-        <li><a href="module-animate.html">animate</a></li>
-        <li><a href="module-globals.html">globals</a></li>
-        <li><a href="module-js-css-animations.html">js-css-animations</a></li>
-        <li><a href="module-measurements.html">measurements</a></li>
-        <li><a href="module-resize-parent.html">resize-parent</a></li>
-        <li><a href="module-transitions.html">transitions</a></li>
-      </ul>
-    </nav>
 
-    <br class="clear" />
 
-    <footer>
-      Documentation generated by
-      <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Wed Nov 23
-      2022 20:22:20 GMT-0300 (Horário Padrão de Brasília)
-    </footer>
+</div>
 
-    <script>
-      prettyPrint();
-    </script>
-    <script src="scripts/linenumber.js"></script>
-  </body>
+<nav>
+    <h2><a href="index.html">JS-CSS Animations</a></h2><h3>Modules</h3><ul><li><a href="module-animate.html">animate</a></li><li><a href="module-globals.html">globals</a></li><li><a href="module-js-css-animations.html">js-css-animations</a></li><li><a href="module-measurements.html">measurements</a></li><li><a href="module-resize-parent.html">resize-parent</a></li><li><a href="module-transitions.html">transitions</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Wed Dec 07 2022 15:22:18 GMT-0300 (Horário Padrão de Brasília)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
 </html>
