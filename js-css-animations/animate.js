@@ -9,7 +9,12 @@ import {
   CUSTOM_CSS_PROPERTIES,
 } from './globals.js';
 
-import { initParentResize, endParentResize } from './resize-parent.js';
+import {
+  initParentResize,
+  endParentResize,
+  setOverflowHidden,
+  removeOverflowHidden,
+} from './resize-parent.js';
 
 import {
   removeInlineTransition,
@@ -32,7 +37,7 @@ const configurations = {
     staggerDelay: undefined,
     start: undefined,
     complete: undefined,
-    keepSpace: false,
+    maintainSpace: false,
     dimensionsTransition: true,
     widthTransition: undefined,
     heightTransition: undefined,
@@ -146,6 +151,12 @@ const TARGETS_STACK = {
   },
   stack: {},
 };
+
+/**
+ * Keeps track of the EventListeners associated to a trigger selector
+ * @type {{[x: String]: EventListener[]}}
+ */
+const LISTENERS = {};
 
 /**
  * Removes the CSS properties customized by the user
@@ -326,10 +337,12 @@ const isEnabled = element =>
  * @returns True if the element has an iteration CSS property set, False otherwise
  */
 const hasIterationProp = element => {
+  const iterationProperty = element.style.getPropertyValue(
+    PROPERTY_NAMES.iteration
+  );
   return (
-    element.style
-      .getPropertyValue(PROPERTY_NAMES.iteration)
-      .match(/^(infinite|\d+)$/) !== null
+    iterationProperty != '1' &&
+    iterationProperty.match(/^(infinite|\d+)$/) !== null
   );
 };
 
@@ -343,17 +356,14 @@ const hasIterationProp = element => {
  *  element: HTMLElement,
  *  parentMeasures: Object,
  *  action: string,
- *  dimension: string | undefined,
- *  keepSpace: boolean
+ *  dimension: string | undefined
  * }} args - All the necessary arguments
  */
 const handleVisibilityToggle = (element, args) => {
   setTimeout(() => {
     if (args.dimension) setParentMaxMeasures(args);
     if (args.action === 'show') {
-      args.keepSpace
-        ? element.classList.remove(CLASS_NAMES.hidden)
-        : element.classList.remove(CLASS_NAMES.collapsed);
+      element.classList.remove(CLASS_NAMES.hidden, CLASS_NAMES.collapsed);
     }
   }, 0);
 };
@@ -366,12 +376,14 @@ const handleVisibilityToggle = (element, args) => {
  */
 const endVisibilityToggle = (element, opts) => {
   if (opts.action === 'hide') {
-    opts.keepSpace
+    opts.maintainSpace
       ? element.classList.add(CLASS_NAMES.hidden)
       : element.classList.add(CLASS_NAMES.collapsed);
   }
   if (opts.heightTransition || opts.widthTransition)
     endParentResize(element, opts);
+  else if (opts.overflowHidden && element.parentElement)
+    removeOverflowHidden(element.parentElement);
 };
 
 /**
@@ -414,8 +426,8 @@ const animate = (element, action, id, opts = {}) => {
     trigger,
     start = CONFIG.start,
     complete = CONFIG.complete,
-    keepSpace = CONFIG.keepSpace,
-    dimensionsTransition = keepSpace || isMotion(animType)
+    maintainSpace = CONFIG.maintainSpace,
+    dimensionsTransition = maintainSpace || isMotion(animType)
       ? false
       : CONFIG.dimensionsTransition,
     widthTransition = CONFIG.widthTransition ?? dimensionsTransition,
@@ -444,7 +456,8 @@ const animate = (element, action, id, opts = {}) => {
             heightTransition,
             overflowHidden,
           }));
-        }
+        } else if (overflowHidden && element.parentElement)
+          setOverflowHidden(element.parentElement);
       },
       motion: () => {
         currentTransition = getCurrentTransition(element);
@@ -459,7 +472,6 @@ const animate = (element, action, id, opts = {}) => {
           parentMeasures,
           action,
           dimension,
-          keepSpace,
         });
       },
       motion: () => {
@@ -473,9 +485,10 @@ const animate = (element, action, id, opts = {}) => {
       visibility: () => {
         endVisibilityToggle(element, {
           action,
-          keepSpace,
+          maintainSpace,
           widthTransition,
           heightTransition,
+          overflowHidden,
         });
         if (!hasIterationProp(element))
           element.classList.remove(CLASS_NAMES[action][id]);
@@ -567,7 +580,7 @@ const preset = (el, args) => {
  * @param {HTMLElement} el - The DOM element being animated
  * @param {number} animationId - The ID of the animation in the *_ANIMS_ID
  * @param {Object} opts - The options passed by the user
- * @returns A function to be passed to the addEventListener() as a handler
+ * @returns {EventListener} A function to be passed to the addEventListener() as a handler
  * @see {@link module:globals.VISIBILITY_ANIMS_ID}
  * @see {@link module:globals.MOTION_ANIMS_ID}
  */
@@ -619,24 +632,48 @@ const init = (animationId, opts = {}) => {
       btn.setAttribute('target-selector', targetSelector);
     }
 
+    if (!opts.trigger) opts.trigger = trigger;
+    LISTENERS[trigger] = [];
     document
       .querySelectorAll(getTargetSelector(btn))
       .forEach((el, i, queryList) => {
-        btn.addEventListener(
-          eventType,
-          // @ts-ignore
-          eventHandler(el, animationId, {
-            ...opts,
-            totalTargets: queryList.length,
-            queryIndex: i,
-          })
-        );
+        // @ts-ignore
+        const listener = eventHandler(el, animationId, {
+          ...opts,
+          totalTargets: queryList.length,
+          queryIndex: i,
+        });
+
+        LISTENERS[trigger].push(listener);
+        btn.addEventListener(eventType, listener);
       });
   });
 };
 
+/**
+ * Removes the event listener of all elements represented by the `triggerSelector`
+ * @param {String|null} triggerSelector - A valid CSS selector for the trigger Element. If ommited, '.${CLASS_NAMES.trigger}' will be used instead.
+ * @param {String} eventType - The event name. If ommited, 'click' is the default value.
+ */
+const end = (triggerSelector = null, eventType = 'click') => {
+  const triggerList =
+    typeof triggerSelector === 'string'
+      ? document.querySelectorAll(triggerSelector)
+      : document.querySelectorAll(`.${CLASS_NAMES.trigger}`);
+
+  triggerList.forEach(trigger => {
+    LISTENERS[triggerSelector ?? `.${CLASS_NAMES.trigger}`].forEach(
+      listener => {
+        trigger.removeEventListener(eventType, listener);
+      }
+    );
+  });
+  delete LISTENERS[triggerSelector ?? `.${CLASS_NAMES.trigger}`];
+};
+
 export {
   init,
+  end,
   animate,
   preset,
   isEnabled,
