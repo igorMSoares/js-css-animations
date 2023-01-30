@@ -223,6 +223,16 @@ jsCssAnimations.init.fade({
 highlight: [4],
 }">
 
+<div class="align-center">
+
+::: tip
+Setting '_maintainSpace: **true**_' will automatically set '_dimensionsTransition_' to **false**.
+
+It's important to note that, when '_dimensionsTransition_' is set to **true**, it can have an impact on the performance of the page, as it will trigger browser's **Paint** and **Layout** steps which can be costly.
+:::
+
+</div>
+
 ```html{1}
 <button class="js-anim--trigger" target-selector=".fade__example">
   Fade Out
@@ -341,12 +351,19 @@ code: `jsCssAnimations.init.rotate({
   <div class="example__custom-rotate rotation-area">
     <p class="rotation-area--text">↑</p>
   </div>
+
+### Choose any angle of rotation
+
+If you want to rotate by a specific angle, use the _rotate()_ method passing the '_angle_' option.
+
+The angle can either be passed as a **number** representing the amount in degrees, or as a **string** in the format '\<angle\>deg'
+
 </div>
 
 </Example>
 
 <style scoped>
-.rotation-example--wrapper {
+.rotation-example--wrapper, .align-center {
   text-align: center;
 }
 
