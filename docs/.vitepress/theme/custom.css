@@ -2,6 +2,10 @@ html {
   scroll-behavior: smooth;
 }
 
+.buttons {
+  flex-wrap: wrap;
+}
+
 .vp-doc div[class*='language-'] {
   margin-left: 0;
   margin-right: 0;
