@@ -1,3 +1,7 @@
+html {
+  scroll-behavior: smooth;
+}
+
 .vp-doc div[class*='language-'] {
   margin-left: 0;
   margin-right: 0;
