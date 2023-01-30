@@ -28,6 +28,8 @@ export default {
           { text: 'Slide', link: '/examples/#slide-animations' },
           { text: 'Fade', link: '/examples/#fade-in-out' },
           { text: 'Collapse', link: '/examples/#collapse-expand' },
+          { text: 'Rotate', link: '/examples/#rotate' },
+          { text: 'Custom Rotation', link: '/examples/#custom-rotation' },
         ],
       },
       {
