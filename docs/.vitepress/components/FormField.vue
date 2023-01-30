@@ -37,7 +37,7 @@
       @change="
         $emit('changeField', {
           opts: form,
-          fieldLabel: this.label,
+          fieldLabel: label,
         })
       "
       :type="type"
@@ -51,7 +51,7 @@
       @change="
         $emit('changeField', {
           opts: form,
-          fieldLabel: this.label,
+          fieldLabel: label,
         })
       "
       :id="toKebabCase(label)"

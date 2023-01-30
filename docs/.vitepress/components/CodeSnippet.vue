@@ -21,7 +21,7 @@
   onMounted(() => {
     setCDN('https://unpkg.com/shiki/');
     // @ts-ignore
-    getHighlighter({ theme: 'material-palenight', langs: langs }).then(
+    getHighlighter({ theme: 'material-theme-palenight', langs: langs }).then(
       highlighter => {
         let lineOptions = [];
         highlight.forEach(lineNumber => {
