@@ -26,7 +26,10 @@ Although the functionalities are all already working, I'm still making some chan
 2. Link the **js-animations.css** in your HTML file:
 
 ```html
-<link rel="stylesheet" href="./src/js-css-animations/js-animations.css" />
+<link
+  rel="stylesheet"
+  href="<path-to-js-directory>/js-css-animations/js-animations.css"
+/>
 ```
 
 3. Import the **js-css-animations.js** in your javascript file
