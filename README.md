@@ -44,7 +44,7 @@ import jsCssAnimations from './js-css-animations/js-css-animations.js';
 // Example of usage
 jsCssAnimations.init.slideUp({
   trigger: '.btn--slide-up',
-  targetSelector: '.slide-this-content'
+  targetSelector: '.slide-this-content',
   staggerDelay: 500,
   duration: '1s',
   start: () => {
