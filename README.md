@@ -21,9 +21,9 @@ Although the functionalities are all already working, I'm still making some chan
 
 ## How to use it
 
-1. Copy the './_js-css-animations/_' directory to your project's folder
+1. Copy the `./js-css-animations/` directory to your project's folder
 
-2. Link the **js-animations.css** in your HTML file:
+2. Link the `js-animations.css` in your HTML file:
 
 ```html
 <link
@@ -32,7 +32,7 @@ Although the functionalities are all already working, I'm still making some chan
 />
 ```
 
-3. Import the **js-css-animations.js** in your javascript file
+3. Import the `js-css-animations.js` in your javascript file
 
 ```js
 import jsCssAnimations from './js-css-animations/js-css-animations.js';
