@@ -3,11 +3,7 @@
  * when child element is being animated
  * @module resize-parent
  */
-import {
-  CLASS_NAMES,
-  CUSTOM_CSS_PROPERTIES,
-  PROPERTY_NAMES,
-} from './globals.js';
+import { CUSTOM_CSS_PROPERTIES, PROPERTY_NAMES } from './globals.js';
 
 import {
   getParentMeasures,
@@ -67,29 +63,12 @@ const getDimension = (wTransit, hTransit) => {
 };
 
 /**
- * Adds a CSS class which will set the overflow property to 'clip' (or 'hidden')
- * @param {HTMLElement} el - The DOM element which will receive the CSS class
- */
-const setOverflowHidden = el => {
-  el.classList.add(CLASS_NAMES.overflowHidden);
-};
-
-/**
- * Removes the CSS class which sets the overflow property to 'clip' (or 'hidden')
- * @param {HTMLElement} el - The DOM element with the CSS class to remove
- */
-const removeOverflowHidden = el => {
-  el.classList.remove(CLASS_NAMES.overflowHidden);
-};
-
-/**
  * Handles parent element width/height transitions during child element's animation
  * @param {{
  *  element: HTMLElement,
  *  action: string,
  *  widthTransition: boolean,
  *  heightTransition: boolean,
- *  overflowHidden: boolean
  * }} args - Containing all the information needed to initiate parent's dimensions transitions
  * @returns An object with the dimension(s) to transition and the parent element's measurements before and after the child element's animation is performed
  */
@@ -101,7 +80,6 @@ const initParentResize = args => {
   const dimension = getDimension(widthTransition, heightTransition);
   setDimensionsTransitions(parentElement, widthTransition, heightTransition);
   setParentCssProperties(element);
-  if (args.overflowHidden) setOverflowHidden(parentElement);
   setParentMaxMeasures({
     parentState: 'initial',
     element,
@@ -124,12 +102,6 @@ const endParentResize = (element, opts) => {
   removeDimensionMax(parentElement, 'width');
   removeCustomCssProperties(parentElement);
   removeDimensionsTransitions(parentElement, wTransit, hTransit);
-  removeOverflowHidden(parentElement);
 };
 
-export {
-  initParentResize,
-  endParentResize,
-  setOverflowHidden,
-  removeOverflowHidden,
-};
+export { initParentResize, endParentResize };

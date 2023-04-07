@@ -9,12 +9,7 @@ import {
   CUSTOM_CSS_PROPERTIES,
 } from './globals.js';
 
-import {
-  initParentResize,
-  endParentResize,
-  setOverflowHidden,
-  removeOverflowHidden,
-} from './resize-parent.js';
+import { initParentResize, endParentResize } from './resize-parent.js';
 
 import {
   removeInlineTransition,
@@ -335,6 +330,22 @@ const isEnabled = element =>
   !(element.getAttribute('js-anim--disabled') === 'true');
 
 /**
+ * Adds a CSS class which will set the overflow property to 'clip' (or 'hidden')
+ * @param {HTMLElement} el - The DOM element which will receive the CSS class
+ */
+const setOverflowHidden = el => {
+  el.classList.add(CLASS_NAMES.overflowHidden);
+};
+
+/**
+ * Removes the CSS class which sets the overflow property to 'clip' (or 'hidden')
+ * @param {HTMLElement} el - The DOM element with the CSS class to remove
+ */
+const removeOverflowHidden = el => {
+  el.classList.remove(CLASS_NAMES.overflowHidden);
+};
+
+/**
  * Verifies if an element has defined an iteration CSS property
  * @param {HTMLElement} element
  * @returns True if the element has an iteration CSS property set, False otherwise
@@ -385,7 +396,8 @@ const endVisibilityToggle = (element, opts) => {
   }
   if (opts.heightTransition || opts.widthTransition)
     endParentResize(element, opts);
-  else if (opts.overflowHidden && element.parentElement)
+
+  if (opts.overflowHidden && element.parentElement)
     removeOverflowHidden(element.parentElement);
 };
 
@@ -457,9 +469,10 @@ const animate = (element, action, id, opts = {}) => {
             action,
             widthTransition,
             heightTransition,
-            overflowHidden,
           }));
-        } else if (overflowHidden && element.parentElement)
+        }
+
+        if (overflowHidden && element.parentElement)
           setOverflowHidden(element.parentElement);
       },
       motion: () => {
