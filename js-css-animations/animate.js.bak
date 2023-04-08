@@ -9,15 +9,15 @@ import {
   CUSTOM_CSS_PROPERTIES,
 } from './globals.js';
 
-// import { initParentResize, endParentResize } from './resize-parent.js';
+import { initParentResize, endParentResize } from './resize-parent.js';
 
 import {
   removeInlineTransition,
-  //   appendTransition,
-  //   getCurrentTransition,
+  appendTransition,
+  getCurrentTransition,
 } from './transitions.js';
 
-// import { setParentMaxMeasures } from './measurements.js';
+import { setParentMaxMeasures } from './measurements.js';
 
 /**
  * Contains the default value for each custom option.
@@ -425,50 +425,6 @@ const initCallback = (trigger, fn, type) => {
   }
 };
 
-const getAnimationHandler = async (animType, args) => {
-  const { element, action, id } = args;
-  if (animType === 'motion') {
-    const { default: MotionAnimationHandler } = await import(
-      './MotionAnimationHandler.js'
-    );
-    return new MotionAnimationHandler(element, action, id);
-  }
-
-  if (animType === 'visibility') {
-    const { widthTransition, heightTransition } = args;
-
-    if (widthTransition || heightTransition) {
-      const { default: VisibilityAnimationHandler } = await import(
-        './VisibilityAnimationWithParentResizeHandler.js'
-      );
-      const animationHandler = new VisibilityAnimationHandler(
-        element,
-        action,
-        id
-      );
-      animationHandler.setDimensionsTransition({
-        heightTransition,
-        widthTransition,
-      });
-
-      return animationHandler;
-    }
-
-    const { default: VisibilityAnimationHandler } = await import(
-      './VisibilityAnimationHandler.js'
-    );
-    const animationHandler = new VisibilityAnimationHandler(
-      element,
-      action,
-      id
-    );
-    if (args.overflowHidden) animationHandler.setOverflowHidden(true);
-    if (args.maintainSpace) animationHandler.setMaintainSpace(true);
-
-    return animationHandler;
-  }
-};
-
 /**
  * Handles all the animation process
  * @param {HTMLElement} element - The DOM element to animate
@@ -478,7 +434,7 @@ const getAnimationHandler = async (animType, args) => {
  * @see {@link module:globals.VISIBILITY_ANIMS_ID}
  * @see {@link module:globals.MOTION_ANIMS_ID}
  */
-const animate = async (element, action, id, opts = {}) => {
+const animate = (element, action, id, opts = {}) => {
   disable(element);
   const {
     animType,
@@ -500,112 +456,90 @@ const animate = async (element, action, id, opts = {}) => {
     move: 'moveBack',
     moveBack: 'move',
   });
-  // let parentMeasures, dimension, currentTransition;
+  let parentMeasures, dimension, currentTransition;
 
   if (trigger) TARGETS_STACK.add(element, trigger);
 
-  const handleAnimation = await getAnimationHandler(animType, {
-    element,
-    action,
-    id,
-    widthTransition,
-    heightTransition,
-    overflowHidden,
-    maintainSpace,
-  });
+  const handleAnimation = {
+    begining: {
+      visibility: () => {
+        if (widthTransition || heightTransition) {
+          ({ parentMeasures, dimension } = initParentResize({
+            element,
+            action,
+            widthTransition,
+            heightTransition,
+          }));
+        }
 
-  // const handleAnimation = {
-  //   begining: {
-  //     visibility: () => {
-  //       if (widthTransition || heightTransition) {
-  //         ({ parentMeasures, dimension } = initParentResize({
-  //           element,
-  //           action,
-  //           widthTransition,
-  //           heightTransition,
-  //         }));
-  //       }
-
-  //       if (overflowHidden && element.parentElement)
-  //         setOverflowHidden(element.parentElement);
-  //     },
-  //     motion: () => {
-  //       currentTransition = getCurrentTransition(element);
-  //       removeMotionCssClass(element);
-  //     },
-  //   },
-  //   middle: {
-  //     visibility: () => {
-  //       handleVisibilityToggle(element, {
-  //         parentState: 'final',
-  //         element,
-  //         parentMeasures,
-  //         action,
-  //         dimension,
-  //       });
-  //     },
-  //     motion: () => {
-  //       if (currentTransition) {
-  //         appendTransition(element, CLASS_NAMES[action][id], currentTransition);
-  //       }
-  //       if (action === 'move') element.classList.add(CLASS_NAMES.moved);
-  //     },
-  //   },
-  //   end: {
-  //     visibility: () => {
-  //       endVisibilityToggle(element, {
-  //         action,
-  //         maintainSpace,
-  //         widthTransition,
-  //         heightTransition,
-  //         overflowHidden,
-  //       });
-  //       if (!hasIterationProp(element))
-  //         element.classList.remove(CLASS_NAMES[action][id]);
-  //     },
-  //     motion: () => {
-  //       if (action === 'moveBack') element.classList.remove(CLASS_NAMES.moved);
-  //     },
-  //   },
-  //   conclude: () => {
-  //     if (trigger && opts.queryIndex === opts.totalTargets - 1) {
-  //       opts.staggerDelay
-  //         ? CALLBACK_TRACKER.remove(trigger)
-  //         : setTimeout(() => CALLBACK_TRACKER.remove(trigger), delay);
-  //       TARGETS_STACK.get(trigger).forEach(el => enable(el));
-  //       TARGETS_STACK.remove(trigger);
-  //     } else if (!trigger) {
-  //       enable(element);
-  //     }
-  //   },
-  // };
-
-  const concludeAnimation = () => {
-    if (trigger && opts.queryIndex === opts.totalTargets - 1) {
-      opts.staggerDelay
-        ? CALLBACK_TRACKER.remove(trigger)
-        : setTimeout(() => CALLBACK_TRACKER.remove(trigger), delay);
-      TARGETS_STACK.get(trigger).forEach(el => enable(el));
-      TARGETS_STACK.remove(trigger);
-    } else if (!trigger) {
-      enable(element);
-    }
+        if (overflowHidden && element.parentElement)
+          setOverflowHidden(element.parentElement);
+      },
+      motion: () => {
+        currentTransition = getCurrentTransition(element);
+        removeMotionCssClass(element);
+      },
+    },
+    middle: {
+      visibility: () => {
+        handleVisibilityToggle(element, {
+          parentState: 'final',
+          element,
+          parentMeasures,
+          action,
+          dimension,
+        });
+      },
+      motion: () => {
+        if (currentTransition) {
+          appendTransition(element, CLASS_NAMES[action][id], currentTransition);
+        }
+        if (action === 'move') element.classList.add(CLASS_NAMES.moved);
+      },
+    },
+    end: {
+      visibility: () => {
+        endVisibilityToggle(element, {
+          action,
+          maintainSpace,
+          widthTransition,
+          heightTransition,
+          overflowHidden,
+        });
+        if (!hasIterationProp(element))
+          element.classList.remove(CLASS_NAMES[action][id]);
+      },
+      motion: () => {
+        if (action === 'moveBack') element.classList.remove(CLASS_NAMES.moved);
+      },
+    },
+    conclude: () => {
+      if (trigger && opts.queryIndex === opts.totalTargets - 1) {
+        opts.staggerDelay
+          ? CALLBACK_TRACKER.remove(trigger)
+          : setTimeout(() => CALLBACK_TRACKER.remove(trigger), delay);
+        TARGETS_STACK.get(trigger).forEach(el => enable(el));
+        TARGETS_STACK.remove(trigger);
+      } else if (!trigger) {
+        enable(element);
+      }
+    },
   };
 
-  handleAnimation.begin();
+  handleAnimation.begining[animType]();
   if (typeof start === 'function') {
     initCallback(trigger, start, 'start');
   }
   element.classList.add(CLASS_NAMES[action][id]);
   element.classList.remove(CLASS_NAMES[OPPOSITE_ACTION[action]][id]);
-  handleAnimation.middle();
+  handleAnimation.middle[animType]();
 
   setTimeout(() => {
-    handleAnimation.end();
+    handleAnimation.end[animType]();
     if (typeof complete === 'function') {
       initCallback(trigger, complete, 'complete');
     }
-    concludeAnimation();
+    handleAnimation.conclude();
   }, duration + delay);
 };
 
