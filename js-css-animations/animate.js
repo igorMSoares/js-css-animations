@@ -9,16 +9,6 @@ import {
   CUSTOM_CSS_PROPERTIES,
 } from './globals.js';
 
-// import { initParentResize, endParentResize } from './resize-parent.js';
-
-// import {
-//   // removeInlineTransition,
-//   //   appendTransition,
-//   //   getCurrentTransition,
-// } from './transitions.js';
-
-// import { setParentMaxMeasures } from './measurements.js';
-
 /**
  * Contains the default value for each custom option.
  * Those values can be overwritten by the user by calling jsCssAnimations.config()
@@ -294,20 +284,6 @@ const isVisibility = animType => animType === 'visibility';
 const isMotion = animType => animType === 'motion';
 
 /**
- * Removes the current motion animation CSS class from the element
- * @param {HTMLElement} element - The DOM element being animated
- */
-const removeMotionCssClass = element => {
-  const className = [...element.classList].find(cl =>
-    cl.match(/js\-anim\-\-(rotate|scale)/)
-  );
-  if (className) element.classList.remove(className);
-  if (className === CLASS_NAMES.move[MOTION_ANIMS_ID.rotate]) {
-    element.style.removeProperty(PROPERTY_NAMES.angle);
-  }
-};
-
-/**
  * Sets an attribute to indicate that the element is currently being animated
  * and so can not perform any other animations
  * @param {HTMLElement} element - The DOM element being animated
@@ -333,75 +309,11 @@ const isEnabled = element =>
   !(element.getAttribute('js-anim--disabled') === 'true');
 
 /**
- * Adds a CSS class which will set the overflow property to 'clip' (or 'hidden')
- * @param {HTMLElement} el - The DOM element which will receive the CSS class
- */
-const setOverflowHidden = el => {
-  el.classList.add(CLASS_NAMES.overflowHidden);
-};
-
-/**
  * Removes the CSS class which sets the overflow property to 'clip' (or 'hidden')
  * @param {HTMLElement} el - The DOM element with the CSS class to remove
  */
 const removeOverflowHidden = el => {
   el.classList.remove(CLASS_NAMES.overflowHidden);
-};
-
-/**
- * Verifies if an element has defined an iteration CSS property
- * @param {HTMLElement} element
- * @returns True if the element has an iteration CSS property set, False otherwise
- */
-const hasIterationProp = element => {
-  const iterationProperty = element.style.getPropertyValue(
-    PROPERTY_NAMES.iteration
-  );
-  return (
-    iterationProperty != '1' &&
-    iterationProperty.match(/^(infinite|\d+)$/) !== null
-  );
-};
-
-/**
- * Sets the parent element dimensions, if needed.
- *
- * Removes the collapsed or hidden class from the element, when necessary
- * @param {HTMLElement} element - The DOM element being animated
- * @param {{
- *  parentState: string,
- *  element: HTMLElement,
- *  parentMeasures: Object,
- *  action: string,
- *  dimension: string | undefined
- * }} args - All the necessary arguments
- */
-const handleVisibilityToggle = (element, args) => {
-  setTimeout(() => {
-    if (args.dimension) setParentMaxMeasures(args);
-    if (args.action === 'show') {
-      element.classList.remove(CLASS_NAMES.hidden, CLASS_NAMES.collapsed);
-    }
-  }, 0);
-};
-
-/**
- * Adds the hidden or collapsed class, when necessary.
- * Finalize parent element's resize operations, if needed.
- * @param {HTMLElement} element - The DOM element being animated
- * @param {Object} opts - All the necessary options
- */
-const endVisibilityToggle = (element, opts) => {
-  if (opts.action === 'hide') {
-    opts.maintainSpace
-      ? element.classList.add(CLASS_NAMES.hidden)
-      : element.classList.add(CLASS_NAMES.collapsed);
-  }
-  if (opts.heightTransition || opts.widthTransition)
-    endParentResize(element, opts);
-
-  if (opts.overflowHidden && element.parentElement)
-    removeOverflowHidden(element.parentElement);
 };
 
 /**
@@ -503,7 +415,6 @@ const animate = async (element, action, id, opts = {}) => {
     move: 'moveBack',
     moveBack: 'move',
   });
-  // let parentMeasures, dimension, currentTransition;
 
   if (trigger) TARGETS_STACK.add(element, trigger);
 
@@ -516,72 +427,6 @@ const animate = async (element, action, id, opts = {}) => {
     overflowHidden,
     maintainSpace,
   });
-
-  // const handleAnimation = {
-  //   begining: {
-  //     visibility: () => {
-  //       if (widthTransition || heightTransition) {
-  //         ({ parentMeasures, dimension } = initParentResize({
-  //           element,
-  //           action,
-  //           widthTransition,
-  //           heightTransition,
-  //         }));
-  //       }
-
-  //       if (overflowHidden && element.parentElement)
-  //         setOverflowHidden(element.parentElement);
-  //     },
-  //     motion: () => {
-  //       currentTransition = getCurrentTransition(element);
-  //       removeMotionCssClass(element);
-  //     },
-  //   },
-  //   middle: {
-  //     visibility: () => {
-  //       handleVisibilityToggle(element, {
-  //         parentState: 'final',
-  //         element,
-  //         parentMeasures,
-  //         action,
-  //         dimension,
-  //       });
-  //     },
-  //     motion: () => {
-  //       if (currentTransition) {
-  //         appendTransition(element, CLASS_NAMES[action][id], currentTransition);
-  //       }
-  //       if (action === 'move') element.classList.add(CLASS_NAMES.moved);
-  //     },
-  //   },
-  //   end: {
-  //     visibility: () => {
-  //       endVisibilityToggle(element, {
-  //         action,
-  //         maintainSpace,
-  //         widthTransition,
-  //         heightTransition,
-  //         overflowHidden,
-  //       });
-  //       if (!hasIterationProp(element))
-  //         element.classList.remove(CLASS_NAMES[action][id]);
-  //     },
-  //     motion: () => {
-  //       if (action === 'moveBack') element.classList.remove(CLASS_NAMES.moved);
-  //     },
-  //   },
-  //   conclude: () => {
-  //     if (trigger && opts.queryIndex === opts.totalTargets - 1) {
-  //       opts.staggerDelay
-  //         ? CALLBACK_TRACKER.remove(trigger)
-  //         : setTimeout(() => CALLBACK_TRACKER.remove(trigger), delay);
-  //       TARGETS_STACK.get(trigger).forEach(el => enable(el));
-  //       TARGETS_STACK.remove(trigger);
-  //     } else if (!trigger) {
-  //       enable(element);
-  //     }
-  //   },
-  // };
 
   const concludeAnimation = () => {
     if (trigger && opts.queryIndex === opts.totalTargets - 1) {
