@@ -440,13 +440,13 @@ const animate = async (element, action, id, opts = {}) => {
     }
   };
 
-  handleAnimation.begin();
+  await handleAnimation.begin();
   if (typeof start === 'function') {
     initCallback(trigger, start, 'start');
   }
   element.classList.add(CLASS_NAMES[action][id]);
   element.classList.remove(CLASS_NAMES[OPPOSITE_ACTION[action]][id]);
-  handleAnimation.middle();
+  await handleAnimation.middle();
 
   setTimeout(() => {
     handleAnimation.end();
