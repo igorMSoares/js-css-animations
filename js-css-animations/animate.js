@@ -11,11 +11,11 @@ import {
 
 // import { initParentResize, endParentResize } from './resize-parent.js';
 
-import {
-  removeInlineTransition,
-  //   appendTransition,
-  //   getCurrentTransition,
-} from './transitions.js';
+// import {
+//   // removeInlineTransition,
+//   //   appendTransition,
+//   //   getCurrentTransition,
+// } from './transitions.js';
 
 // import { setParentMaxMeasures } from './measurements.js';
 
@@ -204,9 +204,12 @@ export const setCssProperty = (element, property, value) => {
  * @param {HTMLElement} element - The DOM element to update the CSS Properties
  * @param {Object.<string, string>} opts - Object containing a custom property key and a CSS value to be updated
  */
-const updateCssProperties = (element, opts) => {
+const updateCssProperties = async (element, opts) => {
   removeCustomCssProperties(element);
-  if (element !== document.documentElement) removeInlineTransition(element);
+  if (element !== document.documentElement) {
+    const { removeInlineTransition } = await import('./transitions.js');
+    removeInlineTransition(element);
+  }
   CUSTOM_CSS_PROPERTIES.forEach(prop => {
     if (typeof opts[prop] === 'string' || typeof opts[prop] === 'number') {
       if (typeof opts[prop] === 'number') {
@@ -636,7 +639,7 @@ const getAction = (element, animType) => {
  * @param {HTMLElement} el - The DOM element being animated
  * @param {Object} args - The animation's ID and type and all the options passed by the user
  */
-const preset = (el, args) => {
+const preset = async (el, args) => {
   const { opts, animationId } = args;
   const { animType } = opts;
   if (
@@ -647,7 +650,7 @@ const preset = (el, args) => {
   )
     opts.angle = undefined;
 
-  updateCssProperties(el, opts);
+  await updateCssProperties(el, opts);
 
   if (opts.staggerDelay) {
     const staggeredDelay =

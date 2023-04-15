@@ -69,9 +69,9 @@ const getTargets = selector => {
  * @see {@link module:globals.PROPERTY_NAMES}
  * @see {@link module:animate~configurations}
  */
-const config = opts => {
+const config = async opts => {
   updateDefaultConfig(opts);
-  updateCssProperties(document.documentElement, opts);
+  await updateCssProperties(document.documentElement, opts);
   if (opts.cursor)
     setCssProperty(document.documentElement, 'cursor', opts.cursor);
 };
@@ -190,10 +190,10 @@ const animationFunctions = (function () {
           'dimensionsTransition',
         ].forEach(opt => (args[opt] = opts[opt]));
 
-        getTargets(target).forEach((element, i) => {
+        getTargets(target).forEach(async (element, i) => {
           opts.animType = animType;
           opts.queryIndex = i;
-          preset(element, {
+          await preset(element, {
             opts,
             animationId: id,
           });
