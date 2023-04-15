@@ -484,7 +484,7 @@ const getAction = (element, animType) => {
  * @param {HTMLElement} el - The DOM element being animated
  * @param {Object} args - The animation's ID and type and all the options passed by the user
  */
-const preset = async (el, args) => {
+const preset = (el, args) => {
   const { opts, animationId } = args;
   const { animType } = opts;
   if (
@@ -495,14 +495,14 @@ const preset = async (el, args) => {
   )
     opts.angle = undefined;
 
-  await updateCssProperties(el, opts);
-
-  if (opts.staggerDelay) {
-    const staggeredDelay =
-      getTimeInMs(opts.delay) +
-      getTimeInMs(opts.staggerDelay) * opts.queryIndex;
-    setCssProperty(el, 'delay', `${staggeredDelay}ms`);
-  }
+  updateCssProperties(el, opts).then(() => {
+    if (opts.staggerDelay) {
+      const staggeredDelay =
+        getTimeInMs(opts.delay) +
+        getTimeInMs(opts.staggerDelay) * opts.queryIndex;
+      setCssProperty(el, 'delay', `${staggeredDelay}ms`);
+    }
+  });
 };
 
 /**
