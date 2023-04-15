@@ -2,6 +2,7 @@
  * Handles all the animation process
  * @module animate
  */
+import VisibilityAnimationWithParentResizeHandler from './VisibilityAnimationWithParentResizeHandler.js';
 import {
   MOTION_ANIMS_ID,
   PROPERTY_NAMES,
@@ -484,7 +485,7 @@ const getAction = (element, animType) => {
  * @param {HTMLElement} el - The DOM element being animated
  * @param {Object} args - The animation's ID and type and all the options passed by the user
  */
-const preset = (el, args) => {
+const preset = async (el, args) => {
   const { opts, animationId } = args;
   const { animType } = opts;
   if (
@@ -495,14 +496,14 @@ const preset = (el, args) => {
   )
     opts.angle = undefined;
 
-  updateCssProperties(el, opts).then(() => {
-    if (opts.staggerDelay) {
-      const staggeredDelay =
-        getTimeInMs(opts.delay) +
-        getTimeInMs(opts.staggerDelay) * opts.queryIndex;
-      setCssProperty(el, 'delay', `${staggeredDelay}ms`);
-    }
-  });
+  await updateCssProperties(el, opts);
+
+  if (opts.staggerDelay) {
+    const staggeredDelay =
+      getTimeInMs(opts.delay) +
+      getTimeInMs(opts.staggerDelay) * opts.queryIndex;
+    setCssProperty(el, 'delay', `${staggeredDelay}ms`);
+  }
 };
 
 /**
@@ -515,7 +516,7 @@ const preset = (el, args) => {
  * @see {@link module:globals.MOTION_ANIMS_ID}
  */
 const eventHandler = (el, animationId, opts) => {
-  return (/** @type {Event} */ e) => {
+  return async (/** @type {Event} */ e) => {
     const {
       stopPropagation = CONFIG.stopPropagation,
       preventDefault = CONFIG.preventDefault,
@@ -529,7 +530,7 @@ const eventHandler = (el, animationId, opts) => {
         `Can't find a valid action for this animation type`
       );
 
-    preset(el, {
+    await preset(el, {
       animationId,
       opts,
     });
