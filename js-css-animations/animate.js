@@ -2,7 +2,6 @@
  * Handles all the animation process
  * @module animate
  */
-import VisibilityAnimationWithParentResizeHandler from './VisibilityAnimationWithParentResizeHandler.js';
 import {
   MOTION_ANIMS_ID,
   PROPERTY_NAMES,
@@ -343,46 +342,38 @@ const initCallback = (trigger, fn, type) => {
 
 const getAnimationHandler = async (animType, args) => {
   const { element, action, id } = args;
+  let animationHandler = null;
+
   if (animType === 'motion') {
     const { default: MotionAnimationHandler } = await import(
       './MotionAnimationHandler.js'
     );
-    return new MotionAnimationHandler(element, action, id);
-  }
-
-  if (animType === 'visibility') {
+    animationHandler = new MotionAnimationHandler(element, action, id);
+  } else if (animType === 'visibility') {
     const { widthTransition, heightTransition } = args;
 
     if (widthTransition || heightTransition) {
       const { default: VisibilityAnimationHandler } = await import(
         './VisibilityAnimationWithParentResizeHandler.js'
       );
-      const animationHandler = new VisibilityAnimationHandler(
-        element,
-        action,
-        id
-      );
+      animationHandler = new VisibilityAnimationHandler(element, action, id);
       animationHandler.setDimensionsTransition({
         heightTransition,
         widthTransition,
       });
-
-      return animationHandler;
+    } else {
+      const { default: VisibilityAnimationHandler } = await import(
+        './VisibilityAnimationHandler.js'
+      );
+      animationHandler = new VisibilityAnimationHandler(element, action, id);
     }
 
-    const { default: VisibilityAnimationHandler } = await import(
-      './VisibilityAnimationHandler.js'
-    );
-    const animationHandler = new VisibilityAnimationHandler(
-      element,
-      action,
-      id
-    );
     if (args.overflowHidden) animationHandler.setOverflowHidden(true);
     if (args.maintainSpace) animationHandler.setMaintainSpace(true);
-
-    return animationHandler;
   }
+
+  await animationHandler.initDependencies();
+  return animationHandler;
 };
 
 /**
@@ -441,15 +432,15 @@ const animate = async (element, action, id, opts = {}) => {
     }
   };
 
-  await handleAnimation.begin();
+  handleAnimation.begin();
   if (typeof start === 'function') {
     initCallback(trigger, start, 'start');
   }
   element.classList.add(CLASS_NAMES[action][id]);
   element.classList.remove(CLASS_NAMES[OPPOSITE_ACTION[action]][id]);
-  await handleAnimation.middle();
+  handleAnimation.middle();
 
-  setTimeout(() => {
+  setTimeout(async () => {
     handleAnimation.end();
     if (typeof complete === 'function') {
       initCallback(trigger, complete, 'complete');
@@ -553,6 +544,17 @@ const init = (animationId, opts = {}) => {
     targetSelector = CONFIG.targetSelector,
     cursor,
   } = opts;
+
+  /** TODO: load dependencies on page load */
+  // async function loadDependencies() {
+  //   await import('./resize-parent.js');
+  //   await import('./measurements.js');
+  //   await import('./transitions.js');
+
+  //   removeEventListener('load', loadDependencies);
+  // }
+
+  // addEventListener('load', loadDependencies);
 
   document.querySelectorAll(trigger).forEach(btn => {
     btn.classList.add(CLASS_NAMES.btnCursor);

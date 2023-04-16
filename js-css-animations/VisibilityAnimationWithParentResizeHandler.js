@@ -1,3 +1,4 @@
+import AnimationHandler from './AnimationHandler.js';
 import VisibilityAnimationHandler from './VisibilityAnimationHandler.js';
 
 export default class VisibilityAnimationWithParentResizeHandler extends VisibilityAnimationHandler {
@@ -9,76 +10,59 @@ export default class VisibilityAnimationWithParentResizeHandler extends Visibili
     this.parentMeasures = null;
   }
 
-  setDimensionsTransition(heightTransition, widthTransition) {
+  setDimensionsTransition({ heightTransition, widthTransition }) {
     this.heightTransition = heightTransition;
     this.widthTransition = widthTransition;
   }
 
-  static #resizeParentModule = null;
-  static #measurementsModule = null;
-
-  static async #initResizeParentModule() {
-    if (!VisibilityAnimationWithParentResizeHandler.#resizeParentModule) {
-      VisibilityAnimationWithParentResizeHandler.#resizeParentModule =
-        await this.getModule('./resize-parent.js');
-    }
+  async initDependencies() {
+    await AnimationHandler.getModule('./resize-parent.js');
+    await AnimationHandler.getModule('./measurements.js');
   }
 
-  static async #initMeasurementsModule() {
-    if (!VisibilityAnimationWithParentResizeHandler.#measurementsModule) {
-      VisibilityAnimationWithParentResizeHandler.#measurementsModule =
-        await this.getModule('./measurements.js');
-    }
-  }
-
-  async begin() {
-    await VisibilityAnimationWithParentResizeHandler.#initResizeParentModule();
+  begin() {
     super.begin();
 
     if (this.widthTransition || this.heightTransition) {
-      const parentData =
-        VisibilityAnimationWithParentResizeHandler.#resizeParentModule.initParentResize(
-          {
-            element: this.element,
-            action: this.action,
-            widthTransition: this.widthTransition,
-            heightTransition: this.heightTransition,
-          }
-        );
+      const { initParentResize } = AnimationHandler.modules.resizeParent;
+
+      const parentData = initParentResize({
+        element: this.element,
+        action: this.action,
+        widthTransition: this.widthTransition,
+        heightTransition: this.heightTransition,
+      });
 
       this.parentMeasures = parentData.parentMeasures;
       this.dimension = parentData.dimension;
     }
   }
 
-  async middle() {
-    await VisibilityAnimationWithParentResizeHandler.#initMeasurementsModule();
+  middle() {
     super.middle();
 
     setTimeout(() => {
-      if (this.dimension)
-        VisibilityAnimationWithParentResizeHandler.#measurementsModule.setParentMaxMeasures(
-          {
-            parentState: 'final',
-            element: this.element,
-            parentMeasures: this.parentMeasures,
-            action: this.action,
-            dimension: this.dimension,
-          }
-        );
+      if (this.dimension) {
+        const { setParentMaxMeasures } = AnimationHandler.modules.measurements;
+
+        setParentMaxMeasures({
+          parentState: 'final',
+          element: this.element,
+          parentMeasures: this.parentMeasures,
+          action: this.action,
+          dimension: this.dimension,
+        });
+      }
     }, 0);
   }
 
-  async end() {
-    await VisibilityAnimationWithParentResizeHandler.#initResizeParentModule();
+  end() {
     super.end();
 
     const { widthTransition, heightTransition } = this;
     if (widthTransition || heightTransition) {
-      VisibilityAnimationWithParentResizeHandler.#resizeParentModule.endParentResize(
-        this.element,
-        { widthTransition, heightTransition }
-      );
+      const { endParentResize } = AnimationHandler.modules.resizeParent;
+      endParentResize(this.element, { widthTransition, heightTransition });
     }
   }
 }

@@ -9,11 +9,21 @@ export default class AnimationHandler {
 
   static async getModule(modulePath) {
     if (!(modulePath in this.modules)) {
+      const toCamelCase = path => {
+        const fileName = path.match(/\/([^\.]+)(?:\.js)?$/)[1];
+        return fileName.replace(/-([a-z])/g, (_, letter) =>
+          letter.toUpperCase()
+        );
+      };
       const module = await import(modulePath);
-      this.modules[modulePath] = module;
+      this.modules[toCamelCase(modulePath)] = module;
     }
 
     return this.modules[modulePath];
+  }
+
+  async initDependencies() {
+    return Promise.resolve();
   }
 
   begin() {

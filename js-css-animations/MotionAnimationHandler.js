@@ -7,8 +7,6 @@ export default class MotionAnimationHandler extends AnimationHandler {
     this.currentTransition = null;
   }
 
-  static #transitionsModule = null;
-
   static #removeMotionCssClass(element) {
     const className = [...element.classList].find(cl =>
       cl.match(/js\-anim\-\-(rotate|scale)/)
@@ -20,27 +18,20 @@ export default class MotionAnimationHandler extends AnimationHandler {
     }
   }
 
-  static async #initTransitionsModule() {
-    if (!this.#transitionsModule) {
-      this.#transitionsModule = await AnimationHandler.getModule(
-        './transitions.js'
-      );
-    }
+  async initDependencies() {
+    await AnimationHandler.getModule('./transitions.js');
   }
 
-  async begin() {
-    await MotionAnimationHandler.#initTransitionsModule();
-    this.currentTransition =
-      MotionAnimationHandler.#transitionsModule.getCurrentTransition(
-        this.element
-      );
+  begin() {
+    const { getCurrentTransition } = AnimationHandler.modules.transitions;
+    this.currentTransition = getCurrentTransition(this.element);
     MotionAnimationHandler.#removeMotionCssClass(this.element);
   }
 
-  async middle() {
-    await MotionAnimationHandler.#initTransitionsModule();
+  middle() {
     if (this.currentTransition) {
-      MotionAnimationHandler.#transitionsModule.appendTransition(
+      const { appendTransition } = AnimationHandler.modules.transitions;
+      appendTransition(
         this.element,
         CLASS_NAMES[this.action][this.animationId],
         this.currentTransition
