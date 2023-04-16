@@ -309,14 +309,6 @@ const isEnabled = element =>
   !(element.getAttribute('js-anim--disabled') === 'true');
 
 /**
- * Removes the CSS class which sets the overflow property to 'clip' (or 'hidden')
- * @param {HTMLElement} el - The DOM element with the CSS class to remove
- */
-const removeOverflowHidden = el => {
-  el.classList.remove(CLASS_NAMES.overflowHidden);
-};
-
-/**
  * Executes a given callback, checking, when necessary, if the callback was already
  * executed by another element being animated by the same trigger button
  * @param {string} trigger - The CSS selector of the element that triggered the animation
