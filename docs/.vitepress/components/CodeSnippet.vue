@@ -1,5 +1,5 @@
 <script setup>
-  import { getHighlighter, setCDN } from 'shiki';
+  import { getHighlighter } from 'shiki';
   import { onMounted } from 'vue';
 
   const props = defineProps({
@@ -18,41 +18,42 @@
     highlight = [],
   } = props;
 
-  onMounted(() => {
-    setCDN('https://unpkg.com/shiki/');
+  onMounted(async () => {
     // @ts-ignore
-    getHighlighter({ theme: 'material-theme-palenight', langs: langs }).then(
-      highlighter => {
-        let lineOptions = [];
-        highlight.forEach(lineNumber => {
-          if (typeof lineNumber === 'string') {
-            const range = lineNumber.match(/\d+/g);
-            if (range) {
-              for (let i = +range[0]; i <= +range[1]; i++) {
-                lineOptions.push({
-                  line: i,
-                  classes: ['highlighted'],
-                });
-              }
-            }
-          } else if (typeof lineNumber === 'number') {
+    const highlighter = await getHighlighter({ theme: 'material-theme-palenight', langs: langs });
+
+    await highlighter.loadTheme('material-theme-palenight')
+    await highlighter.loadLanguage('javascript')
+
+    let lineOptions = [];
+    highlight.forEach(lineNumber => {
+      if (typeof lineNumber === 'string') {
+        const range = lineNumber.match(/\d+/g);
+        if (range) {
+          for (let i = +range[0]; i <= +range[1]; i++) {
             lineOptions.push({
-              line: lineNumber,
+              line: i,
               classes: ['highlighted'],
             });
           }
+        }
+      } else if (typeof lineNumber === 'number') {
+        lineOptions.push({
+          line: lineNumber,
+          classes: ['highlighted'],
         });
-
-        const snippet = highlighter.codeToHtml(code, {
-          lang: lang,
-          lineOptions: lineOptions,
-        });
-
-        // @ts-ignore
-        document.querySelector(`#${snippetId} .shiki-code`).innerHTML = snippet;
-        document.querySelector(`#${snippetId} pre`)?.removeAttribute('style');
       }
-    );
+    });
+
+    const snippet = highlighter.codeToHtml(code, {
+      theme: 'material-theme-palenight',
+      lang: lang,
+      lineOptions: lineOptions,
+    });
+
+    // @ts-ignore
+    document.querySelector(`#${snippetId} .shiki-code`).innerHTML = snippet;
+    document.querySelector(`#${snippetId} pre`)?.removeAttribute('style');
   });
 </script>
 

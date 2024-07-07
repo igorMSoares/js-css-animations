@@ -142,11 +142,10 @@
 <template>
   <Container>
     <h3 :id="titleId()" class="title">{{ title }}</h3>
-    <a
-      href="#"
+    <p
       class="customize--anchor"
       :class="`customize--anchor__${animationName}`"
-      >Customize this animation</a
+      >Customize this animation</p
     >
     <div>
       <AnimationForm
@@ -203,5 +202,10 @@
   .customize--anchor {
     display: flex;
     justify-content: right;
+    color: #42b883;
+  }
+
+  .customize--anchor:hover {
+    text-decoration: underline;
   }
 </style>
